@@ -2245,9 +2245,9 @@
             <td class="p-2"><input type="text" value="${it.uraian}" oninput="updatePersediaanItem(${idx}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
             <td class="p-2"><input type="number" value="${it.awal}" oninput="updatePersediaanItem(${idx}, 'awal', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
             <td class="p-2"><input type="number" value="${it.mutasi}" oninput="updatePersediaanItem(${idx}, 'mutasi', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(akhir)}</td>
+            <td id="pers_akhir_${idx}" class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(akhir)}</td>
             <td class="p-2 text-center">
-              <button onclick="removePersediaanRow(${idx})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
+              <button type="button" onclick="removePersediaanRow(${idx})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
             </td>
           </tr>
         `;
@@ -2257,7 +2257,12 @@
     function updatePersediaanItem(idx, field, val) {
       const item = state.activeReport.payload.persediaan.items[idx];
       item[field] = (field === 'awal' || field === 'mutasi') ? Number(val || 0) : val;
-      renderPersediaanEditor();
+      // Hanya perbarui teks Saldo Akhir pada baris terkait agar kursor tidak terlepas
+      const akhirEl = document.getElementById('pers_akhir_' + idx);
+      if (akhirEl) {
+        const akhir = Number(item.awal || 0) + Number(item.mutasi || 0);
+        akhirEl.textContent = 'Rp ' + formatRp(akhir);
+      }
       renderDashboard();
     }
 
@@ -2447,6 +2452,7 @@
     }
 
     // Penyusutan, Golongan Kemitraan, Golongan BMN Dihentikan, Revaluasi, Bersejarah & Perbandingan Neraca
+    // Penyusutan, Golongan Kemitraan, Golongan BMN Dihentikan, Revaluasi, Bersejarah & Perbandingan Neraca
     function renderPenyusutanEditor() {
       const p = state.activeReport.payload;
       const peny = p.penyusutan;
@@ -2467,9 +2473,9 @@
         return `
           <tr>
             <td class="p-2 font-semibold text-slate-700">${r.label}</td>
-            <td class="p-2"><input type="number" value="${intra}" oninput="state.activeReport.payload.penyusutan['${r.code}_intra']=Number(this.value||0);renderPenyusutanEditor();" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
-            <td class="p-2"><input type="number" value="${ekstra}" oninput="state.activeReport.payload.penyusutan['${r.code}_ekstra']=Number(this.value||0);renderPenyusutanEditor();" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
-            <td class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(intra + ekstra)}</td>
+            <td class="p-2"><input type="number" value="${intra}" oninput="updatePenyusutanVal('${r.code}', 'intra', this.value)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
+            <td class="p-2"><input type="number" value="${ekstra}" oninput="updatePenyusutanVal('${r.code}', 'ekstra', this.value)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
+            <td id="peny_gab_${r.code}" class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(intra + ekstra)}</td>
           </tr>
         `;
       }).join('');
@@ -2563,11 +2569,30 @@
             <td class="p-2 text-center">${idx + 1}</td>
             <td class="p-2 font-semibold text-slate-700">${r.label}</td>
             <td class="p-2 text-right font-mono">${formatRp(r.barang)}</td>
-            <td class="p-2"><input type="number" value="${selisih}" oninput="state.activeReport.payload.selisihNeracaManual['${r.key}']=Number(this.value||0);renderPenyusutanEditor();" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2 text-right font-bold text-slate-800">${formatRp(lapKeu)}</td>
+            <td class="p-2"><input type="number" value="${selisih}" oninput="updateSelisihNeracaVal('${r.key}', ${r.barang}, this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td id="lap_keu_${r.key}" class="p-2 text-right font-bold text-slate-800">${formatRp(lapKeu)}</td>
           </tr>
         `;
       }).join('');
+    }
+
+    function updatePenyusutanVal(code, type, val) {
+      const peny = state.activeReport.payload.penyusutan;
+      peny[code + '_' + type] = Number(val || 0);
+      const gabEl = document.getElementById('peny_gab_' + code);
+      if (gabEl) {
+        const total = Number(peny[code + '_intra'] || 0) + Number(peny[code + '_ekstra'] || 0);
+        gabEl.textContent = 'Rp ' + formatRp(total);
+      }
+    }
+
+    function updateSelisihNeracaVal(key, barangVal, val) {
+      const sel = Number(val || 0);
+      state.activeReport.payload.selisihNeracaManual[key] = sel;
+      const keuEl = document.getElementById('lap_keu_' + key);
+      if (keuEl) {
+        keuEl.textContent = formatRp(Number(barangVal || 0) - sel);
+      }
     }
 
     function addRevaluasiRow() {
