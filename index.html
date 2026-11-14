@@ -496,23 +496,32 @@
               </div>
             </div>
 
-            <!-- Pilihan Ceklis Status Audit Kop Periode (HANYA MUNCUL UNTUK SEMESTER II DAN TAHUNAN) -->
-            <div id="initDraftAuditContainer" class="hidden p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <label class="block text-xs font-bold text-slate-700">
-                <i class="fa-solid fa-check-double text-blue-900 mr-1"></i>Keterangan Status Audit pada Kop Periode Laporan (Khusus Semester II & Tahunan):
-              </label>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-blue-800">
-                  <input type="radio" name="initDraft_auditStatus" value="" checked onchange="handleInitDraftPeriodeChange()" class="text-blue-900 focus:ring-blue-900" />
-                  <span class="text-xs font-semibold text-slate-700">Tidak Ditampilkan</span>
+            <!-- Pilihan Ceklist Status Audit Kop Periode (HANYA MUNCUL UNTUK SEMESTER II DAN TAHUNAN) -->
+            <div id="initDraftAuditContainer" class="hidden p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-bold text-slate-800">
+                  <i class="fa-solid fa-square-check text-blue-900 mr-1.5"></i>Ceklist Status Audit pada Kop Periode Laporan:
                 </label>
-                <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-blue-800">
-                  <input type="radio" name="initDraft_auditStatus" value="Unaudited" onchange="handleInitDraftPeriodeChange()" class="text-blue-900 focus:ring-blue-900" />
-                  <span class="text-xs font-semibold text-amber-800">Unaudited</span>
+                <span class="text-[11px] text-slate-500 italic">Kosongkan (jangan dicentang) jika tanpa Audited/Unaudited</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-300 bg-white cursor-pointer hover:border-amber-500 transition">
+                  <input type="checkbox" id="initDraft_chkUnaudited" value="Unaudited"
+                    onchange="toggleInitDraftAuditCheckbox('Unaudited')"
+                    class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 cursor-pointer" />
+                  <div>
+                    <span class="text-xs font-extrabold text-amber-800 block">Unaudited</span>
+                    <span class="text-[10px] text-slate-500">Tampilkan "(Unaudited)" di kop laporan</span>
+                  </div>
                 </label>
-                <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-blue-800">
-                  <input type="radio" name="initDraft_auditStatus" value="Audited" onchange="handleInitDraftPeriodeChange()" class="text-blue-900 focus:ring-blue-900" />
-                  <span class="text-xs font-semibold text-emerald-800">Audited</span>
+                <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-300 bg-white cursor-pointer hover:border-emerald-600 transition">
+                  <input type="checkbox" id="initDraft_chkAudited" value="Audited"
+                    onchange="toggleInitDraftAuditCheckbox('Audited')"
+                    class="w-4 h-4 rounded text-emerald-700 focus:ring-emerald-600 cursor-pointer" />
+                  <div>
+                    <span class="text-xs font-extrabold text-emerald-800 block">Audited</span>
+                    <span class="text-[10px] text-slate-500">Tampilkan "(Audited)" di kop laporan</span>
+                  </div>
                 </label>
               </div>
             </div>
@@ -627,14 +636,19 @@
                 </select>
               </div>
               <div id="metaAuditStatusContainer" class="hidden">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Status Audit di Kop Periode</label>
-                <select id="meta_auditStatus" onchange="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
-                  <option value="">Tidak Ditampilkan</option>
-                  <option value="Unaudited">Unaudited</option>
-                  <option value="Audited">Audited</option>
-                </select>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Ceklist Status Audit Kop (Kosongkan jika tanpa keduanya)</label>
+                <input type="hidden" id="meta_auditStatus" value="" />
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 cursor-pointer hover:border-amber-500">
+                    <input type="checkbox" id="meta_chkUnaudited" onchange="toggleMetaAuditCheckbox('Unaudited')" class="w-4 h-4 rounded text-amber-600 cursor-pointer" />
+                    <span class="text-xs font-bold text-amber-800">Unaudited</span>
+                  </label>
+                  <label class="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 cursor-pointer hover:border-emerald-600">
+                    <input type="checkbox" id="meta_chkAudited" onchange="toggleMetaAuditCheckbox('Audited')" class="w-4 h-4 rounded text-emerald-700 cursor-pointer" />
+                    <span class="text-xs font-bold text-emerald-800">Audited</span>
+                  </label>
+                </div>
               </div>
-              <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Tahun Anggaran</label>
                 <input type="text" id="meta_tahunAnggaran" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
               </div>
@@ -2001,8 +2015,34 @@
       });
     }
 
+    function getInitDraftAuditStatus() {
+      const perEl = document.getElementById('initDraft_periode');
+      const per = perEl ? perEl.value : 'Semester I';
+      if (per === 'Semester I') return '';
+      const chkUn = document.getElementById('initDraft_chkUnaudited');
+      const chkAu = document.getElementById('initDraft_chkAudited');
+      if (chkAu && chkAu.checked) return 'Audited';
+      if (chkUn && chkUn.checked) return 'Unaudited';
+      return ''; // Jika keduanya tidak dicentang, tidak ada tulisan Audited/Unaudited
+    }
+
+    function toggleInitDraftAuditCheckbox(which) {
+      const chkUn = document.getElementById('initDraft_chkUnaudited');
+      const chkAu = document.getElementById('initDraft_chkAudited');
+      if (which === 'Unaudited' && chkUn && chkUn.checked && chkAu) {
+        chkAu.checked = false;
+      } else if (which === 'Audited' && chkAu && chkAu.checked && chkUn) {
+        chkUn.checked = false;
+      }
+      handleInitDraftPeriodeChange();
+    }
+
     function openNewDraftGate() {
       state.activeReport = null;
+      const chkUn = document.getElementById('initDraft_chkUnaudited');
+      const chkAu = document.getElementById('initDraft_chkAudited');
+      if (chkUn) chkUn.checked = false;
+      if (chkAu) chkAu.checked = false;
       renderAllViews();
       switchMainTab('editor');
       updateEditorGateVisibility();
@@ -2026,19 +2066,20 @@
         else cutEl.value = `31 Desember ${thn}`;
       }
 
-      // Hanya Semester II dan Tahunan yang punya pilihan Audited, Unaudited, atau Tanpa Keduanya
+      // Tampilkan kotak ceklist HANYA jika memilih Semester II atau Tahunan
       if (auditContainer) {
         if (per === 'Semester II' || per === 'Tahunan') {
           auditContainer.classList.remove('hidden');
         } else {
           auditContainer.classList.add('hidden');
-          const defaultRadio = document.querySelector('input[name="initDraft_auditStatus"][value=""]');
-          if (defaultRadio) defaultRadio.checked = true;
+          const chkUn = document.getElementById('initDraft_chkUnaudited');
+          const chkAu = document.getElementById('initDraft_chkAudited');
+          if (chkUn) chkUn.checked = false;
+          if (chkAu) chkAu.checked = false;
         }
       }
 
-      const checkedAuditEl = document.querySelector('input[name="initDraft_auditStatus"]:checked');
-      const selectedAudit = (per === 'Semester I') ? '' : (checkedAuditEl ? checkedAuditEl.value : '');
+      const selectedAudit = getInitDraftAuditStatus();
 
       if (infoBox && infoTxt) {
         if (per === 'Tahunan') {
@@ -2046,13 +2087,14 @@
           const rSem1 = findSemesterReportByAudit(thn, 'Semester I', '');
           const rSem2 = findSemesterReportByAudit(thn, 'Semester II', selectedAudit);
           const sem2TargetLabel = selectedAudit ? `Semester II (${selectedAudit})` : `Semester II (Tanpa Audited/Unaudited)`;
+          const tahunanTargetLabel = selectedAudit ? `Tahunan (${selectedAudit})` : `Tahunan (Tanpa Audited/Unaudited)`;
           const s1Badge = rSem1 ? `<b class="text-emerald-700">Ditemukan (${rSem1.reportId})</b>` : `<b class="text-rose-600">Belum Ada</b>`;
           const s2Badge = rSem2 ? `<b class="text-emerald-700">Ditemukan (${rSem2.reportId})</b>` : `<b class="text-rose-600">Belum Ada</b>`;
 
-          infoTxt.innerHTML = `Sumber Data Tahun <b>${thn}</b> untuk <b>Tahunan ${selectedAudit ? '(' + selectedAudit + ')' : '(Tanpa Audited/Unaudited)'}</b>:<br/>` +
+          infoTxt.innerHTML = `Sumber Data Tahun <b>${thn}</b> untuk <b>${tahunanTargetLabel}</b>:<br/>` +
             `• Laporan <b>Semester I</b>: ${s1Badge}<br/>` +
             `• Laporan <b>${sem2TargetLabel}</b>: ${s2Badge}<br/>` +
-            `Sistem otomatis mengambil <b>Saldo Awal dari Semester I</b>, mengambil <b>Saldo Akhir dari ${sem2TargetLabel}</b>, serta menggabungkan seluruh transaksi mutasi tambah, mutasi kurang, penyusutan, dan rincian lainnya dari kedua laporan tersebut.`;
+            `Sistem otomatis mengambil <b>Saldo Awal dari Semester I</b>, mengambil <b>Saldo Akhir dari ${sem2TargetLabel}</b>, serta menggabungkan seluruh transaksi mutasi tambah, mutasi kurang, penyusutan, dan rincian lainnya.`;
         } else {
           infoBox.classList.add('hidden');
         }
@@ -2408,10 +2450,8 @@
       const cutoffVal = document.getElementById('initDraft_tanggalCutoff').value.trim();
       const uakpbVal = document.getElementById('initDraft_uakpb').value.trim();
       const kodeVal = document.getElementById('initDraft_kodeSatker').value.trim();
-      const auditRadio = document.querySelector('input[name="initDraft_auditStatus"]:checked');
-      // Hanya Semester II dan Tahunan yang menyimpan auditStatus
-      const auditStatusVal = (periodeVal === 'Semester I') ? '' : (auditRadio ? auditRadio.value : '');
-
+      // Baca dari ceklist: jika tidak dicentang maka bernilai '' (tanpa tulisan Audited/Unaudited)
+      const auditStatusVal = getInitDraftAuditStatus();
       let sample = (periodeVal === 'Tahunan')
         ? buildAnnualPayloadFromSemesters(tahunVal, auditStatusVal, getDefaultSamplePayload())
         : getDefaultSamplePayload();
@@ -2740,15 +2780,40 @@
       if (!p.babV) p.babV = sample.babV;
     }
 
+    function syncMetaAuditCheckboxesUI(auditVal) {
+      const clean = String(auditVal || '').trim();
+      const chkUn = document.getElementById('meta_chkUnaudited');
+      const chkAu = document.getElementById('meta_chkAudited');
+      const hiddenEl = document.getElementById('meta_auditStatus');
+      if (chkUn) chkUn.checked = (clean === 'Unaudited');
+      if (chkAu) chkAu.checked = (clean === 'Audited');
+      if (hiddenEl) hiddenEl.value = (clean === 'Unaudited' || clean === 'Audited') ? clean : '';
+    }
+
+    function toggleMetaAuditCheckbox(which) {
+      const chkUn = document.getElementById('meta_chkUnaudited');
+      const chkAu = document.getElementById('meta_chkAudited');
+      const hiddenEl = document.getElementById('meta_auditStatus');
+      if (which === 'Unaudited' && chkUn && chkUn.checked && chkAu) {
+        chkAu.checked = false;
+      } else if (which === 'Audited' && chkAu && chkAu.checked && chkUn) {
+        chkUn.checked = false;
+      }
+      let finalVal = '';
+      if (chkAu && chkAu.checked) finalVal = 'Audited';
+      else if (chkUn && chkUn.checked) finalVal = 'Unaudited';
+      if (hiddenEl) hiddenEl.value = finalVal;
+      syncFormToPayload();
+    }
+
     function updateMetaAuditVisibility(periodeVal) {
       const auditBox = document.getElementById('metaAuditStatusContainer');
-      const auditSelect = document.getElementById('meta_auditStatus');
       if (!auditBox) return;
       if (periodeVal === 'Semester II' || periodeVal === 'Tahunan') {
         auditBox.classList.remove('hidden');
       } else {
         auditBox.classList.add('hidden');
-        if (auditSelect) auditSelect.value = '';
+        syncMetaAuditCheckboxesUI('');
       }
     }
 
@@ -2759,6 +2824,7 @@
       const m = p.meta || {};
 
       updateMetaAuditVisibility(m.periode);
+      syncMetaAuditCheckboxesUI(m.auditStatus);
 
       const badgeEl = document.getElementById('editorBadgeId');
       if (badgeEl) badgeEl.textContent = state.activeReport.reportId || 'DRAFT';
@@ -2805,10 +2871,10 @@
         if (el) m[k] = el.value;
       });
 
-      // Pastikan Semester I tidak memiliki status Audited / Unaudited
       updateMetaAuditVisibility(m.periode);
       if (m.periode === 'Semester I') {
         m.auditStatus = '';
+        syncMetaAuditCheckboxesUI('');
       }
 
       m.nilaiNeracaAwalIntra = getNum('meta_nilaiNeracaAwalIntra', 0);
