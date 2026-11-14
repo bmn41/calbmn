@@ -411,358 +411,505 @@
       <!-- TAB 2: EDITOR KERTAS KERJA CALBMN (BAB I s.d. BAB V)               -->
       <!-- ================================================================== -->
       <div id="mainTab-editor" class="hidden space-y-5">
-        <!-- Sticky Action Bar Editor (Sudah Diperbaiki Tanpa Tag Ganda) -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">DRAFT BARU</span>
+
+        <!-- Datalist Pilihan Cepat Jenis Mutasi (Bisa Dipilih atau Diketik Manual) -->
+        <datalist id="listJenisMutasiTambah">
+          <option value="Saldo Awal"></option>
+          <option value="Pembelian"></option>
+          <option value="Transfer Masuk"></option>
+          <option value="Hibah Masuk"></option>
+          <option value="Reklasifikasi Masuk"></option>
+          <option value="Penyelesaian Pembangunan Dengan KDP"></option>
+          <option value="Penggunaan kembali BMN yang sudah dihentikan penggunaan aktif"></option>
+          <option value="Pengembangan Nilai Aset"></option>
+          <option value="Koreksi Pencatatan (Tambah)"></option>
+          <option value="Perolehan Lainnya yang Sah"></option>
+        </datalist>
+
+        <datalist id="listJenisMutasiKurang">
+          <option value="Penghapusan"></option>
+          <option value="Transfer Keluar"></option>
+          <option value="Hibah Keluar"></option>
+          <option value="Reklasifikasi Keluar"></option>
+          <option value="Penghentian Aset dari Penggunaan"></option>
+          <option value="Koreksi Pencatatan (Kurang)"></option>
+        </datalist>
+
+        <!-- TAHAP 1: GERBANG PEMBUATAN DRAFT (Tampil jika belum klik Simpan Draft) -->
+        <div id="editorDraftGate" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 max-w-2xl mx-auto my-6">
+          <div class="flex items-center gap-3.5 border-b border-slate-100 pb-4 mb-5">
+            <div class="w-12 h-12 rounded-2xl navy-gradient text-amber-400 flex items-center justify-center text-xl shadow">
+              <i class="fa-solid fa-file-circle-plus"></i>
+            </div>
             <div>
-              <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
-              <p class="text-[11px] text-slate-500">Perubahan data langsung memperbarui Pratinjau Dokumen Resmi</p>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-extrabold uppercase">Tahap 1 • Inisialisasi Draft</span>
+              <h2 class="text-lg font-extrabold text-slate-900 mt-0.5">Simpan Draft Laporan Terlebih Dahulu</h2>
+              <p class="text-xs text-slate-500">Tentukan periode laporan dan klik <b>Simpan Draft Awal</b> untuk membuka pengisian Kertas Kerja CaLBMN.</p>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="switchMainTab('preview')"
-              class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition flex items-center gap-1.5">
-              <i class="fa-solid fa-eye"></i><span>Lihat Pratinjau</span>
-            </button>
-            <button onclick="exportToExcel()"
-              class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5">
-              <i class="fa-solid fa-file-excel"></i><span>Unduh Excel (.xlsx)</span>
-            </button>
-            <button onclick="saveCurrentReport()"
-              class="px-4 py-2 rounded-xl navy-gradient text-white text-xs font-bold shadow hover:opacity-95 transition flex items-center gap-1.5">
-              <i class="fa-solid fa-floppy-disk text-amber-400"></i><span>Simpan ke Database</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Sub-Tab Navigasi Bab Kertas Kerja -->
-        <div class="flex flex-wrap gap-1.5 bg-slate-200/80 p-1.5 rounded-2xl">
-          <button onclick="switchEditorSubTab('meta')" id="subTabBtn-meta"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition bg-white text-blue-950 shadow-sm">
-            1. Identitas & Narasi (Bab I - II)
-          </button>
-          <button onclick="switchEditorSubTab('persediaan_tanah')" id="subTabBtn-persediaan_tanah"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
-            2. Persediaan & Tanah (Bab III.A - B)
-          </button>
-          <button onclick="switchEditorSubTab('subassets')" id="subTabBtn-subassets"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
-            3. Peralatan, Mesin & Sub-Aset (Bab III.C - H)
-          </button>
-          <button onclick="switchEditorSubTab('penyusutan')" id="subTabBtn-penyusutan"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
-            4. Penyusutan, Revaluasi & Bersejarah (Bab III.I - IV)
-          </button>
-          <button onclick="switchEditorSubTab('babv')" id="subTabBtn-babv"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
-            5. Perkembangan, PSP & BMN Idle (Bab V)
-          </button>
-        </div>
-
-        <!-- SUB-TAB 1: IDENTITAS SATKER & NARASI UMUM -->
-        <div id="editorSubTab-meta" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-          <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">A. Identitas Laporan & Satuan Kerja (UAKPB)</h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Periode Pelaporan</label>
-              <select id="meta_periode" onchange="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl">
-                <option value="Semester I">Semester I</option>
-                <option value="Semester II">Semester II</option>
-                <option value="Tahunan">Tahunan (Audited/Unaudited)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Tahun Anggaran</label>
-              <input type="text" id="meta_tahunAnggaran" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Cut-Off Neraca</label>
-              <input type="text" id="meta_tanggalCutoff" oninput="syncFormToPayload()" placeholder="Contoh: 30 Juni 2026" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">UAPB (Kementerian/Lembaga)</label>
-              <input type="text" id="meta_uapb" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">UAPBE-1 (Eselon I)</label>
-              <input type="text" id="meta_uapbe1" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">UAPPB-W (Wilayah)</label>
-              <input type="text" id="meta_uappbw" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nama Satker (UAKPB)</label>
-              <input type="text" id="meta_uakpb" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Kode Satker Lengkap</label>
-              <input type="text" id="meta_kodeSatker" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-mono" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Alamat & Telepon</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" id="meta_alamat" oninput="syncFormToPayload()" placeholder="Alamat" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-                <input type="text" id="meta_telepon" oninput="syncFormToPayload()" placeholder="Telepon" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+          <form onsubmit="handleCreateAndSaveInitialDraft(event)" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Periode Pelaporan</label>
+                <select id="initDraft_periode" required class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold">
+                  <option value="Semester I">Semester I</option>
+                  <option value="Semester II">Semester II</option>
+                  <option value="Tahunan">Tahunan (Audited/Unaudited)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Tahun Anggaran</label>
+                <input type="text" id="initDraft_tahunAnggaran" required value="2025" placeholder="Contoh: 2025"
+                  class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Cut-Off Neraca</label>
+                <input type="text" id="initDraft_tanggalCutoff" required placeholder="Contoh: 30 Juni 2025"
+                  class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl" />
               </div>
             </div>
-          </div>
 
-          <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2 pt-2">B. Pejabat Penandatangan Laporan</h3>
-          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Kota Penandatanganan</label>
-              <input type="text" id="meta_kotaTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Nama Satuan Kerja (UAKPB)</label>
+                <input type="text" id="initDraft_uakpb" required value="Universitas Negeri Manado"
+                  class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Kode Satker</label>
+                <input type="text" id="initDraft_kodeSatker" required value="139.03.1700.693383.000.KD"
+                  class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-mono" />
+              </div>
             </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Tanda Tangan</label>
-              <input type="text" id="meta_tanggalTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Jabatan Penandatangan</label>
-              <input type="text" id="meta_jabatanTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap Pejabat</label>
-              <input type="text" id="meta_namaTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-bold" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">NIP Pejabat</label>
-              <input type="text" id="meta_nipTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-mono" />
-            </div>
-          </div>
 
-          <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2 pt-2">C. Narasi Penjelasan Pos Neraca (Bab I, II & III)</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Saldo Awal Tahun (Bab I)</label>
-              <textarea id="meta_saldoAwalTahun" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Ringkasan Nilai Neraca BMN (Bab II)</label>
-              <textarea id="meta_narasiNeraca" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Gedung dan Bangunan (Bab III)</label>
-              <textarea id="meta_narasiGedung" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Aset Lainnya (Bab III)</label>
-              <textarea id="meta_narasiAsetLainnya" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- SUB-TAB 2: PERSEDIAAN & TANAH -->
-        <div id="editorSubTab-persediaan_tanah" class="hidden space-y-6">
-          <!-- Persediaan -->
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab III.A — Rincian Barang Persediaan</h3>
-              <button onclick="addPersediaanRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 text-xs font-bold">
-                <i class="fa-solid fa-plus mr-1"></i>Tambah Akun Persediaan
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <button type="button" onclick="switchMainTab('dashboard')"
+                class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">
+                Batal
+              </button>
+              <button type="submit"
+                class="px-5 py-2.5 rounded-xl navy-gradient text-white text-xs font-bold shadow-md hover:opacity-95 flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk text-amber-400"></i>
+                <span>Simpan Draft Awal & Mulai Buat Laporan</span>
               </button>
             </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs border-collapse">
-                <thead>
-                  <tr class="bg-slate-50 border-b text-slate-600 font-bold">
-                    <th class="p-2.5 text-left w-28">Kode Akun</th>
-                    <th class="p-2.5 text-left">Uraian Akun Persediaan</th>
-                    <th class="p-2.5 text-right w-44">Saldo Awal (Rp)</th>
-                    <th class="p-2.5 text-right w-44">Mutasi Bersih (Rp)</th>
-                    <th class="p-2.5 text-right w-44">Saldo Akhir (Rp)</th>
-                    <th class="p-2.5 text-center w-12"></th>
-                  </tr>
-                </thead>
-                <tbody id="persediaanTableBody" class="divide-y"></tbody>
-              </table>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          </form>
+        </div>
+
+        <!-- TAHAP 2: WORKSPACE KERTAS KERJA (Hanya tampil setelah Draft disimpan) -->
+        <div id="editorWorkspace" class="hidden space-y-5">
+          <!-- Sticky Action Bar Editor -->
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">-</span>
               <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Nilai Persediaan Kondisi Rusak (Rp)</label>
-                <input type="number" id="persediaan_rusak" oninput="syncPersediaanExtra()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
+                <p class="text-[11px] text-slate-500">Perubahan data langsung memperbarui Pratinjau Dokumen Resmi</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="openNewDraftGate()"
+                class="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i><span>Draft Baru</span>
+              </button>
+              <button onclick="switchMainTab('preview')"
+                class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-eye"></i><span>Lihat Pratinjau</span>
+              </button>
+              <button onclick="exportToExcel()"
+                class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-file-excel"></i><span>Unduh Excel (.xlsx)</span>
+              </button>
+              <button onclick="saveCurrentReport()"
+                class="px-4 py-2 rounded-xl navy-gradient text-white text-xs font-bold shadow hover:opacity-95 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-floppy-disk text-amber-400"></i><span>Simpan Perubahan Laporan</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sub-Tab Navigasi Bab Kertas Kerja -->
+          <div class="flex flex-wrap gap-1.5 bg-slate-200/80 p-1.5 rounded-2xl">
+            <button onclick="switchEditorSubTab('meta')" id="subTabBtn-meta"
+              class="px-4 py-2 rounded-xl text-xs font-bold transition bg-white text-blue-950 shadow-sm">
+              1. Identitas & Narasi (Bab I - II)
+            </button>
+            <button onclick="switchEditorSubTab('persediaan_tanah')" id="subTabBtn-persediaan_tanah"
+              class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
+              2. Persediaan & Tanah (Bab III.A - B)
+            </button>
+            <button onclick="switchEditorSubTab('subassets')" id="subTabBtn-subassets"
+              class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
+              3. Peralatan, Mesin & Sub-Aset (Bab III.C - H)
+            </button>
+            <button onclick="switchEditorSubTab('penyusutan')" id="subTabBtn-penyusutan"
+              class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
+              4. Penyusutan, Revaluasi & Bersejarah (Bab III.I - IV)
+            </button>
+            <button onclick="switchEditorSubTab('babv')" id="subTabBtn-babv"
+              class="px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
+              5. Perkembangan, PSP & BMN Idle (Bab V)
+            </button>
+          </div>
+
+          <!-- SUB-TAB 1: IDENTITAS SATKER & NARASI UMUM -->
+          <div id="editorSubTab-meta" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">A. Identitas Laporan & Satuan Kerja (UAKPB)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Periode Pelaporan</label>
+                <select id="meta_periode" onchange="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl">
+                  <option value="Semester I">Semester I</option>
+                  <option value="Semester II">Semester II</option>
+                  <option value="Tahunan">Tahunan (Audited/Unaudited)</option>
+                </select>
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Nilai Persediaan Kondisi Usang (Rp)</label>
-                <input type="number" id="persediaan_usang" oninput="syncPersediaanExtra()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                <label class="block text-xs font-bold text-slate-600 mb-1">Tahun Anggaran</label>
+                <input type="text" id="meta_tahunAnggaran" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Cut-Off Neraca</label>
+                <input type="text" id="meta_tanggalCutoff" oninput="syncFormToPayload()" placeholder="Contoh: 30 Juni 2025" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">UAPB (Kementerian/Lembaga)</label>
+                <input type="text" id="meta_uapb" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">UAPBE-1 (Eselon I)</label>
+                <input type="text" id="meta_uapbe1" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">UAPPB-W (Wilayah)</label>
+                <input type="text" id="meta_uappbw" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Nama Satker (UAKPB)</label>
+                <input type="text" id="meta_uakpb" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Kode Satker Lengkap</label>
+                <input type="text" id="meta_kodeSatker" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-mono" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Alamat & Telepon</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" id="meta_alamat" oninput="syncFormToPayload()" placeholder="Alamat" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                  <input type="text" id="meta_telepon" oninput="syncFormToPayload()" placeholder="Telepon" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                </div>
+              </div>
+            </div>
+
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2 pt-2">B. Pejabat Penandatangan Laporan</h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Kota Penandatanganan</label>
+                <input type="text" id="meta_kotaTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Tanda Tangan</label>
+                <input type="text" id="meta_tanggalTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Jabatan Penandatangan</label>
+                <input type="text" id="meta_jabatanTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap Pejabat</label>
+                <input type="text" id="meta_namaTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-bold" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">NIP Pejabat</label>
+                <input type="text" id="meta_nipTtd" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-mono" />
+              </div>
+            </div>
+
+            <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2 pt-2">C. Narasi Penjelasan Pos Neraca (Bab I, II & III)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Saldo Awal Tahun (Bab I)</label>
+                <textarea id="meta_saldoAwalTahun" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Ringkasan Nilai Neraca BMN (Bab II)</label>
+                <textarea id="meta_narasiNeraca" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Gedung dan Bangunan (Bab III)</label>
+                <textarea id="meta_narasiGedung" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Narasi Aset Lainnya (Bab III)</label>
+                <textarea id="meta_narasiAsetLainnya" rows="3" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl"></textarea>
               </div>
             </div>
           </div>
 
-          <!-- Tanah -->
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
-            <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab III.B — Rincian Aset Tetap Tanah</h3>
+          <!-- SUB-TAB 2: PERSEDIAAN & TANAH (MUTASI DINAMIS) -->
+          <div id="editorSubTab-persediaan_tanah" class="hidden space-y-6">
+            <!-- Persediaan -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+              <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab III.A — Rincian Barang Persediaan</h3>
+                <button onclick="addPersediaanRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 text-xs font-bold">
+                  <i class="fa-solid fa-plus mr-1"></i>Tambah Akun Persediaan
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b text-slate-600 font-bold">
+                      <th class="p-2.5 text-left w-28">Kode Akun</th>
+                      <th class="p-2.5 text-left">Uraian Akun Persediaan</th>
+                      <th class="p-2.5 text-right w-44">Saldo Awal (Rp)</th>
+                      <th class="p-2.5 text-right w-44">Mutasi Bersih (Rp)</th>
+                      <th class="p-2.5 text-right w-44">Saldo Akhir (Rp)</th>
+                      <th class="p-2.5 text-center w-12"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="persediaanTableBody" class="divide-y"></tbody>
+                </table>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Nilai Persediaan Kondisi Rusak (Rp)</label>
+                  <input type="number" id="persediaan_rusak" oninput="syncPersediaanExtra()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 mb-1">Nilai Persediaan Kondisi Usang (Rp)</label>
+                  <input type="number" id="persediaan_usang" oninput="syncPersediaanExtra()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Tanah (Mutasi Tambah & Kurang Dinamis Intra + Ekstra) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+              <div>
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab III.B — Rincian Aset Tetap Tanah</h3>
+                <p class="text-xs text-slate-500 mt-1">Tambahkan hanya jenis mutasi yang terjadi pada periode ini. Hanya mutasi yang ditambahkan di bawah ini yang akan tercetak di output laporan.</p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Mutasi Tambah Tanah -->
+                <div class="border border-slate-200 rounded-xl p-4 space-y-3">
+                  <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-extrabold text-emerald-800 uppercase">1. Mutasi Tambah Tanah (Intra & Ekstra)</h4>
+                    <button type="button" onclick="addTanahMutasiRow('tambah')"
+                      class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                      <i class="fa-solid fa-plus mr-1"></i>Tambah Jenis Mutasi
+                    </button>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                      <thead>
+                        <tr class="bg-slate-50 border-b text-slate-600">
+                          <th class="p-2 text-left">Jenis Mutasi Tambah</th>
+                          <th class="p-2 text-right w-32">Intra (Rp)</th>
+                          <th class="p-2 text-right w-32">Ekstra (Rp)</th>
+                          <th class="p-2 text-center w-8"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="tanahTambahContainer" class="divide-y"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Mutasi Kurang Tanah -->
+                <div class="border border-slate-200 rounded-xl p-4 space-y-3">
+                  <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-extrabold text-rose-800 uppercase">2. Mutasi Kurang Tanah (Intra & Ekstra)</h4>
+                    <button type="button" onclick="addTanahMutasiRow('kurang')"
+                      class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold">
+                      <i class="fa-solid fa-plus mr-1"></i>Tambah Jenis Mutasi
+                    </button>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                      <thead>
+                        <tr class="bg-slate-50 border-b text-slate-600">
+                          <th class="p-2 text-left">Jenis Mutasi Kurang</th>
+                          <th class="p-2 text-right w-32">Intra (Rp)</th>
+                          <th class="p-2 text-right w-32">Ekstra (Rp)</th>
+                          <th class="p-2 text-center w-8"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="tanahKurangContainer" class="divide-y"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Kondisi Tanah (Kuantitas Bidang & Nilai Rp)</h4>
+                  <div id="tanahKondisiContainer" class="space-y-2"></div>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Permasalahan Tanah (Sengketa/Kepemilikan)</h4>
+                  <div id="tanahMasalahContainer" class="space-y-2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 3: PERALATAN MESIN & SUB-ASET TETAP (MUTASI DINAMIS) -->
+          <div id="editorSubTab-subassets" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+            <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
+              <div>
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab III.C s.d. H — Kertas Kerja Peralatan Mesin & Sub-Kelompok Aset</h3>
+                <p class="text-xs text-slate-500">Pilih sub-aset lalu tambahkan jenis mutasi tambah/kurang yang diperlukan. Hanya mutasi yang ditambahkan yang masuk ke output laporan.</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-xs font-bold text-slate-700">Pilih Sub-Aset:</label>
+                <select id="activeSubAssetKey" onchange="renderSubAssetEditor()" class="px-3.5 py-2 text-xs font-bold border border-blue-800 bg-blue-50 text-blue-950 rounded-xl">
+                  <option value="pm_310">PM 3.10 - Komputer</option>
+                  <option value="pm_301">PM 3.01 - Alat Besar</option>
+                  <option value="pm_302">PM 3.02 - Alat Angkutan</option>
+                  <option value="pm_303">PM 3.03 - Alat Bengkel dan Alat Ukur</option>
+                  <option value="pm_305">PM 3.05 - Alat Kantor dan Rumah Tangga</option>
+                  <option value="pm_306">PM 3.06 - Alat Studio, Komunikasi & Pemancar</option>
+                  <option value="pm_308">PM 3.08 - Alat Laboratorium</option>
+                  <option value="gb_401">GB 4.01 - Gedung dan Bangunan</option>
+                  <option value="jij_501">JIJ 5.01 - Jalan, Irigasi, dan Jaringan</option>
+                  <option value="atl_601">ATL 6.01 - Aset Tetap Lainnya</option>
+                  <option value="kdp_701">KDP 7.01 - Konstruksi Dalam Pengerjaan</option>
+                  <option value="atb_801">ATB 8.01 - Aset Tak Berwujud</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Mutasi Tambah Sub-Aset -->
+              <div class="border border-slate-200 rounded-xl p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-extrabold uppercase text-emerald-800">1. Rincian Mutasi Tambah (Intra & Ekstra)</h4>
+                  <button type="button" onclick="addSubAssetMutasiRow('tambah')"
+                    class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                    <i class="fa-solid fa-plus mr-1"></i>Tambah Jenis Mutasi
+                  </button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="bg-slate-50 border-b text-slate-600">
+                        <th class="p-2 text-left">Jenis Mutasi Tambah</th>
+                        <th class="p-2 text-right w-32">Intrakomptabel (Rp)</th>
+                        <th class="p-2 text-right w-32">Ekstrakomptabel (Rp)</th>
+                        <th class="p-2 text-center w-8"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="subAssetTambahBody" class="divide-y"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Mutasi Kurang & Kondisi Sub-Aset -->
+              <div class="border border-slate-200 rounded-xl p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-extrabold uppercase text-rose-800">2. Rincian Mutasi Kurang (Intra & Ekstra)</h4>
+                  <button type="button" onclick="addSubAssetMutasiRow('kurang')"
+                    class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold">
+                    <i class="fa-solid fa-plus mr-1"></i>Tambah Jenis Mutasi
+                  </button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="bg-slate-50 border-b text-slate-600">
+                        <th class="p-2 text-left">Jenis Mutasi Kurang</th>
+                        <th class="p-2 text-right w-32">Intrakomptabel (Rp)</th>
+                        <th class="p-2 text-right w-32">Ekstrakomptabel (Rp)</th>
+                        <th class="p-2 text-center w-8"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="subAssetKurangBody" class="divide-y"></tbody>
+                  </table>
+                </div>
+
+                <h4 class="text-xs font-extrabold uppercase text-blue-900 pt-4 border-t mb-2">3. Rekap Kondisi Fisik Sub-Aset</h4>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="bg-slate-50 border-b text-slate-600">
+                        <th class="p-2 text-left">Kondisi</th>
+                        <th class="p-2 text-right">Kuantitas (Unit)</th>
+                        <th class="p-2 text-right">Nilai (Rp)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="subAssetKondisiBody" class="divide-y"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 4: PENYUSUTAN, BMN DIHENTIKAN, REVALUASI & BERSEJARAH -->
+          <div id="editorSubTab-penyusutan" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab III.I — Akumulasi Penyusutan & Amortisasi BMN</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b text-slate-600 font-bold">
+                      <th class="p-2.5 text-left">Kelompok Aset</th>
+                      <th class="p-2.5 text-right">Penyusutan Intrakomptabel (Rp)</th>
+                      <th class="p-2.5 text-right">Penyusutan Ekstrakomptabel (Rp)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="penyusutanTableBody" class="divide-y"></tbody>
+                </table>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 class="text-xs font-bold text-emerald-800 uppercase mb-2">Mutasi Tambah Tanah (Intrakomptabel)</h4>
-                <div id="tanahTambahContainer" class="space-y-2"></div>
+              <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">BMN Dihentikan dari Penggunaan per Golongan</h3>
+                <div id="bmnDihentikanContainer" class="space-y-2"></div>
               </div>
-              <div>
-                <h4 class="text-xs font-bold text-rose-800 uppercase mb-2">Mutasi Kurang Tanah (Intrakomptabel)</h4>
-                <div id="tanahKurangContainer" class="space-y-2"></div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t">
-              <div>
-                <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Kondisi Tanah (Kuantitas & Nilai Rp)</h4>
-                <div id="tanahKondisiContainer" class="space-y-2"></div>
-              </div>
-              <div>
-                <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Permasalahan Tanah (Sengketa/Kepemilikan)</h4>
-                <div id="tanahMasalahContainer" class="space-y-2"></div>
+              <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Koreksi Revaluasi BMN (Inventarisasi & Penilaian)</h3>
+                <div id="revaluasiContainer" class="space-y-2"></div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- SUB-TAB 3: PERALATAN MESIN & SUB-ASET TETAP -->
-        <div id="editorSubTab-subassets" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
-          <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
-            <div>
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab III.C s.d. H — Kertas Kerja Sub-Kelompok Aset Tetap & Lainnya</h3>
-              <p class="text-xs text-slate-500">Pilih sub-kelompok aset (misal: <code>pm_310</code> Komputer) untuk mengisi Mutasi Tambah, Kurang, dan Kondisi</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <label class="text-xs font-bold text-slate-700">Pilih Sub-Aset:</label>
-              <select id="activeSubAssetKey" onchange="renderSubAssetEditor()" class="px-3.5 py-2 text-xs font-bold border border-blue-800 bg-blue-50 text-blue-950 rounded-xl">
-                <option value="pm_310">PM 3.10 - Komputer</option>
-                <option value="pm_301">PM 3.01 - Alat Besar</option>
-                <option value="pm_302">PM 3.02 - Alat Angkutan</option>
-                <option value="pm_303">PM 3.03 - Alat Bengkel dan Alat Ukur</option>
-                <option value="pm_305">PM 3.05 - Alat Kantor dan Rumah Tangga</option>
-                <option value="pm_306">PM 3.06 - Alat Studio, Komunikasi & Pemancar</option>
-                <option value="pm_308">PM 3.08 - Alat Laboratorium</option>
-                <option value="gb_401">GB 4.01 - Gedung dan Bangunan</option>
-                <option value="jij_501">JIJ 5.01 - Jalan, Irigasi, dan Jaringan</option>
-                <option value="atl_601">ATL 6.01 - Aset Tetap Lainnya</option>
-                <option value="kdp_701">KDP 7.01 - Konstruksi Dalam Pengerjaan</option>
-                <option value="atb_801">ATB 8.01 - Aset Tak Berwujud</option>
-              </select>
-            </div>
-          </div>
+          <!-- SUB-TAB 5: BAB V (PERKEMBANGAN, PSP, PENGELOLAAN & IDLE) -->
+          <div id="editorSubTab-babv" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.A — Tren Perkembangan Nilai BMN (5 Periode)</h3>
+                <div id="babVPerkembanganContainer" class="space-y-2"></div>
+              </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Mutasi Tambah -->
-            <div class="border border-slate-200 rounded-xl p-4">
-              <h4 class="text-xs font-extrabold uppercase text-emerald-800 mb-3">1. Rincian Mutasi Tambah (Intra & Ekstra)</h4>
+              <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.B — Penetapan Status Penggunaan (PSP)</h3>
+                <div id="babVPspContainer" class="space-y-2"></div>
+              </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.C & D — Pengelolaan BMN & Informasi BMN Idle</h3>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Keterangan / Penjelasan BMN Idle</label>
+                <input type="text" id="babV_ketIdle" oninput="syncBabVIdleKet()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
               <div class="overflow-x-auto">
-                <table class="w-full text-xs">
+                <table class="w-full text-xs border-collapse">
                   <thead>
-                    <tr class="bg-slate-50 border-b text-slate-600">
-                      <th class="p-2 text-left">Jenis Transaksi Tambah</th>
-                      <th class="p-2 text-right">Intrakomptabel (Rp)</th>
-                      <th class="p-2 text-right">Ekstrakomptabel (Rp)</th>
+                    <tr class="bg-slate-50 border-b text-slate-600 font-bold">
+                      <th class="p-2 text-center w-10">No</th>
+                      <th class="p-2 text-left">Tahapan Pengelolaan BMN</th>
+                      <th class="p-2 text-center">Penggunaan</th>
+                      <th class="p-2 text-center">Pemanfaatan</th>
+                      <th class="p-2 text-center">Pemindahtanganan</th>
+                      <th class="p-2 text-center">Penghapusan</th>
                     </tr>
                   </thead>
-                  <tbody id="subAssetTambahBody" class="divide-y"></tbody>
+                  <tbody id="babVPengelolaanBody" class="divide-y"></tbody>
                 </table>
               </div>
-            </div>
-
-            <!-- Mutasi Kurang -->
-            <div class="border border-slate-200 rounded-xl p-4">
-              <h4 class="text-xs font-extrabold uppercase text-rose-800 mb-3">2. Rincian Mutasi Kurang (Intra & Ekstra)</h4>
-              <div class="overflow-x-auto">
-                <table class="w-full text-xs">
-                  <thead>
-                    <tr class="bg-slate-50 border-b text-slate-600">
-                      <th class="p-2 text-left">Jenis Transaksi Kurang</th>
-                      <th class="p-2 text-right">Intrakomptabel (Rp)</th>
-                      <th class="p-2 text-right">Ekstrakomptabel (Rp)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="subAssetKurangBody" class="divide-y"></tbody>
-                </table>
-              </div>
-
-              <h4 class="text-xs font-extrabold uppercase text-blue-900 mt-5 mb-2">3. Rekap Kondisi Fisik Sub-Aset</h4>
-              <div class="overflow-x-auto">
-                <table class="w-full text-xs">
-                  <thead>
-                    <tr class="bg-slate-50 border-b text-slate-600">
-                      <th class="p-2 text-left">Kondisi</th>
-                      <th class="p-2 text-right">Kuantitas (Unit)</th>
-                      <th class="p-2 text-right">Nilai (Rp)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="subAssetKondisiBody" class="divide-y"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SUB-TAB 4: PENYUSUTAN, BMN DIHENTIKAN, REVALUASI & BERSEJARAH -->
-        <div id="editorSubTab-penyusutan" class="hidden space-y-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-            <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab III.I — Akumulasi Penyusutan & Amortisasi BMN</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs border-collapse">
-                <thead>
-                  <tr class="bg-slate-50 border-b text-slate-600 font-bold">
-                    <th class="p-2.5 text-left">Kelompok Aset</th>
-                    <th class="p-2.5 text-right">Penyusutan Intrakomptabel (Rp)</th>
-                    <th class="p-2.5 text-right">Penyusutan Ekstrakomptabel (Rp)</th>
-                  </tr>
-                </thead>
-                <tbody id="penyusutanTableBody" class="divide-y"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">BMN Dihentikan dari Penggunaan per Golongan</h3>
-              <div id="bmnDihentikanContainer" class="space-y-2"></div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Koreksi Revaluasi BMN (Inventarisasi & Penilaian)</h3>
-              <div id="revaluasiContainer" class="space-y-2"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SUB-TAB 5: BAB V (PERKEMBANGAN, PSP, PENGELOLAAN & IDLE) -->
-        <div id="editorSubTab-babv" class="hidden space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Perkembangan Nilai BMN -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.A — Tren Perkembangan Nilai BMN (5 Periode)</h3>
-              <div id="babVPerkembanganContainer" class="space-y-2"></div>
-            </div>
-
-            <!-- Penetapan Status Penggunaan (PSP) -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.B — Penetapan Status Penggunaan (PSP)</h3>
-              <div id="babVPspContainer" class="space-y-2"></div>
-            </div>
-          </div>
-
-          <!-- Pengelolaan BMN & BMN Idle -->
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-            <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.C & D — Pengelolaan BMN & Informasi BMN Idle</h3>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Keterangan / Penjelasan BMN Idle</label>
-              <input type="text" id="babV_ketIdle" oninput="syncBabVIdleKet()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs border-collapse">
-                <thead>
-                  <tr class="bg-slate-50 border-b text-slate-600 font-bold">
-                    <th class="p-2 text-center w-10">No</th>
-                    <th class="p-2 text-left">Tahapan Pengelolaan BMN</th>
-                    <th class="p-2 text-center">Penggunaan</th>
-                    <th class="p-2 text-center">Pemanfaatan</th>
-                    <th class="p-2 text-center">Pemindahtanganan</th>
-                    <th class="p-2 text-center">Penghapusan</th>
-                  </tr>
-                </thead>
-                <tbody id="babVPengelolaanBody" class="divide-y"></tbody>
-              </table>
             </div>
           </div>
         </div>
@@ -938,6 +1085,20 @@
       activeReport: null
     };
 
+    const SUPER_ADMIN_PRIMARY = 'admin';
+
+    function isSuperAdminUser(u) {
+      if (!u) return false;
+      return String(u.username || '').trim().toLowerCase() === SUPER_ADMIN_PRIMARY ||
+             String(u.role || '').trim().toLowerCase() === 'super_admin';
+    }
+
+    function isAdminLevelUser(u) {
+      if (!u) return false;
+      const r = String(u.role || '').trim().toLowerCase();
+      return isSuperAdminUser(u) || r === 'admin';
+    }
+
     const SUB_ASSET_LABELS = {
       pm_310: 'Komputer (Gol. 3.10)',
       pm_301: 'Alat Besar (Gol. 3.01)',
@@ -953,7 +1114,7 @@
       atb_801: 'Aset Tak Berwujud (Gol. 8.01)'
     };
 
-    const TAMBAH_LABELS = [
+    const DEFAULT_TAMBAH_FALLBACK = [
       'Saldo Awal Periode',
       'Pembelian / Perolehan APBN',
       'Transfer Masuk',
@@ -962,7 +1123,7 @@
       'Koreksi Pencatatan / Pengembangan'
     ];
 
-    const KURANG_LABELS = [
+    const DEFAULT_KURANG_FALLBACK = [
       'Penghapusan BMN',
       'Transfer Keluar',
       'Hibah Keluar',
@@ -981,7 +1142,8 @@
         .replace(/e-CaLBMN/g, 'CaLBMN');
     }
 
-    // Template Kosong untuk Pembuatan Laporan Baru
+    // Template Kosong: Mutasi Tambah & Kurang Tanah serta Sub-Aset dimulai kosong ([])
+    // agar pengguna hanya menambahkan jenis mutasi yang benar-benar diperlukan.
     function getDefaultSamplePayload() {
       return {
         meta: {
@@ -1018,16 +1180,8 @@
           usang: 0
         },
         tanah: {
-          tambah: [
-            { uraian: 'Pembelian', intra: 0 },
-            { uraian: 'Penggunaan kembali BMN yang sudah dihentikan penggunaan aktif', intra: 0 },
-            { uraian: 'Penyelesaian Pembangunan Dengan KDP', intra: 0 }
-          ],
-          kurang: [
-            { uraian: 'Penghapusan', intra: 0 },
-            { uraian: 'Penghentian Aset dari Penggunaan', intra: 0 },
-            { uraian: 'Koreksi Pencatatan', intra: 0 }
-          ],
+          tambah: [],
+          kurang: [],
           kondisi: [
             { uraian: 'Baik', qty: 0, nilai: 0 },
             { uraian: 'Rusak Ringan', qty: 0, nilai: 0 },
@@ -1041,8 +1195,8 @@
         },
         subAssets: {
           pm_310: {
-            tambah: Array.from({ length: 6 }, () => ({ intra: 0, ekstra: 0 })),
-            kurang: Array.from({ length: 5 }, () => ({ intra: 0, ekstra: 0 })),
+            tambah: [],
+            kurang: [],
             kondisi: Array.from({ length: 3 }, () => ({ qty: 0, nilai: 0 }))
           }
         },
@@ -1130,7 +1284,7 @@
       try {
         return JSON.parse(rawText);
       } catch (parseErr) {
-        throw new Error('Pastikan fungsi doPost(e) sudah ditambahkan di Code.gs dan sudah di-Deploy ulang sebagai Versi Baru (Siapa Saja / Anyone).');
+        throw new Error('Pastikan fungsi doPost(e) sudah diperbarui di Code.gs dan di-Deploy ulang sebagai Versi Baru.');
       }
     }
 
@@ -1203,12 +1357,13 @@
     // MANAJEMEN SESI (TAHAN REFRESH & AUTO-LOGOUT IDLE 30 MENIT)
     // ========================================================================
     function saveActiveSession(userObj) {
+      const effectiveRole = isSuperAdminUser(userObj) ? 'super_admin' : userObj.role;
       const sessionPayload = {
         user: {
           userId: userObj.userId,
           username: userObj.username,
           fullName: cleanLabel(userObj.fullName),
-          role: userObj.role
+          role: effectiveRole
         },
         lastActivity: Date.now()
       };
@@ -1265,11 +1420,12 @@
     }
 
     function applyAuthenticatedUI(userObj) {
+      if (isSuperAdminUser(userObj)) userObj.role = 'super_admin';
       document.getElementById('headerUserFullName').textContent = cleanLabel(userObj.fullName);
-      document.getElementById('headerUserRole').textContent = userObj.role.toUpperCase();
+      document.getElementById('headerUserRole').textContent = isSuperAdminUser(userObj) ? 'ADMIN KHUSUS' : userObj.role.toUpperCase();
 
       const adminNav = document.getElementById('navBtn-admin');
-      if (userObj.role === 'admin') {
+      if (isAdminLevelUser(userObj)) {
         adminNav.classList.remove('hidden');
         adminNav.classList.add('flex');
       } else {
@@ -1300,6 +1456,7 @@
         document.getElementById('loginPassword').value = '';
 
         res.user.fullName = cleanLabel(res.user.fullName);
+        if (isSuperAdminUser(res.user)) res.user.role = 'super_admin';
         state.currentUser = res.user;
         state.reports = res.reports || [];
         state.users = res.users || [];
@@ -1374,11 +1531,22 @@
       }
     }
 
-    function switchMainTab(tabName) {
-      if ((tabName === 'editor' || tabName === 'preview') && !state.activeReport) {
-        createNewReport(false);
+    function updateEditorGateVisibility() {
+      const gate = document.getElementById('editorDraftGate');
+      const ws = document.getElementById('editorWorkspace');
+      // Hanya buka Kertas Kerja jika sudah ada laporan yang disimpan sebagai Draft (memiliki reportId)
+      if (state.activeReport && state.activeReport.reportId) {
+        gate.classList.add('hidden');
+        ws.classList.remove('hidden');
+      } else {
+        gate.classList.remove('hidden');
+        ws.classList.add('hidden');
       }
+    }
 
+    function switchMainTab(tabName) {
+      // Saat mengklik Editor Kertas Kerja, JANGAN otomatis membuat draft.
+      // Biarkan updateEditorGateVisibility() menampilkan form "Simpan Draft Terlebih Dahulu" jika belum ada draft.
       const tabs = ['dashboard', 'editor', 'preview', 'profile', 'admin'];
       tabs.forEach(t => {
         const el = document.getElementById('mainTab-' + t);
@@ -1397,6 +1565,7 @@
           }
         }
       });
+      if (tabName === 'editor') updateEditorGateVisibility();
       if (tabName === 'preview') renderDocumentPreview();
     }
 
@@ -1416,17 +1585,76 @@
     }
 
     // ========================================================================
+    // PEMBUATAN DRAFT AWAL (WAJIB SIMPAN DRAFT DULU BARU BISA EDIT LAPORAN)
+    // ========================================================================
+    function createNewReport() {
+      openNewDraftGate();
+    }
+
+    function openNewDraftGate() {
+      state.activeReport = null;
+      renderAllViews();
+      switchMainTab('editor');
+      updateEditorGateVisibility();
+    }
+
+    async function handleCreateAndSaveInitialDraft(e) {
+      e.preventDefault();
+      const sample = getDefaultSamplePayload();
+      sample.meta.periode = document.getElementById('initDraft_periode').value;
+      sample.meta.tahunAnggaran = document.getElementById('initDraft_tahunAnggaran').value.trim();
+      sample.meta.tanggalCutoff = document.getElementById('initDraft_tanggalCutoff').value.trim();
+      sample.meta.uakpb = document.getElementById('initDraft_uakpb').value.trim();
+      sample.meta.uappbw = sample.meta.uakpb;
+      sample.meta.kodeSatker = document.getElementById('initDraft_kodeSatker').value.trim();
+
+      const newDraftObj = {
+        reportId: '',
+        periode: sample.meta.periode,
+        tahunAnggaran: sample.meta.tahunAnggaran,
+        tanggalCutoff: sample.meta.tanggalCutoff,
+        kodeSatker: sample.meta.kodeSatker,
+        namaSatker: sample.meta.uakpb,
+        totalNeraca: 0,
+        payload: sample
+      };
+
+      showLoading('Menyimpan Draft Awal ke Database Spreadsheet...');
+      try {
+        const res = await callServer('apiSaveReport', newDraftObj, state.currentUser);
+        hideLoading();
+        if (res && res.success) {
+          state.reports = res.bundle.reports || [];
+          state.logs = res.bundle.logs || state.logs;
+          const created = state.reports.find(r => r.reportId === res.reportId) || { ...newDraftObj, reportId: res.reportId };
+          state.activeReport = JSON.parse(JSON.stringify(created));
+
+          renderAllViews();
+          updateEditorGateVisibility();
+          switchEditorSubTab('meta');
+          showToast(res.message);
+        } else {
+          showToast(res ? res.message : 'Gagal menyimpan draft.', 'error');
+        }
+      } catch (err) {
+        hideLoading();
+        showToast('Gagal menyimpan draft: ' + err.message, 'error');
+      }
+    }
+
+    // ========================================================================
     // RENDER & SINKRONISASI DATA KERTAS KERJA
     // ========================================================================
     function renderAllViews() {
       renderDashboard();
-      if (state.activeReport) {
+      updateEditorGateVisibility();
+      if (state.activeReport && state.activeReport.reportId) {
         loadActiveReportIntoEditor();
         renderDocumentPreview();
       } else {
-        document.getElementById('printArea').innerHTML = '<div style="text-align:center;color:#64748b;padding:40px;font-family:sans-serif;">Belum ada laporan aktif. Silakan klik <b>Buat Laporan Baru</b> pada menu Daftar Laporan.</div>';
+        document.getElementById('printArea').innerHTML = '<div style="text-align:center;color:#64748b;padding:40px;font-family:sans-serif;">Belum ada laporan aktif. Silakan klik <b>Buat Laporan Baru</b> dan simpan draft terlebih dahulu.</div>';
       }
-      if (state.currentUser && state.currentUser.role === 'admin') {
+      if (state.currentUser && isAdminLevelUser(state.currentUser)) {
         renderAdminPanel();
       }
     }
@@ -1442,8 +1670,8 @@
         });
       }
       if (p.tanah) {
-        (p.tanah.tambah || []).forEach(t => total += Number(t.intra || 0));
-        (p.tanah.kurang || []).forEach(k => total -= Number(k.intra || 0));
+        (p.tanah.tambah || []).forEach(t => total += Number(t.intra || 0) + Number(t.ekstra || 0));
+        (p.tanah.kurang || []).forEach(k => total -= (Number(k.intra || 0) + Number(k.ekstra || 0)));
       }
       if (p.subAssets) {
         Object.values(p.subAssets).forEach(sa => {
@@ -1461,12 +1689,11 @@
       const idEl = document.getElementById('statActiveId');
       const neracaEl = document.getElementById('statActiveTotalNeraca');
 
-      if (state.activeReport && state.activeReport.payload) {
+      if (state.activeReport && state.activeReport.reportId && state.activeReport.payload) {
         const m = state.activeReport.payload.meta || {};
-        const pLabel = (m.periode || m.tahunAnggaran) ? `${m.periode || '-'} - TA ${m.tahunAnggaran || '-'}` : 'Draft Laporan Baru';
-        periodEl.textContent = pLabel;
+        periodEl.textContent = `${m.periode || '-'} - TA ${m.tahunAnggaran || '-'}`;
         periodEl.className = 'text-lg font-extrabold text-blue-900 mt-1';
-        idEl.textContent = `ID: ${state.activeReport.reportId || 'DRAFT (Belum Disimpan)'}`;
+        idEl.textContent = `ID: ${state.activeReport.reportId}`;
         neracaEl.textContent = 'Rp ' + formatRp(calculateActiveTotalNeraca());
       } else {
         periodEl.textContent = 'Belum Ada Laporan';
@@ -1477,7 +1704,7 @@
 
       const tbody = document.getElementById('reportsTableBody');
       if (state.reports.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">Belum ada laporan CaLBMN yang tersimpan di database. Klik tombol <b>"Buat Laporan Baru"</b> untuk mulai menyusun laporan.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">Belum ada laporan CaLBMN yang tersimpan di database. Klik tombol <b>"Buat Laporan Baru"</b> untuk membuat dan menyimpan draft awal.</td></tr>`;
         return;
       }
 
@@ -1520,33 +1747,29 @@
       switchMainTab(targetTab);
     }
 
-    function createNewReport(switchTab = true) {
-      const sample = getDefaultSamplePayload();
-      state.activeReport = {
-        reportId: '',
-        periode: sample.meta.periode,
-        tahunAnggaran: sample.meta.tahunAnggaran,
-        tanggalCutoff: sample.meta.tanggalCutoff,
-        kodeSatker: sample.meta.kodeSatker,
-        namaSatker: sample.meta.uakpb,
-        totalNeraca: 0,
-        payload: sample
-      };
-      renderAllViews();
-      if (switchTab) {
-        switchMainTab('editor');
-        showToast('Formulir Laporan CaLBMN baru siap diisi.', 'info');
-      }
-    }
-
     function ensureSubAssetStructure(key) {
+      if (!state.activeReport.payload.subAssets) state.activeReport.payload.subAssets = {};
       const sa = state.activeReport.payload.subAssets;
       if (!sa[key]) {
         sa[key] = {
-          tambah: Array.from({ length: 6 }, () => ({ intra: 0, ekstra: 0 })),
-          kurang: Array.from({ length: 5 }, () => ({ intra: 0, ekstra: 0 })),
+          tambah: [],
+          kurang: [],
           kondisi: Array.from({ length: 3 }, () => ({ qty: 0, nilai: 0 }))
         };
+      }
+      // Normalisasi kompatibilitas data lama jika belum ada properti uraian
+      sa[key].tambah = (sa[key].tambah || []).map((r, idx) => ({
+        uraian: r.uraian !== undefined ? r.uraian : (DEFAULT_TAMBAH_FALLBACK[idx] || 'Mutasi Tambah'),
+        intra: Number(r.intra || 0),
+        ekstra: Number(r.ekstra || 0)
+      }));
+      sa[key].kurang = (sa[key].kurang || []).map((r, idx) => ({
+        uraian: r.uraian !== undefined ? r.uraian : (DEFAULT_KURANG_FALLBACK[idx] || 'Mutasi Kurang'),
+        intra: Number(r.intra || 0),
+        ekstra: Number(r.ekstra || 0)
+      }));
+      if (!sa[key].kondisi || sa[key].kondisi.length < 3) {
+        sa[key].kondisi = Array.from({ length: 3 }, (_, i) => (sa[key].kondisi && sa[key].kondisi[i]) ? sa[key].kondisi[i] : { qty: 0, nilai: 0 });
       }
       return sa[key];
     }
@@ -1556,7 +1779,7 @@
       const p = state.activeReport.payload;
       const m = p.meta || {};
 
-      document.getElementById('editorBadgeId').textContent = state.activeReport.reportId || 'DRAFT BARU';
+      document.getElementById('editorBadgeId').textContent = state.activeReport.reportId || 'DRAFT';
       document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
 
       const metaKeys = [
@@ -1639,22 +1862,73 @@
       pers.usang = Number(document.getElementById('persediaan_usang').value || 0);
     }
 
-    // Editor Tanah
+    // ========================================================================
+    // EDITOR TANAH (MUTASI TAMBAH & KURANG DINAMIS INTRA + EKSTRA)
+    // ========================================================================
     function renderTanahEditor() {
       const t = state.activeReport.payload.tanah;
-      document.getElementById('tanahTambahContainer').innerHTML = (t.tambah || []).map((item, i) => `
-        <div class="flex items-center gap-2">
-          <span class="flex-1 text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" value="${item.intra}" oninput="state.activeReport.payload.tanah.tambah[${i}].intra=Number(this.value||0);renderDashboard();" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
+      if (!t.tambah) t.tambah = [];
+      if (!t.kurang) t.kurang = [];
 
-      document.getElementById('tanahKurangContainer').innerHTML = (t.kurang || []).map((item, i) => `
-        <div class="flex items-center gap-2">
-          <span class="flex-1 text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" value="${item.intra}" oninput="state.activeReport.payload.tanah.kurang[${i}].intra=Number(this.value||0);renderDashboard();" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
+      const tambahBody = document.getElementById('tanahTambahContainer');
+      if (t.tambah.length === 0) {
+        tambahBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">Belum ada mutasi tambah tanah. Klik "+ Tambah Jenis Mutasi" jika ada.</td></tr>`;
+      } else {
+        tambahBody.innerHTML = t.tambah.map((item, i) => `
+          <tr>
+            <td class="p-1.5">
+              <input type="text" list="listJenisMutasiTambah" value="${item.uraian || ''}" placeholder="Pilih / ketik jenis mutasi..."
+                oninput="state.activeReport.payload.tanah.tambah[${i}].uraian=this.value"
+                class="w-full px-2 py-1 border rounded" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${item.intra || 0}"
+                oninput="state.activeReport.payload.tanah.tambah[${i}].intra=Number(this.value||0);renderDashboard();"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${item.ekstra || 0}"
+                oninput="state.activeReport.payload.tanah.tambah[${i}].ekstra=Number(this.value||0);renderDashboard();"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5 text-center">
+              <button type="button" onclick="removeTanahMutasiRow('tambah', ${i})" class="text-rose-500 hover:text-rose-700" title="Hapus Mutasi">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      const kurangBody = document.getElementById('tanahKurangContainer');
+      if (t.kurang.length === 0) {
+        kurangBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">Belum ada mutasi kurang tanah. Klik "+ Tambah Jenis Mutasi" jika ada.</td></tr>`;
+      } else {
+        kurangBody.innerHTML = t.kurang.map((item, i) => `
+          <tr>
+            <td class="p-1.5">
+              <input type="text" list="listJenisMutasiKurang" value="${item.uraian || ''}" placeholder="Pilih / ketik jenis mutasi..."
+                oninput="state.activeReport.payload.tanah.kurang[${i}].uraian=this.value"
+                class="w-full px-2 py-1 border rounded" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${item.intra || 0}"
+                oninput="state.activeReport.payload.tanah.kurang[${i}].intra=Number(this.value||0);renderDashboard();"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${item.ekstra || 0}"
+                oninput="state.activeReport.payload.tanah.kurang[${i}].ekstra=Number(this.value||0);renderDashboard();"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5 text-center">
+              <button type="button" onclick="removeTanahMutasiRow('kurang', ${i})" class="text-rose-500 hover:text-rose-700" title="Hapus Mutasi">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
 
       document.getElementById('tanahKondisiContainer').innerHTML = (t.kondisi || []).map((item, i) => `
         <div class="grid grid-cols-3 gap-2 items-center">
@@ -1673,32 +1947,86 @@
       `).join('');
     }
 
-    // Editor Sub-Assets (PM, GB, JIJ, ATL, KDP, ATB)
+    function addTanahMutasiRow(group) {
+      const t = state.activeReport.payload.tanah;
+      if (!t[group]) t[group] = [];
+      t[group].push({ uraian: '', intra: 0, ekstra: 0 });
+      renderTanahEditor();
+      renderDashboard();
+    }
+
+    function removeTanahMutasiRow(group, idx) {
+      state.activeReport.payload.tanah[group].splice(idx, 1);
+      renderTanahEditor();
+      renderDashboard();
+    }
+
+    // ========================================================================
+    // EDITOR SUB-ASSETS / PERALATAN MESIN (MUTASI TAMBAH & KURANG DINAMIS)
+    // ========================================================================
     function renderSubAssetEditor() {
       const key = document.getElementById('activeSubAssetKey').value;
       const sa = ensureSubAssetStructure(key);
 
-      document.getElementById('subAssetTambahBody').innerHTML = TAMBAH_LABELS.map((lbl, i) => {
-        const row = sa.tambah[i] || { intra: 0, ekstra: 0 };
-        return `
+      const tambahBody = document.getElementById('subAssetTambahBody');
+      if (sa.tambah.length === 0) {
+        tambahBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">Belum ada jenis mutasi tambah. Klik "+ Tambah Jenis Mutasi" untuk menambahkan.</td></tr>`;
+      } else {
+        tambahBody.innerHTML = sa.tambah.map((row, i) => `
           <tr>
-            <td class="p-2 text-slate-700">${lbl}</td>
-            <td class="p-2"><input type="number" value="${row.intra}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${row.ekstra}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-1.5">
+              <input type="text" list="listJenisMutasiTambah" value="${row.uraian || ''}" placeholder="Pilih / ketik jenis mutasi..."
+                oninput="updateSubAsset('${key}', 'tambah', ${i}, 'uraian', this.value)"
+                class="w-full px-2 py-1 border rounded" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${row.intra || 0}"
+                oninput="updateSubAsset('${key}', 'tambah', ${i}, 'intra', this.value)"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${row.ekstra || 0}"
+                oninput="updateSubAsset('${key}', 'tambah', ${i}, 'ekstra', this.value)"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5 text-center">
+              <button type="button" onclick="removeSubAssetMutasiRow('${key}', 'tambah', ${i})" class="text-rose-500 hover:text-rose-700" title="Hapus Mutasi">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
           </tr>
-        `;
-      }).join('');
+        `).join('');
+      }
 
-      document.getElementById('subAssetKurangBody').innerHTML = KURANG_LABELS.map((lbl, i) => {
-        const row = sa.kurang[i] || { intra: 0, ekstra: 0 };
-        return `
+      const kurangBody = document.getElementById('subAssetKurangBody');
+      if (sa.kurang.length === 0) {
+        kurangBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">Belum ada jenis mutasi kurang. Klik "+ Tambah Jenis Mutasi" untuk menambahkan.</td></tr>`;
+      } else {
+        kurangBody.innerHTML = sa.kurang.map((row, i) => `
           <tr>
-            <td class="p-2 text-slate-700">${lbl}</td>
-            <td class="p-2"><input type="number" value="${row.intra}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${row.ekstra}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-1.5">
+              <input type="text" list="listJenisMutasiKurang" value="${row.uraian || ''}" placeholder="Pilih / ketik jenis mutasi..."
+                oninput="updateSubAsset('${key}', 'kurang', ${i}, 'uraian', this.value)"
+                class="w-full px-2 py-1 border rounded" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${row.intra || 0}"
+                oninput="updateSubAsset('${key}', 'kurang', ${i}, 'intra', this.value)"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5">
+              <input type="number" value="${row.ekstra || 0}"
+                oninput="updateSubAsset('${key}', 'kurang', ${i}, 'ekstra', this.value)"
+                class="w-full px-2 py-1 border rounded text-right" />
+            </td>
+            <td class="p-1.5 text-center">
+              <button type="button" onclick="removeSubAssetMutasiRow('${key}', 'kurang', ${i})" class="text-rose-500 hover:text-rose-700" title="Hapus Mutasi">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
           </tr>
-        `;
-      }).join('');
+        `).join('');
+      }
 
       document.getElementById('subAssetKondisiBody').innerHTML = KONDISI_LABELS.map((lbl, i) => {
         const row = sa.kondisi[i] || { qty: 0, nilai: 0 };
@@ -1712,9 +2040,24 @@
       }).join('');
     }
 
+    function addSubAssetMutasiRow(group) {
+      const key = document.getElementById('activeSubAssetKey').value;
+      const sa = ensureSubAssetStructure(key);
+      sa[group].push({ uraian: '', intra: 0, ekstra: 0 });
+      renderSubAssetEditor();
+      renderDashboard();
+    }
+
+    function removeSubAssetMutasiRow(key, group, idx) {
+      const sa = ensureSubAssetStructure(key);
+      sa[group].splice(idx, 1);
+      renderSubAssetEditor();
+      renderDashboard();
+    }
+
     function updateSubAsset(key, group, idx, field, val) {
       const sa = ensureSubAssetStructure(key);
-      sa[group][idx][field] = Number(val || 0);
+      sa[group][idx][field] = (field === 'uraian') ? val : Number(val || 0);
       renderDashboard();
     }
 
@@ -1844,15 +2187,64 @@
     }
 
     // ========================================================================
-    // RENDER PRATINJAU DOKUMEN RESMI CALBMN
+    // RENDER PRATINJAU DOKUMEN RESMI CALBMN (HANYA MUTASI YANG DITAMBAHKAN)
     // ========================================================================
+    function buildDynamicMutationTableHtml(title, rows) {
+      if (!rows || rows.length === 0) return '';
+      let totalIntra = 0, totalEkstra = 0, totalGabungan = 0;
+      const trs = rows.map((r, idx) => {
+        const intra = Number(r.intra || 0);
+        const ekstra = Number(r.ekstra || 0);
+        const sub = intra + ekstra;
+        totalIntra += intra;
+        totalEkstra += ekstra;
+        totalGabungan += sub;
+        return `
+          <tr>
+            <td style="text-align:center">${idx + 1}</td>
+            <td>${r.uraian || '-'}</td>
+            <td style="text-align:right">${formatRp(intra)}</td>
+            <td style="text-align:right">${formatRp(ekstra)}</td>
+            <td style="text-align:right;font-weight:bold">${formatRp(sub)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <div style="font-size:10.5pt; font-weight:bold; margin-top:6px;">${title}</div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:35px">No</th>
+              <th>Uraian Jenis Mutasi</th>
+              <th style="width:120px">Intrakomptabel (Rp)</th>
+              <th style="width:120px">Ekstrakomptabel (Rp)</th>
+              <th style="width:120px">Jumlah (Rp)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trs}
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td colspan="2" style="text-align:center">JUMLAH</td>
+              <td style="text-align:right">${formatRp(totalIntra)}</td>
+              <td style="text-align:right">${formatRp(totalEkstra)}</td>
+              <td style="text-align:right">Rp ${formatRp(totalGabungan)}</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
+
     function renderDocumentPreview() {
-      if (!state.activeReport || !state.activeReport.payload) return;
+      if (!state.activeReport || !state.activeReport.reportId || !state.activeReport.payload) {
+        document.getElementById('printArea').innerHTML = '<div style="text-align:center;color:#64748b;padding:40px;font-family:sans-serif;">Belum ada laporan aktif. Silakan simpan draft terlebih dahulu pada menu <b>Editor Kertas Kerja</b>.</div>';
+        return;
+      }
       syncFormToPayload();
       const p = state.activeReport.payload;
       const m = p.meta || {};
       const pers = p.persediaan || { items: [] };
-      const pm310 = (p.subAssets && p.subAssets.pm_310) ? p.subAssets.pm_310 : { tambah: [], kurang: [], kondisi: [] };
+      const tanah = p.tanah || { tambah: [], kurang: [] };
       const peny = p.penyusutan || {};
       const bv = p.babV || {};
 
@@ -1874,21 +2266,27 @@
         `;
       }).join('');
 
-      let totalPmTambah = 0;
-      const pmTambahRows = TAMBAH_LABELS.map((lbl, idx) => {
-        const r = pm310.tambah[idx] || { intra: 0, ekstra: 0 };
-        const sub = Number(r.intra || 0) + Number(r.ekstra || 0);
-        totalPmTambah += sub;
-        return `
-          <tr>
-            <td style="text-align:center">${idx + 1}</td>
-            <td>${lbl}</td>
-            <td style="text-align:right">${formatRp(r.intra)}</td>
-            <td style="text-align:right">${formatRp(r.ekstra)}</td>
-            <td style="text-align:right;font-weight:bold">${formatRp(sub)}</td>
-          </tr>
-        `;
-      }).join('');
+      // Render Mutasi Tanah (Hanya yang ditambahkan)
+      const tanahTambahHtml = buildDynamicMutationTableHtml('Mutasi Tambah Tanah', tanah.tambah);
+      const tanahKurangHtml = buildDynamicMutationTableHtml('Mutasi Kurang Tanah', tanah.kurang);
+      const sectionTanahHtml = (tanahTambahHtml || tanahKurangHtml)
+        ? `<div style="font-weight:bold; font-size:11pt; margin-top:10px;">B. Tanah</div>${tanahTambahHtml}${tanahKurangHtml}`
+        : `<div style="font-weight:bold; font-size:11pt; margin-top:10px;">B. Tanah</div><p style="font-size:10.5pt; margin:4px 0 10px 0;">Tidak terdapat mutasi tambah maupun mutasi kurang Tanah pada periode ini.</p>`;
+
+      // Render Seluruh Sub-Aset Peralatan Mesin & Aset Tetap Lainnya yang memiliki mutasi
+      let subAssetsHtml = '';
+      Object.keys(SUB_ASSET_LABELS).forEach(key => {
+        const sa = (p.subAssets && p.subAssets[key]) ? p.subAssets[key] : null;
+        if (!sa) return;
+        const tHtml = buildDynamicMutationTableHtml(`Mutasi Tambah — ${SUB_ASSET_LABELS[key]}`, sa.tambah);
+        const kHtml = buildDynamicMutationTableHtml(`Mutasi Kurang — ${SUB_ASSET_LABELS[key]}`, sa.kurang);
+        if (tHtml || kHtml) {
+          subAssetsHtml += `<div style="margin-top:8px;">${tHtml}${kHtml}</div>`;
+        }
+      });
+      if (!subAssetsHtml) {
+        subAssetsHtml = `<p style="font-size:10.5pt; margin:4px 0 10px 0;">Tidak terdapat mutasi tambah maupun mutasi kurang Peralatan dan Mesin / Sub-Aset pada periode ini.</p>`;
+      }
 
       const html = `
         <div style="text-align:center; border-bottom: 3px double #000; padding-bottom: 12px; margin-bottom: 18px;">
@@ -1949,31 +2347,16 @@
           Kondisi Persediaan Rusak: Rp ${formatRp(pers.rusak)} | Kondisi Persediaan Usang: Rp ${formatRp(pers.usang)}
         </p>
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:10px;">B. Peralatan dan Mesin (Rincian Mutasi Sub-Kelompok Komputer / PM)</div>
-        <table>
-          <thead>
-            <tr>
-              <th style="width:35px">No</th>
-              <th>Uraian Mutasi Tambah</th>
-              <th style="width:120px">Intrakomptabel (Rp)</th>
-              <th style="width:120px">Ekstrakomptabel (Rp)</th>
-              <th style="width:120px">Jumlah (Rp)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${pmTambahRows}
-            <tr style="font-weight:bold; background:#f3f4f6;">
-              <td colspan="2" style="text-align:center">TOTAL MUTASI TAMBAH</td>
-              <td colspan="3" style="text-align:right">Rp ${formatRp(totalPmTambah)}</td>
-            </tr>
-          </tbody>
-        </table>
+        ${sectionTanahHtml}
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:10px;">C. Gedung dan Bangunan & Aset Lainnya</div>
+        <div style="font-weight:bold; font-size:11pt; margin-top:10px;">C. Peralatan dan Mesin serta Sub-Kelompok Aset Tetap</div>
+        ${subAssetsHtml}
+
+        <div style="font-weight:bold; font-size:11pt; margin-top:10px;">D. Gedung dan Bangunan & Aset Lainnya</div>
         <p style="text-align:justify; font-size:11pt; margin:4px 0 8px 0;">${m.narasiGedung || ''}</p>
         <p style="text-align:justify; font-size:11pt; margin:4px 0 12px 0;">${m.narasiAsetLainnya || ''}</p>
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:10px;">D. Akumulasi Penyusutan BMN</div>
+        <div style="font-weight:bold; font-size:11pt; margin-top:10px;">E. Akumulasi Penyusutan BMN</div>
         <table>
           <thead>
             <tr>
@@ -2048,10 +2431,13 @@
     }
 
     // ========================================================================
-    // EKSPOR EXCEL (.XLSX) & CETAK PDF
+    // EKSPOR EXCEL (.XLSX) & CETAK PDF (HANYA MUTASI YANG DITAMBAHKAN)
     // ========================================================================
     async function exportToExcel() {
-      if (!state.activeReport || !state.activeReport.payload) return;
+      if (!state.activeReport || !state.activeReport.reportId || !state.activeReport.payload) {
+        showToast('Simpan draft laporan terlebih dahulu sebelum mengunduh Excel.', 'error');
+        return;
+      }
       syncFormToPayload();
       const p = state.activeReport.payload;
       const m = p.meta || {};
@@ -2061,6 +2447,7 @@
         ['CATATAN ATAS LAPORAN BARANG MILIK NEGARA (CaLBMN)'],
         ['Universitas Negeri Manado'],
         [],
+        ['ID Laporan', state.activeReport.reportId],
         ['Periode', m.periode],
         ['Tahun Anggaran', m.tahunAnggaran],
         ['Tanggal Cut-Off', m.tanggalCutoff],
@@ -2084,17 +2471,40 @@
       ]);
       XLSX.utils.book_append_sheet(wb, wsMeta, '1_Identitas_Narasi');
 
-      const persRows = [['Kode Akun', 'Uraian Persediaan', 'Saldo Awal (Rp)', 'Mutasi (Rp)', 'Saldo Akhir (Rp)']];
-      (p.persediaan.items || []).forEach(it => {
-        persRows.push([it.kode, it.uraian, Number(it.awal || 0), Number(it.mutasi || 0), Number(it.awal || 0) + Number(it.mutasi || 0)]);
-      });
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(persRows), '2_Persediaan');
+      // Sheet 2: Persediaan & Mutasi Tanah/Peralatan Mesin yang ditambahkan
+      const mutasiRows = [['KELOMPOK ASET', 'KATEGORI MUTASI', 'JENIS MUTASI', 'INTRAKOMPTABEL (Rp)', 'EKSTRAKOMPTABEL (Rp)', 'JUMLAH (Rp)']];
+      if (p.tanah) {
+        (p.tanah.tambah || []).forEach(r => {
+          mutasiRows.push(['Tanah', 'Mutasi Tambah', r.uraian || '-', Number(r.intra || 0), Number(r.ekstra || 0), Number(r.intra || 0) + Number(r.ekstra || 0)]);
+        });
+        (p.tanah.kurang || []).forEach(r => {
+          mutasiRows.push(['Tanah', 'Mutasi Kurang', r.uraian || '-', Number(r.intra || 0), Number(r.ekstra || 0), Number(r.intra || 0) + Number(r.ekstra || 0)]);
+        });
+      }
+      if (p.subAssets) {
+        Object.keys(SUB_ASSET_LABELS).forEach(key => {
+          const sa = p.subAssets[key];
+          if (!sa) return;
+          (sa.tambah || []).forEach(r => {
+            mutasiRows.push([SUB_ASSET_LABELS[key], 'Mutasi Tambah', r.uraian || '-', Number(r.intra || 0), Number(r.ekstra || 0), Number(r.intra || 0) + Number(r.ekstra || 0)]);
+          });
+          (sa.kurang || []).forEach(r => {
+            mutasiRows.push([SUB_ASSET_LABELS[key], 'Mutasi Kurang', r.uraian || '-', Number(r.intra || 0), Number(r.ekstra || 0), Number(r.intra || 0) + Number(r.ekstra || 0)]);
+          });
+        });
+      }
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mutasiRows), '2_Mutasi_Tanah_PM');
 
-      const bvRows = [['Periode Perkembangan Nilai BMN', 'Nilai (Rp)']];
+      // Sheet 3: Persediaan & Bab V
+      const bvRows = [['Kode Akun', 'Uraian Persediaan', 'Saldo Awal (Rp)', 'Mutasi (Rp)', 'Saldo Akhir (Rp)']];
+      (p.persediaan.items || []).forEach(it => {
+        bvRows.push([it.kode, it.uraian, Number(it.awal || 0), Number(it.mutasi || 0), Number(it.awal || 0) + Number(it.mutasi || 0)]);
+      });
+      bvRows.push([], ['Periode Perkembangan Nilai BMN', 'Nilai (Rp)']);
       (p.babV.perkembangan || []).forEach(x => bvRows.push([x.periode, Number(x.nilai || 0)]));
       bvRows.push([], ['Uraian PSP', 'Sudah PSP (Rp)', 'Belum PSP (Rp)']);
       (p.babV.psp || []).forEach(x => bvRows.push([x.uraian, Number(x.sudah || 0), Number(x.belum || 0)]));
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(bvRows), '3_Bab_V_PSP');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(bvRows), '3_Persediaan_BabV');
 
       const fileName = `CaLBMN_${(m.uakpb || 'UNIMA').replace(/\s+/g, '_')}_${m.periode}_${m.tahunAnggaran}.xlsx`;
       XLSX.writeFile(wb, fileName);
@@ -2106,6 +2516,10 @@
     }
 
     function printReportPdf() {
+      if (!state.activeReport || !state.activeReport.reportId) {
+        showToast('Simpan draft laporan terlebih dahulu sebelum mencetak.', 'error');
+        return;
+      }
       renderDocumentPreview();
       if (state.currentUser && state.activeReport) {
         const m = state.activeReport.payload.meta || {};
@@ -2115,7 +2529,7 @@
     }
 
     // ========================================================================
-    // KEAMANAN AKUN & PANEL ADMIN (DB_USERS & DB_LOGS)
+    // KEAMANAN AKUN & PANEL ADMIN (TERMASUK PENGANGKATAN ADMIN KHUSUS)
     // ========================================================================
     async function handleChangeOwnPassword(e) {
       e.preventDefault();
@@ -2138,58 +2552,74 @@
       }
     }
 
-    const SUPER_ADMIN_USERNAME = 'admin';
-
     function renderAdminPanel() {
       const uBody = document.getElementById('adminUsersTableBody');
       const actorUsername = String(state.currentUser ? state.currentUser.username : '').trim().toLowerCase();
-      const isActorSuperAdmin = (actorUsername === SUPER_ADMIN_USERNAME);
+      const isActorSuperAdmin = isSuperAdminUser(state.currentUser);
 
       uBody.innerHTML = (state.users || []).map(u => {
         const targetUsername = String(u.username || '').trim().toLowerCase();
-        const isTargetSuperAdmin = (targetUsername === SUPER_ADMIN_USERNAME);
+        const isTargetPrimarySuper = (targetUsername === SUPER_ADMIN_PRIMARY);
+        const isTargetSuperAdmin = isSuperAdminUser(u);
         const isSelf = (targetUsername === actorUsername);
-        const isTargetAdmin = (String(u.role).toLowerCase() === 'admin');
+        const isTargetAdminLevel = isAdminLevelUser(u);
 
-        // Aturan izin hapus:
-        // 1. Tidak boleh hapus diri sendiri & tidak boleh hapus Admin Khusus ('admin')
-        // 2. Jika target adalah Admin, hanya Admin Khusus ('admin') yang boleh menghapus
-        const canDelete = !isSelf && !isTargetSuperAdmin && (!isTargetAdmin || isActorSuperAdmin);
+        // Hanya Admin Khusus yang boleh menghapus sesama Admin/Admin Khusus (kecuali akun utama 'admin' & diri sendiri)
+        const canDelete = !isSelf && !isTargetPrimarySuper && (!isTargetAdminLevel || isActorSuperAdmin);
+        const canChangeBasicRole = !isTargetPrimarySuper && (!isTargetAdminLevel || isActorSuperAdmin);
 
-        // Aturan izin ubah role: Admin Khusus tidak bisa diturunkan rolenya, dan sesama Admin hanya bisa diubah oleh Admin Khusus
-        const canChangeRole = !isTargetSuperAdmin && (!isTargetAdmin || isActorSuperAdmin);
+        // Fitur Tambahan: Admin Khusus dapat memilih Admin lain untuk dijadikan Admin Khusus (atau diturunkan kembali ke Admin)
+        const canPromoteToSuper = isActorSuperAdmin && !isTargetPrimarySuper && (u.role === 'admin');
+        const canDemoteFromSuper = isActorSuperAdmin && !isTargetPrimarySuper && !isSelf && (u.role === 'super_admin');
+
+        const roleBadgeClass = isTargetSuperAdmin
+          ? 'bg-purple-100 text-purple-800 border border-purple-300'
+          : (u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800');
+        const roleBadgeLabel = isTargetSuperAdmin ? 'ADMIN KHUSUS' : u.role;
 
         return `
           <tr>
             <td class="p-2.5 font-mono font-bold text-slate-800">
               ${u.username}
-              ${isTargetSuperAdmin ? '<span class="ml-1 px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 text-[9px] font-extrabold uppercase">Admin Khusus</span>' : ''}
+              ${isTargetPrimarySuper ? '<span class="ml-1 px-1.5 py-0.5 rounded bg-slate-800 text-amber-400 text-[9px] font-extrabold uppercase">Utama</span>' : ''}
               <br/><span class="text-[10px] text-slate-400">${u.userId}</span>
             </td>
             <td class="p-2.5 font-semibold text-slate-700">${cleanLabel(u.fullName)}</td>
             <td class="p-2.5 text-center">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
-                ${u.role}
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${roleBadgeClass}">
+                ${roleBadgeLabel}
               </span>
             </td>
             <td class="p-2.5 font-mono text-[11px] text-slate-400">${u.passwordHashPreview || '***'}</td>
             <td class="p-2.5 text-center">
               <div class="inline-flex flex-wrap items-center justify-center gap-1">
-                ${canChangeRole ? `
-                  <button onclick="adminToggleRole('${u.username}', '${u.role === 'admin' ? 'operator' : 'admin'}')"
-                    class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px]" title="Ganti Role">
-                    Ubah Role
+                ${canChangeBasicRole ? `
+                  <button onclick="adminToggleRole('${u.username}', '${isTargetAdminLevel ? 'operator' : 'admin'}')"
+                    class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px]">
+                    ${isTargetAdminLevel ? 'Jadikan Operator' : 'Jadikan Admin'}
+                  </button>
+                ` : ''}
+                ${canPromoteToSuper ? `
+                  <button onclick="adminToggleRole('${u.username}', 'super_admin')"
+                    class="px-2 py-1 rounded bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold text-[11px]" title="Angkat menjadi Admin Khusus">
+                    <i class="fa-solid fa-crown mr-0.5 text-amber-600"></i>Jadikan Admin Khusus
+                  </button>
+                ` : ''}
+                ${canDemoteFromSuper ? `
+                  <button onclick="adminToggleRole('${u.username}', 'admin')"
+                    class="px-2 py-1 rounded bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-[11px]" title="Kembalikan menjadi Admin biasa">
+                    Lepas Admin Khusus
                   </button>
                 ` : ''}
                 ${(!isTargetSuperAdmin || isActorSuperAdmin) ? `
                   <button onclick="adminResetPass('${u.username}')"
-                    class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-[11px]" title="Reset Password ke 123456">
+                    class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-[11px]">
                     Reset Pass
                   </button>
                 ` : ''}
                 ${canDelete ? `
-                  <button onclick="adminDeleteUser('${u.username}', '${u.role}')"
-                    class="px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-[11px]" title="Hapus Akun">
+                  <button onclick="adminDeleteUser('${u.username}', '${roleBadgeLabel}')"
+                    class="px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-[11px]">
                     <i class="fa-solid fa-trash-can mr-0.5"></i>Hapus
                   </button>
                 ` : ''}
@@ -2240,6 +2670,8 @@
     }
 
     async function adminToggleRole(targetUsername, newRole) {
+      const label = newRole === 'super_admin' ? 'ADMIN KHUSUS' : newRole.toUpperCase();
+      if (!confirm(`Ubah role akun "${targetUsername}" menjadi ${label}?`)) return;
       showLoading('Mengubah role user...');
       try {
         const res = await callServer('apiAdminChangeRole', targetUsername, newRole, state.currentUser);
@@ -2279,8 +2711,7 @@
     }
 
     async function adminDeleteUser(targetUsername, targetRole) {
-      const roleLabel = String(targetRole).toUpperCase();
-      if (!confirm(`Apakah Anda yakin ingin MENGHAPUS akun "${targetUsername}" (Role: ${roleLabel}) secara permanen?`)) return;
+      if (!confirm(`Apakah Anda yakin ingin MENGHAPUS akun "${targetUsername}" (${targetRole}) secara permanen?`)) return;
       showLoading('Menghapus akun pengguna...');
       try {
         const res = await callServer('apiAdminDeleteUser', targetUsername, state.currentUser);
