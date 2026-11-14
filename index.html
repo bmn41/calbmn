@@ -323,7 +323,7 @@
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs font-bold uppercase text-slate-400">Total Dokumen CaLBMN</p>
-                <h3 id="statTotalReports" class="text-2xl font-extrabold text-slate-900 mt-1">1</h3>
+                <h3 id="statTotalReports" class="text-2xl font-extrabold text-slate-900 mt-1">0</h3>
               </div>
               <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center">
                 <i class="fa-solid fa-file-invoice"></i>
@@ -336,20 +336,20 @@
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs font-bold uppercase text-slate-400">Laporan Aktif Saat Ini</p>
-                <h3 id="statActivePeriod" class="text-lg font-extrabold text-blue-900 mt-1">Semester I - 2025</h3>
+                <h3 id="statActivePeriod" class="text-lg font-extrabold text-slate-400 mt-1">Belum Ada Laporan</h3>
               </div>
               <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <i class="fa-solid fa-calendar-check"></i>
               </div>
             </div>
-            <p id="statActiveId" class="text-[11px] text-slate-500 mt-2 font-mono">ID: RPT-2025-S1</p>
+            <p id="statActiveId" class="text-[11px] text-slate-500 mt-2 font-mono">ID: -</p>
           </div>
 
           <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs font-bold uppercase text-slate-400">Total Mutasi Aset (Aktif)</p>
-                <h3 id="statActiveTotalNeraca" class="text-lg font-extrabold text-emerald-700 mt-1">Rp 198.085.000</h3>
+                <h3 id="statActiveTotalNeraca" class="text-lg font-extrabold text-emerald-700 mt-1">Rp 0</h3>
               </div>
               <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
                 <i class="fa-solid fa-coins"></i>
@@ -361,7 +361,7 @@
           <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
             <p class="text-xs font-bold uppercase text-slate-400">Aksi Cepat</p>
             <div class="flex gap-2 mt-2">
-              <button onclick="createNewReport()"
+              <button onclick="createNewReport(true)"
                 class="flex-1 py-2.5 px-3 rounded-xl navy-gradient text-white text-xs font-bold hover:opacity-95 transition flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-plus"></i><span>Buat Laporan Baru</span>
               </button>
@@ -415,6 +415,12 @@
         <!-- Sticky Action Bar Editor -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
+            <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">DRAFT BARU</span>
+            <div>
+              <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
+              <p class="text-[11px] text-slate-500">Perubahan data langsung memperbarui Pratinjau Dokumen Resmi</p>
+            </div>
+          </div>
             <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">RPT-2025-S1</span>
             <div>
               <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
@@ -1310,10 +1316,11 @@
         state.users = res.users || [];
         state.logs = res.logs || [];
 
+        // Jika ada laporan di database, pilih yang terbaru. Jika kosong, biarkan null.
         if (state.reports.length > 0) {
           state.activeReport = JSON.parse(JSON.stringify(state.reports[0]));
         } else {
-          createNewReport(false);
+          state.activeReport = null;
         }
 
         saveActiveSession(state.currentUser);
@@ -1360,12 +1367,16 @@
           state.reports = res.bundle.reports || [];
           state.users = res.bundle.users || [];
           state.logs = res.bundle.logs || [];
-          if (state.reports.length > 0 && (!state.activeReport || !state.activeReport.reportId)) {
-            state.activeReport = JSON.parse(JSON.stringify(state.reports[0]));
+
+          if (state.reports.length === 0) {
+            state.activeReport = null;
           } else if (state.activeReport && state.activeReport.reportId) {
             const updatedActive = state.reports.find(r => r.reportId === state.activeReport.reportId);
-            if (updatedActive) state.activeReport = JSON.parse(JSON.stringify(updatedActive));
+            state.activeReport = updatedActive ? JSON.parse(JSON.stringify(updatedActive)) : JSON.parse(JSON.stringify(state.reports[0]));
+          } else {
+            state.activeReport = JSON.parse(JSON.stringify(state.reports[0]));
           }
+
           renderAllViews();
           showToast('Data berhasil disinkronkan dari server!');
         }
@@ -1376,6 +1387,11 @@
     }
 
     function switchMainTab(tabName) {
+      // Jika pengguna membuka tab Editor atau Preview saat belum ada laporan sama sekali, siapkan form kosong
+      if ((tabName === 'editor' || tabName === 'preview') && !state.activeReport) {
+        createNewReport(false);
+      }
+
       const tabs = ['dashboard', 'editor', 'preview', 'profile', 'admin'];
       tabs.forEach(t => {
         const el = document.getElementById('mainTab-' + t);
@@ -1417,8 +1433,12 @@
     // ========================================================================
     function renderAllViews() {
       renderDashboard();
-      loadActiveReportIntoEditor();
-      renderDocumentPreview();
+      if (state.activeReport) {
+        loadActiveReportIntoEditor();
+        renderDocumentPreview();
+      } else {
+        document.getElementById('printArea').innerHTML = '<div style="text-align:center;color:#64748b;padding:40px;font-family:sans-serif;">Belum ada laporan aktif. Silakan klik <b>Buat Laporan Baru</b> pada menu Daftar Laporan.</div>';
+      }
       if (state.currentUser && state.currentUser.role === 'admin') {
         renderAdminPanel();
       }
@@ -1450,16 +1470,27 @@
 
     function renderDashboard() {
       document.getElementById('statTotalReports').textContent = state.reports.length;
+      const periodEl = document.getElementById('statActivePeriod');
+      const idEl = document.getElementById('statActiveId');
+      const neracaEl = document.getElementById('statActiveTotalNeraca');
+
       if (state.activeReport && state.activeReport.payload) {
         const m = state.activeReport.payload.meta || {};
-        document.getElementById('statActivePeriod').textContent = `${m.periode || '-'} - TA ${m.tahunAnggaran || '-'}`;
-        document.getElementById('statActiveId').textContent = `ID: ${state.activeReport.reportId || 'BARU (Belum Disimpan)'}`;
-        document.getElementById('statActiveTotalNeraca').textContent = 'Rp ' + formatRp(calculateActiveTotalNeraca());
+        const pLabel = (m.periode || m.tahunAnggaran) ? `${m.periode || '-'} - TA ${m.tahunAnggaran || '-'}` : 'Draft Laporan Baru';
+        periodEl.textContent = pLabel;
+        periodEl.className = 'text-lg font-extrabold text-blue-900 mt-1';
+        idEl.textContent = `ID: ${state.activeReport.reportId || 'DRAFT (Belum Disimpan)'}`;
+        neracaEl.textContent = 'Rp ' + formatRp(calculateActiveTotalNeraca());
+      } else {
+        periodEl.textContent = 'Belum Ada Laporan';
+        periodEl.className = 'text-lg font-extrabold text-slate-400 mt-1';
+        idEl.textContent = 'ID: -';
+        neracaEl.textContent = 'Rp 0';
       }
 
       const tbody = document.getElementById('reportsTableBody');
       if (state.reports.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">Belum ada laporan tersimpan. Klik "Buat Laporan Baru".</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">Belum ada laporan CaLBMN yang tersimpan di database. Klik tombol <b>"Buat Laporan Baru"</b> untuk mulai menyusun laporan.</td></tr>`;
         return;
       }
 
@@ -1521,287 +1552,6 @@
       }
     }
 
-    function ensureSubAssetStructure(key) {
-      const sa = state.activeReport.payload.subAssets;
-      if (!sa[key]) {
-        sa[key] = {
-          tambah: Array.from({ length: 6 }, () => ({ intra: 0, ekstra: 0 })),
-          kurang: Array.from({ length: 5 }, () => ({ intra: 0, ekstra: 0 })),
-          kondisi: Array.from({ length: 3 }, () => ({ qty: 0, nilai: 0 }))
-        };
-      }
-      return sa[key];
-    }
-
-    function loadActiveReportIntoEditor() {
-      if (!state.activeReport || !state.activeReport.payload) return;
-      const p = state.activeReport.payload;
-      const m = p.meta || {};
-
-      document.getElementById('editorBadgeId').textContent = state.activeReport.reportId || 'DRAFT BARU';
-      document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
-
-      const metaKeys = [
-        'periode', 'tahunAnggaran', 'tanggalCutoff', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
-        'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd',
-        'nipTtd', 'saldoAwalTahun', 'narasiNeraca', 'narasiGedung', 'narasiAsetLainnya'
-      ];
-      metaKeys.forEach(k => {
-        const el = document.getElementById('meta_' + k);
-        if (el) el.value = m[k] || '';
-      });
-
-      renderPersediaanEditor();
-      renderTanahEditor();
-      renderSubAssetEditor();
-      renderPenyusutanEditor();
-      renderBabVEditor();
-    }
-
-    function syncFormToPayload() {
-      if (!state.activeReport) return;
-      const m = state.activeReport.payload.meta;
-      const metaKeys = [
-        'periode', 'tahunAnggaran', 'tanggalCutoff', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
-        'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd',
-        'nipTtd', 'saldoAwalTahun', 'narasiNeraca', 'narasiGedung', 'narasiAsetLainnya'
-      ];
-      metaKeys.forEach(k => {
-        const el = document.getElementById('meta_' + k);
-        if (el) m[k] = el.value;
-      });
-      document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode} TA ${m.tahunAnggaran}`;
-    }
-
-    // Editor Persediaan
-    function renderPersediaanEditor() {
-      const pers = state.activeReport.payload.persediaan;
-      document.getElementById('persediaan_rusak').value = pers.rusak || 0;
-      document.getElementById('persediaan_usang').value = pers.usang || 0;
-
-      const tbody = document.getElementById('persediaanTableBody');
-      tbody.innerHTML = (pers.items || []).map((it, idx) => {
-        const akhir = Number(it.awal || 0) + Number(it.mutasi || 0);
-        return `
-          <tr>
-            <td class="p-2"><input type="text" value="${it.kode}" oninput="updatePersediaanItem(${idx}, 'kode', this.value)" class="w-full px-2 py-1 border rounded font-mono" /></td>
-            <td class="p-2"><input type="text" value="${it.uraian}" oninput="updatePersediaanItem(${idx}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
-            <td class="p-2"><input type="number" value="${it.awal}" oninput="updatePersediaanItem(${idx}, 'awal', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${it.mutasi}" oninput="updatePersediaanItem(${idx}, 'mutasi', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(akhir)}</td>
-            <td class="p-2 text-center">
-              <button onclick="removePersediaanRow(${idx})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function updatePersediaanItem(idx, field, val) {
-      const item = state.activeReport.payload.persediaan.items[idx];
-      item[field] = (field === 'awal' || field === 'mutasi') ? Number(val || 0) : val;
-      renderPersediaanEditor();
-      renderDashboard();
-    }
-
-    function addPersediaanRow() {
-      state.activeReport.payload.persediaan.items.push({ kode: '1171XX', uraian: 'Akun Persediaan Baru', awal: 0, mutasi: 0 });
-      renderPersediaanEditor();
-    }
-
-    function removePersediaanRow(idx) {
-      state.activeReport.payload.persediaan.items.splice(idx, 1);
-      renderPersediaanEditor();
-      renderDashboard();
-    }
-
-    function syncPersediaanExtra() {
-      const pers = state.activeReport.payload.persediaan;
-      pers.rusak = Number(document.getElementById('persediaan_rusak').value || 0);
-      pers.usang = Number(document.getElementById('persediaan_usang').value || 0);
-    }
-
-    // Editor Tanah
-    function renderTanahEditor() {
-      const t = state.activeReport.payload.tanah;
-      document.getElementById('tanahTambahContainer').innerHTML = (t.tambah || []).map((item, i) => `
-        <div class="flex items-center gap-2">
-          <span class="flex-1 text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" value="${item.intra}" oninput="state.activeReport.payload.tanah.tambah[${i}].intra=Number(this.value||0);renderDashboard();" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('tanahKurangContainer').innerHTML = (t.kurang || []).map((item, i) => `
-        <div class="flex items-center gap-2">
-          <span class="flex-1 text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" value="${item.intra}" oninput="state.activeReport.payload.tanah.kurang[${i}].intra=Number(this.value||0);renderDashboard();" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('tanahKondisiContainer').innerHTML = (t.kondisi || []).map((item, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700 font-semibold">${item.uraian}</span>
-          <input type="number" placeholder="Bidang" value="${item.qty}" oninput="state.activeReport.payload.tanah.kondisi[${i}].qty=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Nilai Rp" value="${item.nilai}" oninput="state.activeReport.payload.tanah.kondisi[${i}].nilai=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('tanahMasalahContainer').innerHTML = (t.masalah || []).map((item, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" placeholder="Bidang" value="${item.qty}" oninput="state.activeReport.payload.tanah.masalah[${i}].qty=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Nilai Rp" value="${item.nilai}" oninput="state.activeReport.payload.tanah.masalah[${i}].nilai=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-    }
-
-    // Editor Sub-Assets (PM, GB, JIJ, ATL, KDP, ATB)
-    function renderSubAssetEditor() {
-      const key = document.getElementById('activeSubAssetKey').value;
-      const sa = ensureSubAssetStructure(key);
-
-      document.getElementById('subAssetTambahBody').innerHTML = TAMBAH_LABELS.map((lbl, i) => {
-        const row = sa.tambah[i] || { intra: 0, ekstra: 0 };
-        return `
-          <tr>
-            <td class="p-2 text-slate-700">${lbl}</td>
-            <td class="p-2"><input type="number" value="${row.intra}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${row.ekstra}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-          </tr>
-        `;
-      }).join('');
-
-      document.getElementById('subAssetKurangBody').innerHTML = KURANG_LABELS.map((lbl, i) => {
-        const row = sa.kurang[i] || { intra: 0, ekstra: 0 };
-        return `
-          <tr>
-            <td class="p-2 text-slate-700">${lbl}</td>
-            <td class="p-2"><input type="number" value="${row.intra}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${row.ekstra}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-          </tr>
-        `;
-      }).join('');
-
-      document.getElementById('subAssetKondisiBody').innerHTML = KONDISI_LABELS.map((lbl, i) => {
-        const row = sa.kondisi[i] || { qty: 0, nilai: 0 };
-        return `
-          <tr>
-            <td class="p-2 font-semibold text-slate-700">${lbl}</td>
-            <td class="p-2"><input type="number" value="${row.qty}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'qty', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${row.nilai}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'nilai', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function updateSubAsset(key, group, idx, field, val) {
-      const sa = ensureSubAssetStructure(key);
-      sa[group][idx][field] = Number(val || 0);
-      renderDashboard();
-    }
-
-    // Editor Penyusutan, BMN Dihentikan & Revaluasi
-    function renderPenyusutanEditor() {
-      const peny = state.activeReport.payload.penyusutan;
-      const rows = [
-        { code: 'pm', label: 'Peralatan dan Mesin' },
-        { code: 'gb', label: 'Gedung dan Bangunan' },
-        { code: 'jij', label: 'Jalan, Irigasi, dan Jaringan' },
-        { code: 'atl', label: 'Aset Tetap Lainnya' },
-        { code: 'kdp', label: 'Konstruksi Dalam Pengerjaan' },
-        { code: 'kemitraan', label: 'Kemitraan dengan Pihak Ketiga' },
-        { code: 'atb', label: 'Aset Tak Berwujud (Amortisasi)' },
-        { code: 'dihentikan', label: 'Aset Lain-lain (BMN Dihentikan)' }
-      ];
-
-      document.getElementById('penyusutanTableBody').innerHTML = rows.map(r => `
-        <tr>
-          <td class="p-2.5 font-semibold text-slate-700">${r.label}</td>
-          <td class="p-2.5"><input type="number" value="${peny[r.code + '_intra'] || 0}" oninput="state.activeReport.payload.penyusutan['${r.code}_intra']=Number(this.value||0)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
-          <td class="p-2.5"><input type="number" value="${peny[r.code + '_ekstra'] || 0}" oninput="state.activeReport.payload.penyusutan['${r.code}_ekstra']=Number(this.value||0)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
-        </tr>
-      `).join('');
-
-      const dihentikan = state.activeReport.payload.bmnDihentikanGolongan || [];
-      document.getElementById('bmnDihentikanContainer').innerHTML = dihentikan.map((d, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${d.uraian}</span>
-          <input type="number" placeholder="Intra" value="${d.intra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Ekstra" value="${d.ekstra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      const rev = state.activeReport.payload.revaluasiBmn || [];
-      document.getElementById('revaluasiContainer').innerHTML = rev.map((r, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${r.nama}</span>
-          <input type="number" placeholder="Nilai Rp" value="${r.nilai}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nilai=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="text" placeholder="Keterangan" value="${r.ket || ''}" oninput="state.activeReport.payload.revaluasiBmn[${i}].ket=this.value" class="px-2.5 py-1.5 text-xs border rounded-lg" />
-        </div>
-      `).join('');
-    }
-
-    // Editor Bab V
-    function renderBabVEditor() {
-      const bv = state.activeReport.payload.babV;
-      document.getElementById('babV_ketIdle').value = bv.ketIdle || '';
-
-      document.getElementById('babVPerkembanganContainer').innerHTML = (bv.perkembangan || []).map((p, i) => `
-        <div class="flex items-center gap-2">
-          <input type="text" value="${p.periode}" oninput="state.activeReport.payload.babV.perkembangan[${i}].periode=this.value" class="flex-1 px-2.5 py-1.5 text-xs border rounded-lg" />
-          <input type="number" value="${p.nilai}" oninput="state.activeReport.payload.babV.perkembangan[${i}].nilai=Number(this.value||0)" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right font-semibold" />
-        </div>
-      `).join('');
-
-      document.getElementById('babVPspContainer').innerHTML = (bv.psp || []).map((item, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" placeholder="Sudah PSP" value="${item.sudah}" oninput="state.activeReport.payload.babV.psp[${i}].sudah=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Belum PSP" value="${item.belum}" oninput="state.activeReport.payload.babV.psp[${i}].belum=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('babVPengelolaanBody').innerHTML = (bv.pengelolaan || []).map((row, i) => `
-        <tr>
-          <td class="p-1.5 text-center font-semibold">${row.no}</td>
-          <td class="p-1.5">${row.uraian}</td>
-          <td class="p-1.5"><input type="text" value="${row.guna || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].guna=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.manfaat || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].manfaat=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.pindah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].pindah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.hapus || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].hapus=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-        </tr>
-      `).join('');
-    }
-
-    function syncBabVIdleKet() {
-      state.activeReport.payload.babV.ketIdle = document.getElementById('babV_ketIdle').value;
-    }
-
-    // ========================================================================
-    // SIMPAN & HAPUS LAPORAN KE SERVER DATABASE (CODE.GS)
-    // ========================================================================
-    async function saveCurrentReport() {
-      syncFormToPayload();
-      calculateActiveTotalNeraca();
-      showLoading('Menyimpan Laporan CaLBMN ke Database Spreadsheet...');
-      try {
-        const res = await callServer('apiSaveReport', state.activeReport, state.currentUser);
-        hideLoading();
-        if (res && res.success) {
-          state.activeReport.reportId = res.reportId;
-          state.reports = res.bundle.reports || state.reports;
-          state.logs = res.bundle.logs || state.logs;
-          renderAllViews();
-          showToast(res.message);
-        } else {
-          showToast(res ? res.message : 'Gagal menyimpan laporan.', 'error');
-        }
-      } catch (err) {
-        hideLoading();
-        showToast('Error saat menyimpan: ' + err.message, 'error');
-      }
-    }
-
     async function deleteReport(reportId) {
       if (!confirm('Apakah Anda yakin ingin menghapus laporan ' + reportId + ' dari database?')) return;
       showLoading('Menghapus laporan...');
@@ -1813,7 +1563,7 @@
           if (state.reports.length > 0) {
             state.activeReport = JSON.parse(JSON.stringify(state.reports[0]));
           } else {
-            createNewReport(false);
+            state.activeReport = null;
           }
           renderAllViews();
           showToast(res.message);
