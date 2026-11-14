@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CaLBMN | Sistem Informasi Catatan atas Laporan Barang Milik Negara</title>
+  <title>CaLBMN | Catatan atas Laporan Barang Milik Negara</title>
   <link id="appFavicon" rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png" />
   <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png" />
   <!-- Tailwind CSS -->
@@ -525,7 +525,6 @@
                 </label>
               </div>
             </div>
-
             <!-- Info Otomatis Penggabungan Semester I & II Saat Memilih Tahunan -->
             <div id="initDraftAnnualInfo" class="hidden p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1">
               <p class="font-extrabold flex items-center gap-1.5">
@@ -2037,6 +2036,28 @@
       handleInitDraftPeriodeChange();
     }
 
+    function getInitDraftAuditStatus() {
+      const perEl = document.getElementById('initDraft_periode');
+      const per = perEl ? perEl.value : 'Semester I';
+      if (per === 'Semester I') return '';
+      const chkUn = document.getElementById('initDraft_chkUnaudited');
+      const chkAu = document.getElementById('initDraft_chkAudited');
+      if (chkAu && chkAu.checked) return 'Audited';
+      if (chkUn && chkUn.checked) return 'Unaudited';
+      return ''; // Jika keduanya tidak dicentang, tidak ada tulisan Audited/Unaudited
+    }
+
+    function toggleInitDraftAuditCheckbox(which) {
+      const chkUn = document.getElementById('initDraft_chkUnaudited');
+      const chkAu = document.getElementById('initDraft_chkAudited');
+      if (which === 'Unaudited' && chkUn && chkUn.checked && chkAu) {
+        chkAu.checked = false;
+      } else if (which === 'Audited' && chkAu && chkAu.checked && chkUn) {
+        chkUn.checked = false;
+      }
+      handleInitDraftPeriodeChange();
+    }
+
     function openNewDraftGate() {
       state.activeReport = null;
       const chkUn = document.getElementById('initDraft_chkUnaudited');
@@ -2778,6 +2799,32 @@
       if (!p.asetBersejarah) p.asetBersejarah = sample.asetBersejarah;
       if (!p.selisihNeracaManual) p.selisihNeracaManual = sample.selisihNeracaManual;
       if (!p.babV) p.babV = sample.babV;
+    }
+
+    function syncMetaAuditCheckboxesUI(auditVal) {
+      const clean = String(auditVal || '').trim();
+      const chkUn = document.getElementById('meta_chkUnaudited');
+      const chkAu = document.getElementById('meta_chkAudited');
+      const hiddenEl = document.getElementById('meta_auditStatus');
+      if (chkUn) chkUn.checked = (clean === 'Unaudited');
+      if (chkAu) chkAu.checked = (clean === 'Audited');
+      if (hiddenEl) hiddenEl.value = (clean === 'Unaudited' || clean === 'Audited') ? clean : '';
+    }
+
+    function toggleMetaAuditCheckbox(which) {
+      const chkUn = document.getElementById('meta_chkUnaudited');
+      const chkAu = document.getElementById('meta_chkAudited');
+      const hiddenEl = document.getElementById('meta_auditStatus');
+      if (which === 'Unaudited' && chkUn && chkUn.checked && chkAu) {
+        chkAu.checked = false;
+      } else if (which === 'Audited' && chkAu && chkAu.checked && chkUn) {
+        chkUn.checked = false;
+      }
+      let finalVal = '';
+      if (chkAu && chkAu.checked) finalVal = 'Audited';
+      else if (chkUn && chkUn.checked) finalVal = 'Unaudited';
+      if (hiddenEl) hiddenEl.value = finalVal;
+      syncFormToPayload();
     }
 
     function syncMetaAuditCheckboxesUI(auditVal) {
