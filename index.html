@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>e-CaLBMN | Sistem Informasi Catatan atas Laporan Barang Milik Negara</title>
+  <title>CaLBMN | Sistem Informasi Catatan atas Laporan Barang Milik Negara</title>
   <link id="appFavicon" rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png" />
   <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png" />
   <!-- Tailwind CSS -->
@@ -87,7 +87,7 @@
   <!-- ====================================================================== -->
   <!-- OVERLAY LOADING & NOTIFIKASI TOAST                                     -->
   <!-- ====================================================================== -->
-  <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center">
+  <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center">
     <div class="bg-white rounded-2xl p-6 shadow-2xl flex flex-col items-center max-w-xs w-full mx-4 border border-slate-100">
       <div class="w-12 h-12 border-4 border-blue-900 border-t-amber-500 rounded-full animate-spin mb-3"></div>
       <p id="loadingText" class="text-sm font-semibold text-slate-800 text-center">Memproses data ke Server...</p>
@@ -98,9 +98,9 @@
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
   <!-- ====================================================================== -->
-  <!-- MODAL KONFIGURASI URL APPS SCRIPT (UNTUK GITHUB PAGES)                 -->
+  <!-- MODAL KONFIGURASI URL APPS SCRIPT (HANYA DARI DALAM DASHBOARD)         -->
   <!-- ====================================================================== -->
-  <div id="serverConfigModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+  <div id="serverConfigModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
       <div class="navy-gradient px-6 py-4 text-white flex justify-between items-center">
         <div class="flex items-center gap-2.5">
@@ -113,17 +113,17 @@
       </div>
       <div class="p-6 space-y-4">
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-900 leading-relaxed">
-          <p class="font-bold mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Panduan Koneksi GitHub Pages:</p>
-          <p>Masukkan URL Web App Google Apps Script Anda (berakhiran <code>/exec</code>) agar aplikasi di GitHub Pages ini membaca dan menyimpan data langsung ke Google Spreadsheet Anda.</p>
+          <p class="font-bold mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Pengaturan Endpoint Spreadsheet:</p>
+          <p>Pastikan URL Web App Google Apps Script Anda berakhiran <code>/exec</code> agar aplikasi terhubung langsung ke Google Spreadsheet.</p>
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">URL Web App Google Apps Script (/exec)</label>
-          <input type="url" id="inputGasUrl" placeholder="https://script.google.com/macros/s/AKfycby97bDb14KPzd_cvY_7FNeyKuce1IMbARqSGvzZTX3EcUds2lgPQ6xzYASVVmBq9K44UQ/exec"
+          <input type="url" id="inputGasUrl" placeholder="https://script.google.com/macros/s/.../exec"
             class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-900 focus:outline-none font-mono" />
         </div>
         <div class="flex items-center justify-between pt-2 border-t border-slate-100">
           <button onclick="clearGasUrl()" class="text-xs text-rose-600 hover:underline font-semibold">
-            <i class="fa-solid fa-rotate-left mr-1"></i>Reset ke Mode Simulasi Lokal
+            <i class="fa-solid fa-rotate-left mr-1"></i>Gunakan URL Default
           </button>
           <div class="flex gap-2">
             <button onclick="closeServerConfigModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Batal</button>
@@ -141,33 +141,33 @@
   <!-- ====================================================================== -->
   <section id="loginView" class="min-h-screen flex items-center justify-center p-4 navy-gradient relative overflow-hidden">
     <div class="max-w-4xl w-full grid md:grid-cols-12 bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20">
-      
+
       <!-- Panel Kiri: Identitas Resmi Satker & Sistem -->
       <div class="md:col-span-6 navy-gradient p-8 text-white flex flex-col justify-between relative">
         <div>
-          <div class="flex items-center gap-3 mb-6">
-            <img src="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png" 
-                 alt="Logo UNIMA" class="w-12 h-12 object-contain bg-white/10 p-1.5 rounded-2xl border border-white/20 shadow-md" />
+          <div class="flex items-center gap-3.5 mb-6">
+            <img src="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png"
+                 alt="Logo UNIMA" class="w-14 h-14 object-contain bg-white/10 p-1.5 rounded-2xl border border-white/20 shadow-md" />
             <div>
-              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[11px] font-bold">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[11px] font-bold">
                 <i class="fa-solid fa-building-columns"></i>
-                <span>PMK NOMOR 181/PMK.06/2016</span>
-              </div>
-              <p class="text-xs text-slate-300 font-semibold mt-1">Universitas Negeri Manado</p>
+                <span>UNIVERSITAS NEGERI MANADO</span>
+              </span>
+              <p class="text-xs text-slate-300 font-semibold mt-1">Sub Bagian Perlengkapan</p>
             </div>
           </div>
 
-          <h1 class="text-3xl font-extrabold tracking-tight leading-tight">e-CaLBMN</h1>
+          <h1 class="text-3xl font-extrabold tracking-tight leading-tight">CaLBMN</h1>
           <p class="text-amber-400 font-semibold text-sm mt-1">Sistem Informasi Catatan atas Laporan Barang Milik Negara</p>
           <p class="text-slate-300 text-xs mt-3 leading-relaxed">
-            Platform penyusunan, rekonsiliasi internal, dan pencetakan dokumen standar Lampiran IV PMK 181/PMK.06/2016 pada Satuan Kerja Universitas Negeri Manado.
+            Platform penyusunan, rekonsiliasi internal, dan pencetakan dokumen Catatan atas Laporan Barang Milik Negara pada Satuan Kerja Universitas Negeri Manado.
           </p>
 
           <div class="mt-6 space-y-2.5 text-xs text-slate-200">
             <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
               <i class="fa-solid fa-table-list text-amber-400 text-base w-5 text-center"></i>
               <div>
-                <p class="font-bold">Struktur Standar Bab I s.d. Bab V</p>
+                <p class="font-bold">Struktur Kertas Kerja Bab I s.d. Bab V</p>
                 <p class="text-slate-400 text-[11px]">Persediaan, Aset Tetap, Penyusutan, PSP & BMN Idle</p>
               </div>
             </div>
@@ -201,7 +201,7 @@
         <div class="my-auto">
           <div class="mb-6">
             <h2 class="text-xl font-extrabold text-slate-900">Masuk ke Sistem</h2>
-            <p class="text-xs text-slate-500 mt-1">Gunakan akun Operator SIMAN/SAKTI atau Administrator resmi yang terdaftar.</p>
+            <p class="text-xs text-slate-500 mt-1">Gunakan akun Operator atau Administrator resmi yang terdaftar.</p>
           </div>
 
           <form onsubmit="handleLogin(event)" class="space-y-4" autocomplete="off">
@@ -226,7 +226,7 @@
             <button type="submit"
               class="w-full py-3 rounded-xl navy-gradient text-white font-bold text-sm shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2 mt-2">
               <i class="fa-solid fa-right-to-bracket"></i>
-              <span>Masuk Aplikasi e-CaLBMN</span>
+              <span>Masuk Aplikasi CaLBMN</span>
             </button>
           </form>
 
@@ -238,7 +238,7 @@
 
         <div class="mt-6 pt-3 border-t border-slate-100 flex justify-between items-center text-[11px] text-slate-400">
           <span><i class="fa-solid fa-shield-check mr-1 text-emerald-600"></i>Akses Terbatas Internal Satker</span>
-          <span>TA 2025/2026</span>
+          <span>Universitas Negeri Manado</span>
         </div>
       </div>
 
@@ -253,16 +253,18 @@
     <!-- Top Navigation Bar -->
     <header class="navy-gradient text-white shadow-lg sticky top-0 z-30 no-print">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <!-- Identitas Kiri Header (Tag div sudah diperbaiki) -->
         <div class="flex items-center gap-3">
-          <img src="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png" 
+          <img src="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png"
                alt="Logo UNIMA" class="w-10 h-10 rounded-xl bg-white/10 p-1 object-contain border border-white/20 shadow" />
+          <div>
             <div class="flex items-center gap-2">
-              <span class="font-extrabold text-base tracking-tight">e-CaLBMN UNIMA</span>
+              <span class="font-extrabold text-base tracking-tight">CaLBMN UNIMA</span>
               <span id="connBadgeTop" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-semibold">
                 Online
               </span>
             </div>
-            <p class="text-[11px] text-slate-300">Kode Satker: 139.03.1700.693383.000.KD • PMK 181/PMK.06/2016</p>
+            <p class="text-[11px] text-slate-300">Universitas Negeri Manado • Kode Satker: 139.03.1700.693383.000.KD</p>
           </div>
         </div>
 
@@ -317,7 +319,7 @@
       <div id="mainTab-dashboard" class="space-y-6">
         <!-- Ringkasan Statistik -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200">
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs font-bold uppercase text-slate-400">Total Dokumen CaLBMN</p>
@@ -327,10 +329,10 @@
                 <i class="fa-solid fa-file-invoice"></i>
               </div>
             </div>
-            <p class="text-[11px] text-slate-500 mt-2">Tersimpan di sheet <code>DB_REPORTS</code></p>
+            <p class="text-[11px] text-slate-500 mt-2">Tersimpan di database utama</p>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200">
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs font-bold uppercase text-slate-400">Laporan Aktif Saat Ini</p>
@@ -343,7 +345,7 @@
             <p id="statActiveId" class="text-[11px] text-slate-500 mt-2 font-mono">ID: RPT-2025-S1</p>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200">
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
             <div class="flex justify-between items-start">
               <div>
                 <p class="text-xs font-bold uppercase text-slate-400">Total Mutasi Aset (Aktif)</p>
@@ -356,7 +358,7 @@
             <p class="text-[11px] text-slate-500 mt-2">Otomatis dihitung dari Kertas Kerja</p>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col justify-between">
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
             <p class="text-xs font-bold uppercase text-slate-400">Aksi Cepat</p>
             <div class="flex gap-2 mt-2">
               <button onclick="createNewReport()"
@@ -372,10 +374,10 @@
         </div>
 
         <!-- Tabel Daftar Laporan -->
-        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <div class="px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-3">
             <div>
-              <h2 class="text-base font-extrabold text-slate-900">Arsip & Daftar Laporan e-CaLBMN</h2>
+              <h2 class="text-base font-extrabold text-slate-900">Arsip & Daftar Laporan CaLBMN</h2>
               <p class="text-xs text-slate-500">Pilih laporan untuk diedit pada Kertas Kerja atau dicetak ke format Excel/PDF</p>
             </div>
             <div class="flex items-center gap-2">
@@ -411,7 +413,7 @@
       <!-- ================================================================== -->
       <div id="mainTab-editor" class="hidden space-y-5">
         <!-- Sticky Action Bar Editor -->
-        <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">RPT-2025-S1</span>
             <div>
@@ -439,7 +441,7 @@
         <!-- Sub-Tab Navigasi Bab Kertas Kerja -->
         <div class="flex flex-wrap gap-1.5 bg-slate-200/80 p-1.5 rounded-2xl">
           <button onclick="switchEditorSubTab('meta')" id="subTabBtn-meta"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition bg-white text-blue-950 shadow-xs">
+            class="px-4 py-2 rounded-xl text-xs font-bold transition bg-white text-blue-950 shadow-sm">
             1. Identitas & Narasi (Bab I - II)
           </button>
           <button onclick="switchEditorSubTab('persediaan_tanah')" id="subTabBtn-persediaan_tanah"
@@ -461,7 +463,7 @@
         </div>
 
         <!-- SUB-TAB 1: IDENTITAS SATKER & NARASI UMUM -->
-        <div id="editorSubTab-meta" class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-6">
+        <div id="editorSubTab-meta" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
           <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">A. Identitas Laporan & Satuan Kerja (UAKPB)</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -557,7 +559,7 @@
         <!-- SUB-TAB 2: PERSEDIAAN & TANAH -->
         <div id="editorSubTab-persediaan_tanah" class="hidden space-y-6">
           <!-- Persediaan -->
-          <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
               <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab III.A — Rincian Barang Persediaan</h3>
               <button onclick="addPersediaanRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 text-xs font-bold">
@@ -592,7 +594,7 @@
           </div>
 
           <!-- Tanah -->
-          <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-5">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab III.B — Rincian Aset Tetap Tanah</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -619,7 +621,7 @@
         </div>
 
         <!-- SUB-TAB 3: PERALATAN MESIN & SUB-ASET TETAP -->
-        <div id="editorSubTab-subassets" class="hidden bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-5">
+        <div id="editorSubTab-subassets" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
           <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-3">
             <div>
               <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab III.C s.d. H — Kertas Kerja Sub-Kelompok Aset Tetap & Lainnya</h3>
@@ -697,7 +699,7 @@
 
         <!-- SUB-TAB 4: PENYUSUTAN, BMN DIHENTIKAN, REVALUASI & BERSEJARAH -->
         <div id="editorSubTab-penyusutan" class="hidden space-y-6">
-          <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab III.I — Akumulasi Penyusutan & Amortisasi BMN</h3>
             <div class="overflow-x-auto">
               <table class="w-full text-xs border-collapse">
@@ -714,11 +716,11 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-3">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
               <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">BMN Dihentikan dari Penggunaan per Golongan</h3>
               <div id="bmnDihentikanContainer" class="space-y-2"></div>
             </div>
-            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-3">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
               <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Koreksi Revaluasi BMN (Inventarisasi & Penilaian)</h3>
               <div id="revaluasiContainer" class="space-y-2"></div>
             </div>
@@ -729,20 +731,20 @@
         <div id="editorSubTab-babv" class="hidden space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Perkembangan Nilai BMN -->
-            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-3">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
               <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.A — Tren Perkembangan Nilai BMN (5 Periode)</h3>
               <div id="babVPerkembanganContainer" class="space-y-2"></div>
             </div>
 
             <!-- Penetapan Status Penggunaan (PSP) -->
-            <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-3">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
               <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.B — Penetapan Status Penggunaan (PSP)</h3>
               <div id="babVPspContainer" class="space-y-2"></div>
             </div>
           </div>
 
           <!-- Pengelolaan BMN & BMN Idle -->
-          <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.C & D — Pengelolaan BMN & Informasi BMN Idle</h3>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Keterangan / Penjelasan BMN Idle</label>
@@ -768,12 +770,12 @@
       </div>
 
       <!-- ================================================================== -->
-      <!-- TAB 3: PRATINJAU DOKUMEN RESMI & CETAK (LAMPIRAN IV PMK 181/2016)  -->
+      <!-- TAB 3: PRATINJAU DOKUMEN RESMI & CETAK                             -->
       <!-- ================================================================== -->
       <div id="mainTab-preview" class="hidden space-y-5">
-        <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 flex flex-wrap justify-between items-center gap-3 no-print">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-3 no-print">
           <div>
-            <h2 class="text-sm font-extrabold text-slate-900">Pratinjau Dokumen Resmi CaLBMN (Standar Lampiran IV PMK 181/PMK.06/2016)</h2>
+            <h2 class="text-sm font-extrabold text-slate-900">Pratinjau Dokumen Resmi CaLBMN</h2>
             <p class="text-xs text-slate-500">Siap dicetak ke PDF/Printer atau diunduh sebagai Kertas Kerja Excel multi-sheet</p>
           </div>
           <div class="flex flex-wrap gap-2">
@@ -799,7 +801,7 @@
       <!-- TAB 4: KEAMANAN AKUN (UBAH PASSWORD SENDIRI)                       -->
       <!-- ================================================================== -->
       <div id="mainTab-profile" class="hidden max-w-xl mx-auto">
-        <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-5">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
           <div class="flex items-center gap-3 border-b pb-4">
             <div class="w-11 h-11 rounded-2xl navy-gradient text-amber-400 flex items-center justify-center text-lg">
               <i class="fa-solid fa-user-lock"></i>
@@ -832,14 +834,14 @@
       <div id="mainTab-admin" class="hidden space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- Form Tambah User -->
-          <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4 h-fit">
+          <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 h-fit">
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">
               <i class="fa-solid fa-user-plus mr-1.5 text-amber-600"></i>Tambah Pengguna Baru
             </h3>
             <form onsubmit="handleCreateUser(event)" class="space-y-3">
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Username</label>
-                <input type="text" id="newUser_username" required placeholder="misal: op_fakultas" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+                <input type="text" id="newUser_username" required placeholder="misal: op_perlengkapan" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap / Jabatan</label>
@@ -852,7 +854,7 @@
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Role Akses</label>
                 <select id="newUser_role" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl">
-                  <option value="operator">Operator SIMAN/SAKTI</option>
+                  <option value="operator">Operator BMN</option>
                   <option value="admin">Administrator BMN</option>
                 </select>
               </div>
@@ -863,9 +865,9 @@
           </div>
 
           <!-- Daftar User -->
-          <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+          <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">
-              <i class="fa-solid fa-users mr-1.5 text-blue-800"></i>Daftar Pengguna (Sheet <code>DB_USERS</code>)
+              <i class="fa-solid fa-users mr-1.5 text-blue-800"></i>Daftar Pengguna Terdaftar
             </h3>
             <div class="overflow-x-auto">
               <table class="w-full text-xs border-collapse">
@@ -885,9 +887,9 @@
         </div>
 
         <!-- Tabel Audit Log -->
-        <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 space-y-4">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
           <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">
-            <i class="fa-solid fa-clock-rotate-left mr-1.5 text-emerald-700"></i>Rekam Jejak Audit Aktivitas (Sheet <code>DB_LOGS</code>)
+            <i class="fa-solid fa-clock-rotate-left mr-1.5 text-emerald-700"></i>Rekam Jejak Audit Aktivitas
           </h3>
           <div class="overflow-x-auto max-h-96">
             <table class="w-full text-xs border-collapse">
@@ -913,26 +915,22 @@
   <!-- JAVASCRIPT ENGINE & KONEKTOR HIBRIDA (GITHUB PAGES <-> APPS SCRIPT)    -->
   <!-- ====================================================================== -->
   <script>
-    /**
-     * ISI URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI JIKA INGIN PERMANEN DI KODE,
-     * ATAU ISI LEWAT TOMBOL PENGATURAN (IKON RODA GIGI) DI HALAMAN LOGIN:
-     */
     // ========================================================================
     // KONFIGURASI UTAMA & FAVICON UNIMA
     // ========================================================================
     const FAVICON_DRIVE_ID = '1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv';
     const APP_FAVICON_URL = 'https://drive.google.com/thumbnail?id=' + FAVICON_DRIVE_ID + '&sz=w256&.png';
 
-    // ISI URL WEB APP GOOGLE APPS SCRIPT (/exec) ANDA DI SINI:
-    const DEFAULT_GAS_URL = 'ISI_URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI';
+    // URL Web App Google Apps Script Anda sudah terpasang langsung di sini:
+    const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycby97bDb14KPzd_cvY_7FNeyKuce1IMbARqSGvzZTX3EcUds2lgPQ6xzYASVVmBq9K44UQ/exec';
 
-    // Konfigurasi Sesi (30 Menit Idle Auto-Logout)
-    const SESSION_STORAGE_KEY = 'ECALBMN_UNIMA_SESSION_V1';
+    // Konfigurasi Sesi (Tahan Refresh & 30 Menit Idle Auto-Logout)
+    const SESSION_STORAGE_KEY = 'CALBMN_UNIMA_SESSION_V1';
     const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 Menit dalam milidetik
     let sessionCheckInterval = null;
     let lastActivityWrite = 0;
 
-    // State Aplikasi (Hanya diisi setelah login terverifikasi dari Server)
+    // State Aplikasi
     let state = {
       currentUser: null,
       reports: [],
@@ -975,7 +973,17 @@
 
     const KONDISI_LABELS = ['Baik', 'Rusak Ringan', 'Rusak Berat'];
 
-    // Template Kosong (Tanpa Data Sensitif) untuk Pembuatan Laporan Baru
+    // Pembersih label otomatis agar tidak ada istilah SIMAN/SAKTI atau e-CaLBMN dari data lama
+    function cleanLabel(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/SIMAN\/SAKTI/gi, 'BMN')
+        .replace(/SIMAN/gi, 'BMN')
+        .replace(/SAKTI/gi, 'BMN')
+        .replace(/e-CaLBMN/g, 'CaLBMN');
+    }
+
+    // Template Kosong untuk Pembuatan Laporan Baru
     function getDefaultSamplePayload() {
       return {
         meta: {
@@ -987,12 +995,12 @@
           uappbw: 'Universitas Negeri Manado',
           uakpb: 'Universitas Negeri Manado',
           kodeSatker: '139.03.1700.693383.000.KD',
-          alamat: '',
-          telepon: '',
+          alamat: 'Kampus UNIMA di Tondano 95618',
+          telepon: '(0431) 321847',
           saldoAwalTahun: '',
           kotaTtd: 'Tondano',
           tanggalTtd: '',
-          jabatanTtd: '',
+          jabatanTtd: 'Rektor,',
           namaTtd: '',
           nipTtd: '',
           narasiGedung: '',
@@ -1080,15 +1088,17 @@
             { no: '4', uraian: 'Selesai di Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '' }
           ],
           idle: [],
-          ketIdle: ''
+          ketIdle: 'Tidak terdapat BMN Idle pada satuan kerja Universitas Negeri Manado'
         }
       };
     }
 
     // ========================================================================
-    // KONEKTOR SERVER TERPROTEKSI (TANPA LOCAL FALLBACK YANG MEMBOCORKAN DATA)
+    // KONEKTOR SERVER (GOOGLE APPS SCRIPT & GITHUB PAGES)
     // ========================================================================
     function getConfiguredGasUrl() {
+      const saved = localStorage.getItem('CALBMN_GAS_URL');
+      if (saved && saved.trim() !== '') return saved.trim();
       return (DEFAULT_GAS_URL || '').trim();
     }
 
@@ -1107,18 +1117,25 @@
         });
       }
 
-      // 2. Jika dijalankan dari GitHub Pages (Wajib melalui URL Web App Resmi)
+      // 2. Jika dijalankan dari GitHub Pages melalui HTTP POST ke Web App
       const gasUrl = getConfiguredGasUrl();
-      if (!gasUrl || gasUrl === 'ISI_URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI') {
-        throw new Error('URL Server Database belum dikonfigurasi oleh Administrator.');
+      if (!gasUrl) {
+        throw new Error('URL Web App Google Apps Script belum diatur.');
       }
 
       const res = await fetch(gasUrl, {
         method: 'POST',
+        redirect: 'follow',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action, args })
       });
-      return await res.json();
+
+      const rawText = await res.text();
+      try {
+        return JSON.parse(rawText);
+      } catch (parseErr) {
+        throw new Error('Pastikan fungsi doPost(e) sudah ditambahkan di Code.gs dan sudah di-Deploy ulang sebagai Versi Baru (Siapa Saja / Anyone).');
+      }
     }
 
     // ========================================================================
@@ -1143,9 +1160,9 @@
       const bg = type === 'error' ? 'bg-rose-600' : type === 'info' ? 'bg-blue-900' : 'bg-emerald-600';
       const icon = type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check';
       div.className = `${bg} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2.5 pointer-events-auto transition-all`;
-      div.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+      div.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${cleanLabel(message)}</span>`;
       container.appendChild(div);
-      setTimeout(() => div.remove(), 3800);
+      setTimeout(() => div.remove(), 4000);
     }
 
     function formatRp(num) {
@@ -1153,7 +1170,7 @@
       return new Intl.NumberFormat('id-ID').format(n);
     }
 
-    // Modal Konfigurasi Server
+    // Modal Konfigurasi Server (Diakses dari dalam Dashboard)
     function openServerConfigModal() {
       document.getElementById('inputGasUrl').value = getConfiguredGasUrl();
       const m = document.getElementById('serverConfigModal');
@@ -1169,23 +1186,22 @@
 
     function saveGasUrl() {
       const val = document.getElementById('inputGasUrl').value.trim();
-      localStorage.setItem('ECALBMN_GAS_URL', val);
+      if (val) {
+        localStorage.setItem('CALBMN_GAS_URL', val);
+      } else {
+        localStorage.removeItem('CALBMN_GAS_URL');
+      }
       updateConnectionBadges();
       closeServerConfigModal();
-      showToast(val ? 'URL Web App Google Apps Script berhasil disimpan!' : 'Beralih ke Mode Simulasi Lokal.');
+      showToast('URL Web App Google Apps Script berhasil disimpan!');
     }
 
     function clearGasUrl() {
-      localStorage.removeItem('ECALBMN_GAS_URL');
-      document.getElementById('inputGasUrl').value = '';
+      localStorage.removeItem('CALBMN_GAS_URL');
+      document.getElementById('inputGasUrl').value = DEFAULT_GAS_URL;
       updateConnectionBadges();
       closeServerConfigModal();
-      showToast('Koneksi direset ke Mode Simulasi Lokal.', 'info');
-    }
-
-    function quickFillLogin(u, p) {
-      document.getElementById('loginUsername').value = u;
-      document.getElementById('loginPassword').value = p;
+      showToast('Koneksi dikembalikan ke URL Default.', 'info');
     }
 
     // ========================================================================
@@ -1196,7 +1212,7 @@
         user: {
           userId: userObj.userId,
           username: userObj.username,
-          fullName: userObj.fullName,
+          fullName: cleanLabel(userObj.fullName),
           role: userObj.role
         },
         lastActivity: Date.now()
@@ -1211,7 +1227,6 @@
         const parsed = JSON.parse(raw);
         if (!parsed || !parsed.user || !parsed.lastActivity) return null;
 
-        // Cek apakah sudah melewati 30 menit tanpa aktivitas
         if (Date.now() - parsed.lastActivity > SESSION_TIMEOUT_MS) {
           localStorage.removeItem(SESSION_STORAGE_KEY);
           return { expired: true };
@@ -1226,7 +1241,6 @@
     function recordUserActivity() {
       if (!state.currentUser) return;
       const now = Date.now();
-      // Batasi penulisan ke localStorage maksimal 1 kali setiap 10 detik agar ringan
       if (now - lastActivityWrite < 10000) return;
       lastActivityWrite = now;
 
@@ -1245,7 +1259,7 @@
         if (!sess || sess.expired) {
           handleLogout(true);
         }
-      }, 15000); // Evaluasi setiap 15 detik
+      }, 15000);
     }
 
     function stopSessionMonitor() {
@@ -1256,7 +1270,7 @@
     }
 
     function applyAuthenticatedUI(userObj) {
-      document.getElementById('headerUserFullName').textContent = userObj.fullName;
+      document.getElementById('headerUserFullName').textContent = cleanLabel(userObj.fullName);
       document.getElementById('headerUserRole').textContent = userObj.role.toUpperCase();
 
       const adminNav = document.getElementById('navBtn-admin');
@@ -1288,9 +1302,9 @@
           return;
         }
 
-        // Bersihkan input password agar tidak tersisa di DOM
         document.getElementById('loginPassword').value = '';
 
+        res.user.fullName = cleanLabel(res.user.fullName);
         state.currentUser = res.user;
         state.reports = res.reports || [];
         state.users = res.users || [];
@@ -1302,7 +1316,6 @@
           createNewReport(false);
         }
 
-        // Simpan sesi aktif & jalankan pemantau idle 30 menit
         saveActiveSession(state.currentUser);
         startSessionMonitor();
         applyAuthenticatedUI(state.currentUser);
@@ -1311,7 +1324,7 @@
         showToast('Selamat datang, ' + state.currentUser.fullName + '!');
       } catch (err) {
         hideLoading();
-        showToast('Gagal terhubung ke Server: ' + err.message, 'error');
+        showToast(err.message, 'error');
       }
     }
 
@@ -1319,7 +1332,6 @@
       stopSessionMonitor();
       localStorage.removeItem(SESSION_STORAGE_KEY);
 
-      // Bersihkan seluruh data dari memori browser agar tidak bocor
       state.currentUser = null;
       state.reports = [];
       state.users = [];
@@ -1392,7 +1404,7 @@
         const btn = document.getElementById('subTabBtn-' + s);
         if (s === subName) {
           el.classList.remove('hidden');
-          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-white text-blue-950 shadow-xs';
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-white text-blue-950 shadow-sm';
         } else {
           el.classList.add('hidden');
           btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60';
@@ -1417,18 +1429,15 @@
       const p = state.activeReport.payload;
       let total = 0;
 
-      // Persediaan
       if (p.persediaan && p.persediaan.items) {
         p.persediaan.items.forEach(i => {
           total += Number(i.awal || 0) + Number(i.mutasi || 0);
         });
       }
-      // Tanah
       if (p.tanah) {
         (p.tanah.tambah || []).forEach(t => total += Number(t.intra || 0));
         (p.tanah.kurang || []).forEach(k => total -= Number(k.intra || 0));
       }
-      // SubAssets
       if (p.subAssets) {
         Object.values(p.subAssets).forEach(sa => {
           (sa.tambah || []).forEach(t => total += Number(t.intra || 0) + Number(t.ekstra || 0));
@@ -1466,7 +1475,7 @@
             <td class="py-3 px-4 text-slate-600">${r.tanggalCutoff}</td>
             <td class="py-3 px-4 text-slate-700">${r.namaSatker}<br/><span class="text-[10px] font-mono text-slate-400">${r.kodeSatker}</span></td>
             <td class="py-3 px-4 text-right font-bold text-emerald-700">Rp ${formatRp(r.totalNeraca)}</td>
-            <td class="py-3 px-4 text-[11px] text-slate-500">${r.updatedAt}<br/><span class="text-slate-400">${r.updatedBy}</span></td>
+            <td class="py-3 px-4 text-[11px] text-slate-500">${r.updatedAt}<br/><span class="text-slate-400">${cleanLabel(r.updatedBy)}</span></td>
             <td class="py-3 px-4 text-center">
               <div class="inline-flex items-center gap-1">
                 <button onclick="selectReport('${r.reportId}', 'editor')" class="px-2.5 py-1.5 rounded-lg bg-blue-900 text-white hover:opacity-90 font-semibold" title="Buka & Edit">
@@ -1502,7 +1511,7 @@
         tanggalCutoff: sample.meta.tanggalCutoff,
         kodeSatker: sample.meta.kodeSatker,
         namaSatker: sample.meta.uakpb,
-        totalNeraca: 198085000,
+        totalNeraca: 0,
         payload: sample
       };
       renderAllViews();
@@ -1532,7 +1541,6 @@
       document.getElementById('editorBadgeId').textContent = state.activeReport.reportId || 'DRAFT BARU';
       document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
 
-      // 1. Meta Fields
       const metaKeys = [
         'periode', 'tahunAnggaran', 'tanggalCutoff', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
         'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd',
@@ -1543,17 +1551,10 @@
         if (el) el.value = m[k] || '';
       });
 
-      // 2. Persediaan & Tanah
       renderPersediaanEditor();
       renderTanahEditor();
-
-      // 3. Sub-Assets
       renderSubAssetEditor();
-
-      // 4. Penyusutan, BMN Dihentikan, Revaluasi
       renderPenyusutanEditor();
-
-      // 5. Bab V
       renderBabVEditor();
     }
 
@@ -1824,7 +1825,7 @@
     }
 
     // ========================================================================
-    // RENDER PRATINJAU DOKUMEN RESMI LAMPIRAN IV PMK 181/PMK.06/2016
+    // RENDER PRATINJAU DOKUMEN RESMI CALBMN
     // ========================================================================
     function renderDocumentPreview() {
       if (!state.activeReport || !state.activeReport.payload) return;
@@ -1894,7 +1895,7 @@
 
         <div style="font-weight:bold; font-size:11.5pt; margin-top:16px;">BAB I — PENDAHULUAN</div>
         <p style="text-align:justify; font-size:11pt; margin:6px 0 12px 0;">
-          Catatan atas Laporan Barang Milik Negara (CaLBMN) ini disusun sebagai bagian tidak terpisahkan dari Laporan Barang Kuasa Pengguna (LBKP) pada satuan kerja <b>${m.uakpb || ''}</b> sesuai amanat Peraturan Menteri Keuangan Nomor 181/PMK.06/2016 tentang Penatausahaan Barang Milik Negara. ${m.saldoAwalTahun || ''}
+          Catatan atas Laporan Barang Milik Negara (CaLBMN) ini disusun sebagai bagian tidak terpisahkan dari Laporan Barang Kuasa Pengguna (LBKP) pada satuan kerja <b>${m.uakpb || ''}</b>. ${m.saldoAwalTahun || ''}
         </p>
 
         <div style="font-weight:bold; font-size:11.5pt; margin-top:16px;">BAB II — KEBIJAKAN AKUNTANSI DAN PENATAUSAHAAN BMN</div>
@@ -2039,8 +2040,8 @@
 
       // Sheet 1: Identitas & Ringkasan
       const wsMeta = XLSX.utils.aoa_to_sheet([
-        ['CATATAN ATAS LAPORAN BARANG MILIK NEGARA (e-CaLBMN)'],
-        ['Standar Lampiran IV PMK Nomor 181/PMK.06/2016'],
+        ['CATATAN ATAS LAPORAN BARANG MILIK NEGARA (CaLBMN)'],
+        ['Universitas Negeri Manado'],
         [],
         ['Periode', m.periode],
         ['Tahun Anggaran', m.tahunAnggaran],
@@ -2126,7 +2127,7 @@
       uBody.innerHTML = (state.users || []).map(u => `
         <tr>
           <td class="p-2.5 font-mono font-bold text-slate-800">${u.username}<br/><span class="text-[10px] text-slate-400">${u.userId}</span></td>
-          <td class="p-2.5 font-semibold text-slate-700">${u.fullName}</td>
+          <td class="p-2.5 font-semibold text-slate-700">${cleanLabel(u.fullName)}</td>
           <td class="p-2.5 text-center">
             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
               ${u.role}
@@ -2152,10 +2153,10 @@
       lBody.innerHTML = (state.logs || []).map(l => `
         <tr>
           <td class="p-2 font-mono text-[11px] text-slate-500">${l.timestamp}</td>
-          <td class="p-2 font-bold text-slate-800">${l.fullName} <span class="text-slate-400 font-mono">(${l.username})</span></td>
+          <td class="p-2 font-bold text-slate-800">${cleanLabel(l.fullName)} <span class="text-slate-400 font-mono">(${l.username})</span></td>
           <td class="p-2 text-center uppercase text-[10px] font-bold text-slate-500">${l.role}</td>
           <td class="p-2 text-center"><span class="px-2 py-0.5 rounded bg-slate-100 font-mono text-[10px] font-bold text-blue-900">${l.action}</span></td>
-          <td class="p-2 text-slate-600">${l.details}</td>
+          <td class="p-2 text-slate-600">${cleanLabel(l.details)}</td>
         </tr>
       `).join('');
     }
@@ -2227,12 +2228,10 @@
     window.addEventListener('DOMContentLoaded', async () => {
       updateConnectionBadges();
 
-      // Pasang pendeteksi aktivitas pengguna untuk memperpanjang sesi 30 menit
       ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
         window.addEventListener(evt, recordUserActivity, { passive: true });
       });
 
-      // Cek apakah ada sesi aktif saat halaman di-refresh
       const savedSession = getActiveSession();
       if (savedSession && savedSession.expired) {
         showToast('Sesi Anda sebelumnya telah berakhir (lebih dari 30 menit tanpa aktivitas).', 'error');
@@ -2241,7 +2240,7 @@
 
       if (savedSession && savedSession.user) {
         state.currentUser = savedSession.user;
-        saveActiveSession(state.currentUser); // Perbarui timestamp saat refresh
+        saveActiveSession(state.currentUser);
         applyAuthenticatedUI(state.currentUser);
         startSessionMonitor();
         await refreshFromServer();
