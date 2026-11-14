@@ -478,7 +478,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Periode Pelaporan</label>
-                <select id="initDraft_periode" required class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold">
+                <select id="initDraft_periode" onchange="handleInitDraftPeriodeChange()" required class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold">
                   <option value="Semester I">Semester I</option>
                   <option value="Semester II">Semester II</option>
                   <option value="Tahunan">Tahunan</option>
@@ -486,7 +486,7 @@
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Tahun Anggaran</label>
-                <input type="text" id="initDraft_tahunAnggaran" required value="2026" placeholder="Contoh: 2026"
+                <input type="text" id="initDraft_tahunAnggaran" oninput="handleInitDraftPeriodeChange()" required value="2026" placeholder="Contoh: 2026"
                   class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold" />
               </div>
               <div>
@@ -494,6 +494,36 @@
                 <input type="text" id="initDraft_tanggalCutoff" required placeholder="Contoh: 30 Juni 2026"
                   class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl" />
               </div>
+            </div>
+
+            <!-- Pilihan Ceklis Status Audit Kop Periode (HANYA MUNCUL UNTUK SEMESTER II DAN TAHUNAN) -->
+            <div id="initDraftAuditContainer" class="hidden p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <label class="block text-xs font-bold text-slate-700">
+                <i class="fa-solid fa-check-double text-blue-900 mr-1"></i>Keterangan Status Audit pada Kop Periode Laporan (Khusus Semester II & Tahunan):
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-blue-800">
+                  <input type="radio" name="initDraft_auditStatus" value="" checked onchange="handleInitDraftPeriodeChange()" class="text-blue-900 focus:ring-blue-900" />
+                  <span class="text-xs font-semibold text-slate-700">Tidak Ditampilkan</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-blue-800">
+                  <input type="radio" name="initDraft_auditStatus" value="Unaudited" onchange="handleInitDraftPeriodeChange()" class="text-blue-900 focus:ring-blue-900" />
+                  <span class="text-xs font-semibold text-amber-800">Unaudited</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-blue-800">
+                  <input type="radio" name="initDraft_auditStatus" value="Audited" onchange="handleInitDraftPeriodeChange()" class="text-blue-900 focus:ring-blue-900" />
+                  <span class="text-xs font-semibold text-emerald-800">Audited</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Info Otomatis Penggabungan Semester I & II Saat Memilih Tahunan -->
+            <div id="initDraftAnnualInfo" class="hidden p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-950 space-y-1">
+              <p class="font-extrabold flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i>
+                <span>Penggabungan Otomatis Laporan Tahunan (Semester I + Semester II Sesuai Status Audit)</span>
+              </p>
+              <p id="initDraftAnnualStatusText" class="text-[11px] text-blue-800 leading-relaxed"></p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -531,11 +561,16 @@
               <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">-</span>
               <div>
                 <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
-                <p class="text-[11px] text-slate-500">Keterangan : Bagian BMN tanpa transaksi otomatis tidak ditampilkan</p>
+                <p class="text-[11px] text-slate-500">Format Output 100% Identik dengan Sheet1 • Bagian BMN tanpa transaksi otomatis tidak ditampilkan</p>
               </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
+              <button id="btnSyncAnnualFromSemesters" onclick="syncAnnualFromSemestersInteractive()"
+                class="hidden px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold transition items-center gap-1.5"
+                title="Tarik ulang gabungan data dari Semester I & Semester II (sesuai status audit) pada tahun yang sama">
+                <i class="fa-solid fa-rotate"></i><span>Tarik Data Sem I & II</span>
+              </button>
               <button onclick="openNewDraftGate()"
                 class="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
                 <i class="fa-solid fa-plus"></i><span>Draft Baru</span>
@@ -582,13 +617,21 @@
           <!-- SUB-TAB 1: IDENTITAS SATKER, SALDO AWAL TAHUN & PENANDATANGAN -->
           <div id="editorSubTab-meta" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">A. Entitas Pelaporan & Periode (Bab I.B - I.C)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Periode Pelaporan</label>
                 <select id="meta_periode" onchange="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl">
                   <option value="Semester I">Semester I</option>
                   <option value="Semester II">Semester II</option>
                   <option value="Tahunan">Tahunan</option>
+                </select>
+              </div>
+              <div id="metaAuditStatusContainer" class="hidden">
+                <label class="block text-xs font-bold text-slate-600 mb-1">Status Audit di Kop Periode</label>
+                <select id="meta_auditStatus" onchange="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                  <option value="">Tidak Ditampilkan</option>
+                  <option value="Unaudited">Unaudited</option>
+                  <option value="Audited">Audited</option>
                 </select>
               </div>
               <div>
@@ -615,11 +658,11 @@
                 <label class="block text-xs font-bold text-slate-600 mb-1">UAKPB (Nama Satker)</label>
                 <input type="text" id="meta_uakpb" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
               </div>
-              <div>
+              <div class="md:col-span-2">
                 <label class="block text-xs font-bold text-slate-600 mb-1">Kode Satker</label>
                 <input type="text" id="meta_kodeSatker" oninput="syncFormToPayload()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-mono" />
               </div>
-              <div>
+              <div class="md:col-span-2">
                 <label class="block text-xs font-bold text-slate-600 mb-1">Alamat & Nomor Telp.</label>
                 <div class="grid grid-cols-2 gap-2">
                   <input type="text" id="meta_alamat" oninput="syncFormToPayload()" placeholder="Alamat" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
@@ -676,7 +719,6 @@
               </div>
             </div>
           </div>
-
           <!-- SUB-TAB 2: PERSEDIAAN & TANAH -->
           <div id="editorSubTab-persediaan_tanah" class="hidden space-y-6">
             <!-- Persediaan -->
@@ -1907,28 +1949,488 @@
       });
     }
 
+    // Format Teks Kop Periode dengan Status Audit (Audited / Unaudited / Tidak Ditampilkan)
+    // Helper membaca periode dasar ('Semester I', 'Semester II', 'Tahunan') dan status audit ('', 'Unaudited', 'Audited')
+    function getReportBasePeriode(r) {
+      const raw = (r && r.payload && r.payload.meta && r.payload.meta.periode) ? r.payload.meta.periode : (r ? r.periode : '');
+      return String(raw || '').replace(/\s*\((Audited|Unaudited)\)\s*/i, '').trim();
+    }
+
+    function getReportAuditStatus(r) {
+      const baseP = getReportBasePeriode(r);
+      if (baseP === 'Semester I') return ''; // Semester I tidak memiliki Audited/Unaudited
+      if (r && r.payload && r.payload.meta && r.payload.meta.auditStatus !== undefined) {
+        return String(r.payload.meta.auditStatus || '').trim();
+      }
+      const match = String((r && r.periode) || '').match(/\((Audited|Unaudited)\)/i);
+      return match ? match[1] : '';
+    }
+
+    function formatPeriodeDisplay(periode, auditStatus) {
+      const base = String(periode || '').replace(/\s*\((Audited|Unaudited)\)\s*/i, '').trim();
+      const st = (base === 'Semester I') ? '' : String(auditStatus || '').trim();
+      if (st === 'Audited' || st === 'Unaudited') {
+        return `${base} (${st})`;
+      }
+      return base;
+    }
+
+    // Format Teks Kop Periode dengan Status Audit (Hanya untuk Semester II dan Tahunan)
+    function formatPeriodeTahunHeader(m) {
+      if (!m) return '';
+      const basePeriode = String(m.periode || '').replace(/\s*\((Audited|Unaudited)\)\s*/i, '').trim();
+      const baseText = `Periode ${basePeriode} Tahun Anggaran ${m.tahunAnggaran || ''}`;
+      const st = (basePeriode === 'Semester I') ? '' : String(m.auditStatus || '').trim();
+      if (st === 'Audited' || st === 'Unaudited') {
+        return `${baseText} (${st})`;
+      }
+      return baseText;
+    }
+
+    // Pencarian laporan Semester I atau Semester II yang sesuai dengan tahun & status audit
+    function findSemesterReportByAudit(tahunAnggaran, targetPeriode, targetAuditStatus = '') {
+      const thn = String(tahunAnggaran || '').trim();
+      const wantedPeriode = String(targetPeriode || '').trim();
+      const wantedAudit = (wantedPeriode === 'Semester I') ? '' : String(targetAuditStatus || '').trim().toLowerCase();
+
+      return state.reports.find(r => {
+        const rThn = String(r.tahunAnggaran || (r.payload && r.payload.meta && r.payload.meta.tahunAnggaran) || '').trim();
+        const rPer = getReportBasePeriode(r);
+        const rAud = getReportAuditStatus(r).toLowerCase();
+        return rThn === thn && rPer === wantedPeriode && rAud === wantedAudit;
+      });
+    }
+
     function openNewDraftGate() {
       state.activeReport = null;
       renderAllViews();
       switchMainTab('editor');
       updateEditorGateVisibility();
+      handleInitDraftPeriodeChange();
+    }
+
+    function handleInitDraftPeriodeChange() {
+      const perEl = document.getElementById('initDraft_periode');
+      const thnEl = document.getElementById('initDraft_tahunAnggaran');
+      const cutEl = document.getElementById('initDraft_tanggalCutoff');
+      const auditContainer = document.getElementById('initDraftAuditContainer');
+      const infoBox = document.getElementById('initDraftAnnualInfo');
+      const infoTxt = document.getElementById('initDraftAnnualStatusText');
+      if (!perEl || !thnEl) return;
+
+      const per = perEl.value;
+      const thn = thnEl.value.trim();
+
+      if (cutEl) {
+        if (per === 'Semester I') cutEl.value = `30 Juni ${thn}`;
+        else cutEl.value = `31 Desember ${thn}`;
+      }
+
+      // Hanya Semester II dan Tahunan yang punya pilihan Audited, Unaudited, atau Tanpa Keduanya
+      if (auditContainer) {
+        if (per === 'Semester II' || per === 'Tahunan') {
+          auditContainer.classList.remove('hidden');
+        } else {
+          auditContainer.classList.add('hidden');
+          const defaultRadio = document.querySelector('input[name="initDraft_auditStatus"][value=""]');
+          if (defaultRadio) defaultRadio.checked = true;
+        }
+      }
+
+      const checkedAuditEl = document.querySelector('input[name="initDraft_auditStatus"]:checked');
+      const selectedAudit = (per === 'Semester I') ? '' : (checkedAuditEl ? checkedAuditEl.value : '');
+
+      if (infoBox && infoTxt) {
+        if (per === 'Tahunan') {
+          infoBox.classList.remove('hidden');
+          const rSem1 = findSemesterReportByAudit(thn, 'Semester I', '');
+          const rSem2 = findSemesterReportByAudit(thn, 'Semester II', selectedAudit);
+          const sem2TargetLabel = selectedAudit ? `Semester II (${selectedAudit})` : `Semester II (Tanpa Audited/Unaudited)`;
+          const s1Badge = rSem1 ? `<b class="text-emerald-700">Ditemukan (${rSem1.reportId})</b>` : `<b class="text-rose-600">Belum Ada</b>`;
+          const s2Badge = rSem2 ? `<b class="text-emerald-700">Ditemukan (${rSem2.reportId})</b>` : `<b class="text-rose-600">Belum Ada</b>`;
+
+          infoTxt.innerHTML = `Sumber Data Tahun <b>${thn}</b> untuk <b>Tahunan ${selectedAudit ? '(' + selectedAudit + ')' : '(Tanpa Audited/Unaudited)'}</b>:<br/>` +
+            `• Laporan <b>Semester I</b>: ${s1Badge}<br/>` +
+            `• Laporan <b>${sem2TargetLabel}</b>: ${s2Badge}<br/>` +
+            `Sistem otomatis mengambil <b>Saldo Awal dari Semester I</b>, mengambil <b>Saldo Akhir dari ${sem2TargetLabel}</b>, serta menggabungkan seluruh transaksi mutasi tambah, mutasi kurang, penyusutan, dan rincian lainnya dari kedua laporan tersebut.`;
+        } else {
+          infoBox.classList.add('hidden');
+        }
+      }
+    }
+
+    // Helper menggabungkan daftar mutasi (tambah/kurang) berdasarkan nama uraian transaksi
+    function mergeMutationArrays(arr1, arr2) {
+      const result = [];
+      const mapIdx = {};
+      const addList = (list) => {
+        (list || []).forEach(item => {
+          if (!item) return;
+          const label = String(item.uraian || '').trim();
+          const intra = Number(item.intra || 0);
+          const ekstra = Number(item.ekstra || 0);
+          if (!label && intra === 0 && ekstra === 0) return;
+          const key = label.toLowerCase();
+          if (mapIdx[key] !== undefined) {
+            result[mapIdx[key]].intra += intra;
+            result[mapIdx[key]].ekstra += ekstra;
+          } else {
+            mapIdx[key] = result.length;
+            result.push({ uraian: label, intra: intra, ekstra: ekstra });
+          }
+        });
+      };
+      addList(arr1);
+      addList(arr2);
+      return result;
+    }
+
+    // Engine Penggabungan Otomatis Semester I + Semester II (sesuai status audit) menjadi Laporan Tahunan
+    function buildAnnualPayloadFromSemesters(tahunAnggaran, auditStatus, baseSample) {
+      const thn = String(tahunAnggaran || '').trim();
+      const cleanAudit = String(auditStatus || '').trim();
+      const rSem1 = findSemesterReportByAudit(thn, 'Semester I', '');
+      const rSem2 = findSemesterReportByAudit(thn, 'Semester II', cleanAudit);
+
+      const out = JSON.parse(JSON.stringify(baseSample || getDefaultSamplePayload()));
+      if (!rSem1 && !rSem2) return out;
+
+      const p1 = (rSem1 && rSem1.payload) ? JSON.parse(JSON.stringify(rSem1.payload)) : null;
+      const p2 = (rSem2 && rSem2.payload) ? JSON.parse(JSON.stringify(rSem2.payload)) : null;
+
+      // 1. Meta & Saldo Awal Tahun (Saldo Awal dari Semester I, Identitas Akhir dari Semester II varian audit yang sama)
+      const m1 = (p1 && p1.meta) ? p1.meta : {};
+      const m2 = (p2 && p2.meta) ? p2.meta : {};
+
+      out.meta = {
+        ...out.meta,
+        ...m1,
+        ...m2,
+        periode: 'Tahunan',
+        auditStatus: cleanAudit,
+        tahunAnggaran: thn,
+        tanggalCutoff: m2.tanggalCutoff || `31 Desember ${thn}`,
+        periodeRingkasanJudul: cleanAudit ? `TAHUNAN ${thn} (${cleanAudit.toUpperCase()})` : `TAHUNAN ${thn}`,
+        tahunSaldoAwal: m1.tahunSaldoAwal || m2.tahunSaldoAwal || String(Number(thn) - 1),
+        tanggalSaldoAwal: m1.tanggalSaldoAwal || `01 Januari ${thn}`,
+        nilaiNeracaAwalIntra: (p1 && m1.nilaiNeracaAwalIntra !== undefined) ? Number(m1.nilaiNeracaAwalIntra || 0) : Number(m2.nilaiNeracaAwalIntra || 0),
+        nilaiNeracaAwalEkstra: (p1 && m1.nilaiNeracaAwalEkstra !== undefined) ? Number(m1.nilaiNeracaAwalEkstra || 0) : Number(m2.nilaiNeracaAwalEkstra || 0)
+      };
+
+      // 2. Barang Persediaan (Saldo Awal dari Sem I, Mutasi gabungan Sem I + Sem II, Saldo Akhir sesuai Sem II)
+      const pers1 = (p1 && p1.persediaan) ? p1.persediaan : { items: [], rusak: 0, usang: 0 };
+      const pers2 = (p2 && p2.persediaan) ? p2.persediaan : { items: [], rusak: 0, usang: 0 };
+      const persMap = {};
+      const persMerged = [];
+
+      (pers1.items || []).forEach(it => {
+        const k = `${String(it.kode || '').trim()}__${String(it.uraian || '').trim().toLowerCase()}`;
+        persMap[k] = persMerged.length;
+        persMerged.push({
+          kode: it.kode || '',
+          uraian: it.uraian || '',
+          awal: Number(it.awal || 0),
+          mutasi: Number(it.mutasi || 0)
+        });
+      });
+
+      (pers2.items || []).forEach(it => {
+        const k = `${String(it.kode || '').trim()}__${String(it.uraian || '').trim().toLowerCase()}`;
+        const awal2 = Number(it.awal || 0);
+        const mut2 = Number(it.mutasi || 0);
+        const akhir2 = awal2 + mut2;
+
+        if (persMap[k] !== undefined) {
+          const existing = persMerged[persMap[k]];
+          const combinedMutasi = existing.mutasi + mut2;
+          if (p2 && (awal2 !== 0 || mut2 !== 0)) {
+            existing.mutasi = (awal2 === existing.awal + existing.mutasi) ? combinedMutasi : (akhir2 - existing.awal);
+          } else {
+            existing.mutasi = combinedMutasi;
+          }
+        } else {
+          persMap[k] = persMerged.length;
+          persMerged.push({
+            kode: it.kode || '',
+            uraian: it.uraian || '',
+            awal: p1 ? 0 : awal2,
+            mutasi: p1 ? akhir2 : mut2
+          });
+        }
+      });
+
+      out.persediaan = {
+        items: persMerged.length > 0 ? persMerged : out.persediaan.items,
+        rusak: Number(pers1.rusak || 0) + Number(pers2.rusak || 0),
+        usang: Number(pers1.usang || 0) + Number(pers2.usang || 0)
+      };
+
+      // 3. Tanah (Saldo Awal dari Sem I, Mutasi Tambah & Kurang Gabungan Sem I + Sem II)
+      const t1 = (p1 && p1.tanah) ? p1.tanah : {};
+      const t2 = (p2 && p2.tanah) ? p2.tanah : {};
+      const tanahAwal1 = Number(t1.awalIntra || 0);
+      const tanahAwal2 = Number(t2.awalIntra || 0);
+
+      out.tanah = {
+        awalIntra: (p1 && tanahAwal1 !== 0) ? tanahAwal1 : tanahAwal2,
+        tambah: mergeMutationArrays(t1.tambah, t2.tambah),
+        kurang: mergeMutationArrays(t1.kurang, t2.kurang),
+        pihakKetigaBidang: Number(t1.pihakKetigaBidang || 0) + Number(t2.pihakKetigaBidang || 0),
+        pihakKetigaNilai: Number(t1.pihakKetigaNilai || 0) + Number(t2.pihakKetigaNilai || 0),
+        prosesHapusBidang: Number(t1.prosesHapusBidang || 0) + Number(t2.prosesHapusBidang || 0),
+        prosesHapusNilai: Number(t1.prosesHapusNilai || 0) + Number(t2.prosesHapusNilai || 0),
+        dihentikanM2: Number(t1.dihentikanM2 || 0) + Number(t2.dihentikanM2 || 0),
+        dihentikanNilai: Number(t1.dihentikanNilai || 0) + Number(t2.dihentikanNilai || 0),
+        kondisi: KONDISI_LABELS.map((lbl, idx) => {
+          const k1 = (t1.kondisi && t1.kondisi[idx]) ? t1.kondisi[idx] : { qty: 0, nilai: 0 };
+          const k2 = (t2.kondisi && t2.kondisi[idx]) ? t2.kondisi[idx] : { qty: 0, nilai: 0 };
+          const hasK2 = (t2.kondisi || []).some(x => Number(x.qty || 0) !== 0 || Number(x.nilai || 0) !== 0);
+          return {
+            uraian: lbl,
+            qty: hasK2 ? Number(k2.qty || 0) : Number(k1.qty || 0),
+            nilai: hasK2 ? Number(k2.nilai || 0) : Number(k1.nilai || 0)
+          };
+        }),
+        masalah: (out.tanah.masalah || []).map((mItem, idx) => {
+          const ms1 = (t1.masalah && t1.masalah[idx]) ? t1.masalah[idx] : { qty: 0, nilai: 0 };
+          const ms2 = (t2.masalah && t2.masalah[idx]) ? t2.masalah[idx] : { qty: 0, nilai: 0 };
+          const hasM2 = (t2.masalah || []).some(x => Number(x.qty || 0) !== 0 || Number(x.nilai || 0) !== 0);
+          return {
+            uraian: mItem.uraian,
+            qty: hasM2 ? Number(ms2.qty || 0) : Number(ms1.qty || 0),
+            nilai: hasM2 ? Number(ms2.nilai || 0) : Number(ms1.nilai || 0)
+          };
+        })
+      };
+
+      // 4. Seluruh Sub-Aset (PM, Gedung, JIJ, ATL, KDP, Kemitraan, ATB, BMN Dihentikan)
+      const allKeys = new Set([
+        ...Object.keys((p1 && p1.subAssets) ? p1.subAssets : {}),
+        ...Object.keys((p2 && p2.subAssets) ? p2.subAssets : {})
+      ]);
+
+      out.subAssets = {};
+      allKeys.forEach(key => {
+        const sa1 = (p1 && p1.subAssets && p1.subAssets[key]) ? p1.subAssets[key] : null;
+        const sa2 = (p2 && p2.subAssets && p2.subAssets[key]) ? p2.subAssets[key] : null;
+        const s1 = computeSubAssetSummary(sa1);
+        const s2 = computeSubAssetSummary(sa2);
+
+        const useSem1Awal = s1.hasActivity || (sa1 && (Number(sa1.awalIntra || 0) !== 0 || Number(sa1.awalEkstra || 0) !== 0 || Number(sa1.qtyAwal || 0) !== 0));
+        const qtyAwal = useSem1Awal ? Number(sa1.qtyAwal || 0) : Number((sa2 && sa2.qtyAwal) || 0);
+        const awalIntra = useSem1Awal ? Number(sa1.awalIntra || 0) : Number((sa2 && sa2.awalIntra) || 0);
+        const awalEkstra = useSem1Awal ? Number(sa1.awalEkstra || 0) : Number((sa2 && sa2.awalEkstra) || 0);
+
+        const mergedTambah = mergeMutationArrays(sa1 ? sa1.tambah : [], sa2 ? sa2.tambah : []);
+        const mergedKurang = mergeMutationArrays(sa1 ? sa1.kurang : [], sa2 ? sa2.kurang : []);
+
+        const hasKond2 = sa2 && (sa2.kondisi || []).some(k => Number(k.qty || 0) !== 0 || Number(k.nilai || 0) !== 0);
+        const mergedKondisi = Array.from({ length: 3 }, (_, idx) => {
+          const k1 = (sa1 && sa1.kondisi && sa1.kondisi[idx]) ? sa1.kondisi[idx] : { qty: 0, nilai: 0 };
+          const k2 = (sa2 && sa2.kondisi && sa2.kondisi[idx]) ? sa2.kondisi[idx] : { qty: 0, nilai: 0 };
+          return {
+            qty: hasKond2 ? Number(k2.qty || 0) : Number(k1.qty || 0),
+            nilai: hasKond2 ? Number(k2.nilai || 0) : Number(k1.nilai || 0)
+          };
+        });
+
+        out.subAssets[key] = {
+          qtyAwal: qtyAwal,
+          awalIntra: awalIntra,
+          awalEkstra: awalEkstra,
+          qtyTambah: Number((sa1 && sa1.qtyTambah) || 0) + Number((sa2 && sa2.qtyTambah) || 0),
+          tambah: mergedTambah,
+          qtyKurang: Number((sa1 && sa1.qtyKurang) || 0) + Number((sa2 && sa2.qtyKurang) || 0),
+          kurang: mergedKurang,
+          pihakKetigaQty: Number((sa1 && sa1.pihakKetigaQty) || 0) + Number((sa2 && sa2.pihakKetigaQty) || 0),
+          pihakKetigaNilai: Number((sa1 && sa1.pihakKetigaNilai) || 0) + Number((sa2 && sa2.pihakKetigaNilai) || 0),
+          prosesHapusQty: Number((sa1 && sa1.prosesHapusQty) || 0) + Number((sa2 && sa2.prosesHapusQty) || 0),
+          prosesHapusNilai: Number((sa1 && sa1.prosesHapusNilai) || 0) + Number((sa2 && sa2.prosesHapusNilai) || 0),
+          dihentikanQty: Number((sa1 && sa1.dihentikanQty) || 0) + Number((sa2 && sa2.dihentikanQty) || 0),
+          dihentikanNilai: Number((sa1 && sa1.dihentikanNilai) || 0) + Number((sa2 && sa2.dihentikanNilai) || 0),
+          kondisi: mergedKondisi,
+          akhirIntraSem2: s2.hasActivity ? s2.akhirIntra : null,
+          akhirEkstraSem2: s2.hasActivity ? s2.akhirEkstra : null
+        };
+      });
+
+      // 5. Penyusutan (Gabungan Sem I + Sem II)
+      const peny1 = (p1 && p1.penyusutan) ? p1.penyusutan : {};
+      const peny2 = (p2 && p2.penyusutan) ? p2.penyusutan : {};
+      ['pm', 'gb', 'jij', 'atl', 'kdp', 'kemitraan', 'atb', 'dihentikan'].forEach(c => {
+        out.penyusutan[c + '_intra'] = Number(peny1[c + '_intra'] || 0) + Number(peny2[c + '_intra'] || 0);
+        out.penyusutan[c + '_ekstra'] = Number(peny1[c + '_ekstra'] || 0) + Number(peny2[c + '_ekstra'] || 0);
+      });
+
+      // 6. Golongan Kemitraan & Golongan BMN Dihentikan
+      out.kemitraanGolongan = (out.kemitraanGolongan || []).map((g, i) => {
+        const g1 = (p1 && p1.kemitraanGolongan && p1.kemitraanGolongan[i]) ? p1.kemitraanGolongan[i] : { intra: 0, ekstra: 0 };
+        const g2 = (p2 && p2.kemitraanGolongan && p2.kemitraanGolongan[i]) ? p2.kemitraanGolongan[i] : { intra: 0, ekstra: 0 };
+        return {
+          uraian: g.uraian,
+          intra: Number(g1.intra || 0) + Number(g2.intra || 0),
+          ekstra: Number(g1.ekstra || 0) + Number(g2.ekstra || 0)
+        };
+      });
+
+      out.bmnDihentikanGolongan = (out.bmnDihentikanGolongan || []).map((g, i) => {
+        const g1 = (p1 && p1.bmnDihentikanGolongan && p1.bmnDihentikanGolongan[i]) ? p1.bmnDihentikanGolongan[i] : { intra: 0, ekstra: 0 };
+        const g2 = (p2 && p2.bmnDihentikanGolongan && p2.bmnDihentikanGolongan[i]) ? p2.bmnDihentikanGolongan[i] : { intra: 0, ekstra: 0 };
+        return {
+          uraian: g.uraian,
+          intra: Number(g1.intra || 0) + Number(g2.intra || 0),
+          ekstra: Number(g1.ekstra || 0) + Number(g2.ekstra || 0)
+        };
+      });
+
+      // 7. Revaluasi BMN
+      const revMap = {};
+      const revList = [];
+      const addRev = (arr) => {
+        (arr || []).forEach(r => {
+          if (!r) return;
+          const nm = String(r.nama || '').trim();
+          const nil = Number(r.nilai || 0);
+          const ket = String(r.ket || '').trim();
+          if (!nm && nil === 0 && !ket) return;
+          const k = nm.toLowerCase();
+          if (revMap[k] !== undefined) {
+            revList[revMap[k]].nilai += nil;
+            if (ket && !revList[revMap[k]].ket.includes(ket)) {
+              revList[revMap[k]].ket = revList[revMap[k]].ket ? `${revList[revMap[k]].ket}; ${ket}` : ket;
+            }
+          } else {
+            revMap[k] = revList.length;
+            revList.push({ nama: nm, nilai: nil, ket: ket });
+          }
+        });
+      };
+      addRev(p1 ? p1.revaluasiBmn : []);
+      addRev(p2 ? p2.revaluasiBmn : []);
+      if (revList.length > 0) out.revaluasiBmn = revList;
+
+      // 8. Aset Bersejarah
+      const ab1 = (p1 && p1.asetBersejarah) ? p1.asetBersejarah : {};
+      const ab2 = (p2 && p2.asetBersejarah) ? p2.asetBersejarah : {};
+      out.asetBersejarah = {
+        unitAwal: (p1 && ab1.unitAwal !== undefined) ? Number(ab1.unitAwal || 0) : Number(ab2.unitAwal || 0),
+        unitTambah: Number(ab1.unitTambah || 0) + Number(ab2.unitTambah || 0),
+        unitKurang: Number(ab1.unitKurang || 0) + Number(ab2.unitKurang || 0),
+        tambah: mergeMutationArrays(ab1.tambah, ab2.tambah),
+        kurang: mergeMutationArrays(ab1.kurang, ab2.kurang)
+      };
+
+      // 9. Selisih Neraca Manual
+      const sel1 = (p1 && p1.selisihNeracaManual) ? p1.selisihNeracaManual : {};
+      const sel2 = (p2 && p2.selisihNeracaManual) ? p2.selisihNeracaManual : {};
+      Object.keys(out.selisihNeracaManual).forEach(k => {
+        out.selisihNeracaManual[k] = Number(sel1[k] || 0) + Number(sel2[k] || 0);
+      });
+
+      // 10. Bab V
+      const bv1 = (p1 && p1.babV) ? p1.babV : {};
+      const bv2 = (p2 && p2.babV) ? p2.babV : {};
+      out.babV.perkembangan = (bv2.perkembangan && bv2.perkembangan.some(x => Number(x.nilai || 0) !== 0))
+        ? JSON.parse(JSON.stringify(bv2.perkembangan))
+        : ((bv1.perkembangan && bv1.perkembangan.length > 0) ? JSON.parse(JSON.stringify(bv1.perkembangan)) : out.babV.perkembangan);
+
+      out.babV.psp = (out.babV.psp || []).map((item, i) => {
+        const s1Psp = (bv1.psp && bv1.psp[i]) ? bv1.psp[i] : { sudah: 0, belum: 0 };
+        const s2Psp = (bv2.psp && bv2.psp[i]) ? bv2.psp[i] : { sudah: 0, belum: 0 };
+        return {
+          uraian: item.uraian,
+          sudah: Number(s1Psp.sudah || 0) + Number(s2Psp.sudah || 0),
+          belum: Number(s1Psp.belum || 0) + Number(s2Psp.belum || 0)
+        };
+      });
+
+      out.babV.pengelolaan = (out.babV.pengelolaan || []).map((row, i) => {
+        const r1 = (bv1.pengelolaan && bv1.pengelolaan[i]) ? bv1.pengelolaan[i] : {};
+        const r2 = (bv2.pengelolaan && bv2.pengelolaan[i]) ? bv2.pengelolaan[i] : {};
+        const sumField = (a, b) => {
+          const na = Number(a || 0), nb = Number(b || 0);
+          return (na + nb) !== 0 ? String(na + nb) : (b || a || '');
+        };
+        return {
+          no: row.no,
+          uraian: row.uraian,
+          guna: sumField(r1.guna, r2.guna),
+          manfaat: sumField(r1.manfaat, r2.manfaat),
+          pindah: sumField(r1.pindah, r2.pindah),
+          hapus: sumField(r1.hapus, r2.hapus),
+          jumlah: sumField(r1.jumlah, r2.jumlah)
+        };
+      });
+
+      out.babV.idle = (out.babV.idle || []).map((row, i) => {
+        const i1 = (bv1.idle && bv1.idle[i]) ? bv1.idle[i] : {};
+        const i2 = (bv2.idle && bv2.idle[i]) ? bv2.idle[i] : {};
+        const n1 = Number(i1.jumlah || 0), n2 = Number(i2.jumlah || 0);
+        return {
+          no: row.no,
+          uraian: row.uraian,
+          jumlah: (n1 + n2) !== 0 ? String(n1 + n2) : (i2.jumlah || i1.jumlah || '')
+        };
+      });
+
+      out.babV.ketIdle = bv2.ketIdle || bv1.ketIdle || out.babV.ketIdle;
+
+      const infoSet = [];
+      [...(bv1.informasiLainnya || []), ...(bv2.informasiLainnya || [])].forEach(txt => {
+        const clean = String(txt || '').trim();
+        if (clean && !infoSet.includes(clean)) infoSet.push(clean);
+      });
+      out.babV.informasiLainnya = infoSet;
+
+      return out;
+    }
+
+    function syncAnnualFromSemestersInteractive() {
+      if (!state.activeReport || !state.activeReport.payload) return;
+      const m = state.activeReport.payload.meta || {};
+      const thn = String(m.tahunAnggaran || '').trim();
+      const currentAudit = String(m.auditStatus || '').trim();
+      const sem2Label = currentAudit ? `Semester II (${currentAudit})` : `Semester II (Tanpa Audited/Unaudited)`;
+
+      if (!confirm(`Tarik dan gabungkan ulang data dari Laporan Semester I dan Laporan ${sem2Label} Tahun Anggaran ${thn} ke dalam Laporan Tahunan ini?`)) return;
+
+      const mergedPayload = buildAnnualPayloadFromSemesters(thn, currentAudit, getDefaultSamplePayload());
+      mergedPayload.meta.auditStatus = currentAudit;
+      state.activeReport.payload = mergedPayload;
+      renderAllViews();
+      showToast(`Data Semester I & ${sem2Label} TA ${thn} berhasil digabungkan ke Laporan Tahunan!`);
     }
 
     async function handleCreateAndSaveInitialDraft(e) {
       e.preventDefault();
-      const sample = getDefaultSamplePayload();
-      sample.meta.periode = document.getElementById('initDraft_periode').value;
-      sample.meta.tahunAnggaran = document.getElementById('initDraft_tahunAnggaran').value.trim();
-      sample.meta.tanggalCutoff = document.getElementById('initDraft_tanggalCutoff').value.trim();
-      sample.meta.uakpb = document.getElementById('initDraft_uakpb').value.trim();
-      sample.meta.uappbw = sample.meta.uakpb;
-      sample.meta.kodeSatker = document.getElementById('initDraft_kodeSatker').value.trim();
-      sample.meta.periodeRingkasanJudul = `${sample.meta.periode.toUpperCase()} ${sample.meta.tahunAnggaran}`;
-      sample.meta.tahunSaldoAwal = sample.meta.tahunAnggaran;
+      const periodeVal = document.getElementById('initDraft_periode').value;
+      const tahunVal = document.getElementById('initDraft_tahunAnggaran').value.trim();
+      const cutoffVal = document.getElementById('initDraft_tanggalCutoff').value.trim();
+      const uakpbVal = document.getElementById('initDraft_uakpb').value.trim();
+      const kodeVal = document.getElementById('initDraft_kodeSatker').value.trim();
+      const auditRadio = document.querySelector('input[name="initDraft_auditStatus"]:checked');
+      // Hanya Semester II dan Tahunan yang menyimpan auditStatus
+      const auditStatusVal = (periodeVal === 'Semester I') ? '' : (auditRadio ? auditRadio.value : '');
+
+      let sample = (periodeVal === 'Tahunan')
+        ? buildAnnualPayloadFromSemesters(tahunVal, auditStatusVal, getDefaultSamplePayload())
+        : getDefaultSamplePayload();
+
+      sample.meta.periode = periodeVal;
+      sample.meta.auditStatus = auditStatusVal;
+      sample.meta.tahunAnggaran = tahunVal;
+      sample.meta.tanggalCutoff = cutoffVal;
+      sample.meta.uakpb = uakpbVal;
+      sample.meta.uappbw = uakpbVal;
+      sample.meta.kodeSatker = kodeVal;
+      sample.meta.periodeRingkasanJudul = `${periodeVal.toUpperCase()} ${tahunVal}`;
+      if (!sample.meta.tahunSaldoAwal) sample.meta.tahunSaldoAwal = tahunVal;
+
+      const displayPeriode = formatPeriodeDisplay(periodeVal, auditStatusVal);
 
       const newDraftObj = {
         reportId: '',
-        periode: sample.meta.periode,
+        periode: displayPeriode,
         tahunAnggaran: sample.meta.tahunAnggaran,
         tanggalCutoff: sample.meta.tanggalCutoff,
         kodeSatker: sample.meta.kodeSatker,
@@ -1936,6 +2438,9 @@
         totalNeraca: 0,
         payload: sample
       };
+
+      state.activeReport = newDraftObj;
+      calculateActiveTotalNeraca();
 
       showLoading('Menyimpan Draft Awal ke Database Spreadsheet...');
       try {
@@ -1949,7 +2454,9 @@
           renderAllViews();
           updateEditorGateVisibility();
           switchEditorSubTab('meta');
-          showToast(res.message);
+          showToast(periodeVal === 'Tahunan'
+            ? `Draft Laporan ${displayPeriode} TA ${tahunVal} berhasil dibuat dari gabungan Semester I & Semester II ${auditStatusVal ? '(' + auditStatusVal + ')' : '(Tanpa Audited/Unaudited)'}!`
+            : res.message);
         } else {
           showToast(res ? res.message : 'Gagal menyimpan draft.', 'error');
         }
@@ -2136,7 +2643,8 @@
 
       if (state.activeReport && state.activeReport.reportId && state.activeReport.payload) {
         const m = state.activeReport.payload.meta || {};
-        periodEl.textContent = `${m.periode || '-'} - TA ${m.tahunAnggaran || '-'}`;
+        const dispPeriode = formatPeriodeDisplay(m.periode, m.auditStatus);
+        periodEl.textContent = `${dispPeriode || '-'} - TA ${m.tahunAnggaran || '-'}`;
         periodEl.className = 'text-lg font-extrabold text-blue-900 mt-1';
         idEl.textContent = `ID: ${state.activeReport.reportId}`;
         neracaEl.textContent = 'Rp ' + formatRp(calculateActiveTotalNeraca());
@@ -2155,13 +2663,16 @@
 
       tbody.innerHTML = state.reports.map(r => {
         const isCurrent = state.activeReport && state.activeReport.reportId === r.reportId;
+        const basePer = getReportBasePeriode(r);
+        const audStat = getReportAuditStatus(r);
+        const dispPer = formatPeriodeDisplay(basePer, audStat);
         return `
           <tr class="${isCurrent ? 'bg-blue-50/70' : 'hover:bg-slate-50'} transition">
             <td class="py-3 px-4 font-mono font-bold text-blue-950">
               ${r.reportId}
               ${isCurrent ? '<span class="ml-1.5 px-2 py-0.5 text-[10px] rounded-full bg-amber-500 text-slate-950 font-extrabold">AKTIF</span>' : ''}
             </td>
-            <td class="py-3 px-4 font-bold text-slate-800">${r.periode} • TA ${r.tahunAnggaran}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${dispPer} • TA ${r.tahunAnggaran}</td>
             <td class="py-3 px-4 text-slate-600">${r.tanggalCutoff}</td>
             <td class="py-3 px-4 text-slate-700">${r.namaSatker}<br/><span class="text-[10px] font-mono text-slate-400">${r.kodeSatker}</span></td>
             <td class="py-3 px-4 text-right font-bold text-emerald-700">Rp ${formatRp(r.totalNeraca)}</td>
@@ -2214,6 +2725,8 @@
       if (!state.activeReport.payload) state.activeReport.payload = sample;
       const p = state.activeReport.payload;
       if (!p.meta) p.meta = sample.meta;
+      p.meta.periode = String(p.meta.periode || '').replace(/\s*\((Audited|Unaudited)\)\s*/i, '').trim() || 'Semester I';
+      if (p.meta.periode === 'Semester I') p.meta.auditStatus = '';
       if (!p.persediaan) p.persediaan = sample.persediaan;
       if (!p.persediaan.items) p.persediaan.items = sample.persediaan.items;
       if (!p.tanah) p.tanah = sample.tanah;
@@ -2227,19 +2740,45 @@
       if (!p.babV) p.babV = sample.babV;
     }
 
+    function updateMetaAuditVisibility(periodeVal) {
+      const auditBox = document.getElementById('metaAuditStatusContainer');
+      const auditSelect = document.getElementById('meta_auditStatus');
+      if (!auditBox) return;
+      if (periodeVal === 'Semester II' || periodeVal === 'Tahunan') {
+        auditBox.classList.remove('hidden');
+      } else {
+        auditBox.classList.add('hidden');
+        if (auditSelect) auditSelect.value = '';
+      }
+    }
+
     function loadActiveReportIntoEditor() {
       if (!state.activeReport || !state.activeReport.payload) return;
       ensurePayloadIntegrity();
       const p = state.activeReport.payload;
       const m = p.meta || {};
 
+      updateMetaAuditVisibility(m.periode);
+
       const badgeEl = document.getElementById('editorBadgeId');
       if (badgeEl) badgeEl.textContent = state.activeReport.reportId || 'DRAFT';
       const titleEl = document.getElementById('editorTitleLabel');
-      if (titleEl) titleEl.textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
+      const dispPeriode = formatPeriodeDisplay(m.periode, m.auditStatus);
+      if (titleEl) titleEl.textContent = `Kertas Kerja CaLBMN ${dispPeriode || ''} TA ${m.tahunAnggaran || ''}`;
+
+      const btnSyncAnnual = document.getElementById('btnSyncAnnualFromSemesters');
+      if (btnSyncAnnual) {
+        if (m.periode === 'Tahunan') {
+          btnSyncAnnual.classList.remove('hidden');
+          btnSyncAnnual.classList.add('flex');
+        } else {
+          btnSyncAnnual.classList.add('hidden');
+          btnSyncAnnual.classList.remove('flex');
+        }
+      }
 
       const metaKeys = [
-        'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
+        'periode', 'auditStatus', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
         'nilaiNeracaAwalIntra', 'nilaiNeracaAwalEkstra', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
         'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd', 'nipTtd'
       ];
@@ -2257,7 +2796,7 @@
       ensurePayloadIntegrity();
       const m = state.activeReport.payload.meta;
       const metaKeys = [
-        'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
+        'periode', 'auditStatus', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
         'uapb', 'uapbe1', 'uappbw', 'uakpb', 'kodeSatker', 'alamat', 'telepon',
         'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd', 'nipTtd'
       ];
@@ -2265,11 +2804,32 @@
         const el = document.getElementById('meta_' + k);
         if (el) m[k] = el.value;
       });
+
+      // Pastikan Semester I tidak memiliki status Audited / Unaudited
+      updateMetaAuditVisibility(m.periode);
+      if (m.periode === 'Semester I') {
+        m.auditStatus = '';
+      }
+
       m.nilaiNeracaAwalIntra = getNum('meta_nilaiNeracaAwalIntra', 0);
       m.nilaiNeracaAwalEkstra = getNum('meta_nilaiNeracaAwalEkstra', 0);
 
+      const dispPeriode = formatPeriodeDisplay(m.periode, m.auditStatus);
+      state.activeReport.periode = dispPeriode;
+
       const titleEl = document.getElementById('editorTitleLabel');
-      if (titleEl) titleEl.textContent = `Kertas Kerja CaLBMN ${m.periode} TA ${m.tahunAnggaran}`;
+      if (titleEl) titleEl.textContent = `Kertas Kerja CaLBMN ${dispPeriode} TA ${m.tahunAnggaran}`;
+
+      const btnSyncAnnual = document.getElementById('btnSyncAnnualFromSemesters');
+      if (btnSyncAnnual) {
+        if (m.periode === 'Tahunan') {
+          btnSyncAnnual.classList.remove('hidden');
+          btnSyncAnnual.classList.add('flex');
+        } else {
+          btnSyncAnnual.classList.add('hidden');
+          btnSyncAnnual.classList.remove('flex');
+        }
+      }
     }
 
     // Persediaan (Bebas ketik banyak karakter tanpa kehilangan fokus kursor)
@@ -3513,7 +4073,7 @@
         <!-- Blok Identitas Kiri Atas (Row 7 Sheet1) -->
         <div style="font-size:10.5pt; margin-bottom:14px;">
           <div>Laporan Barang UAKPB ${m.kodeSatker || ''} ${m.uakpb || ''}</div>
-          <div>Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}</div>
+          <div>${formatPeriodeTahunHeader(m)}</div>
         </div>
 
         <!-- Judul Utama Tengah (Row 9-12 Sheet1) -->
@@ -3521,7 +4081,7 @@
           <div style="font-size:12pt; font-weight:bold; text-transform:uppercase;">CATATAN ATAS LAPORAN BARANG MILIK NEGARA</div>
           <div style="font-size:11.5pt; font-weight:bold; text-transform:uppercase;">PADA ${(m.uakpb || 'UNIVERSITAS NEGERI MANADO').toUpperCase()}</div>
           <div style="font-size:11pt; font-weight:bold;">${m.kodeSatker || ''}</div>
-          <div style="font-size:11pt; font-weight:bold; margin-top:4px;">Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}</div>
+          <div style="font-size:11pt; font-weight:bold; margin-top:4px;">${formatPeriodeTahunHeader(m)}</div>
         </div>
 
         <!-- I. PENDAHULUAN -->
