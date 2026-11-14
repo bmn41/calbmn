@@ -98,7 +98,7 @@
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
   <!-- ====================================================================== -->
-  <!-- MODAL KONFIGURASI URL APPS SCRIPT (HANYA DARI DALAM DASHBOARD)         -->
+  <!-- MODAL KONFIGURASI URL APPS SCRIPT (DARI DALAM DASHBOARD)               -->
   <!-- ====================================================================== -->
   <div id="serverConfigModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
@@ -253,7 +253,6 @@
     <!-- Top Navigation Bar -->
     <header class="navy-gradient text-white shadow-lg sticky top-0 z-30 no-print">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-        <!-- Identitas Kiri Header (Tag div sudah diperbaiki) -->
         <div class="flex items-center gap-3">
           <img src="https://drive.google.com/thumbnail?id=1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv&sz=w256&.png"
                alt="Logo UNIMA" class="w-10 h-10 rounded-xl bg-white/10 p-1 object-contain border border-white/20 shadow" />
@@ -412,16 +411,10 @@
       <!-- TAB 2: EDITOR KERTAS KERJA CALBMN (BAB I s.d. BAB V)               -->
       <!-- ================================================================== -->
       <div id="mainTab-editor" class="hidden space-y-5">
-        <!-- Sticky Action Bar Editor -->
+        <!-- Sticky Action Bar Editor (Sudah Diperbaiki Tanpa Tag Ganda) -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">DRAFT BARU</span>
-            <div>
-              <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
-              <p class="text-[11px] text-slate-500">Perubahan data langsung memperbarui Pratinjau Dokumen Resmi</p>
-            </div>
-          </div>
-            <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">RPT-2025-S1</span>
             <div>
               <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
               <p class="text-[11px] text-slate-500">Perubahan data langsung memperbarui Pratinjau Dokumen Resmi</p>
@@ -636,7 +629,7 @@
             <div class="flex items-center gap-2">
               <label class="text-xs font-bold text-slate-700">Pilih Sub-Aset:</label>
               <select id="activeSubAssetKey" onchange="renderSubAssetEditor()" class="px-3.5 py-2 text-xs font-bold border border-blue-800 bg-blue-50 text-blue-950 rounded-xl">
-                <option value="pm_310">PM 3.10 - Komputer (Default Sample UNIMA)</option>
+                <option value="pm_310">PM 3.10 - Komputer</option>
                 <option value="pm_301">PM 3.01 - Alat Besar</option>
                 <option value="pm_302">PM 3.02 - Alat Angkutan</option>
                 <option value="pm_303">PM 3.03 - Alat Bengkel dan Alat Ukur</option>
@@ -927,12 +920,12 @@
     const FAVICON_DRIVE_ID = '1zRVQQWkz9QdFssway4aK5dvT2rGeRxGv';
     const APP_FAVICON_URL = 'https://drive.google.com/thumbnail?id=' + FAVICON_DRIVE_ID + '&sz=w256&.png';
 
-    // URL Web App Google Apps Script Anda sudah terpasang langsung di sini:
+    // URL Web App Google Apps Script Anda:
     const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycby97bDb14KPzd_cvY_7FNeyKuce1IMbARqSGvzZTX3EcUds2lgPQ6xzYASVVmBq9K44UQ/exec';
 
     // Konfigurasi Sesi (Tahan Refresh & 30 Menit Idle Auto-Logout)
     const SESSION_STORAGE_KEY = 'CALBMN_UNIMA_SESSION_V1';
-    const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 Menit dalam milidetik
+    const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
     let sessionCheckInterval = null;
     let lastActivityWrite = 0;
 
@@ -979,7 +972,6 @@
 
     const KONDISI_LABELS = ['Baik', 'Rusak Ringan', 'Rusak Berat'];
 
-    // Pembersih label otomatis agar tidak ada istilah SIMAN/SAKTI atau e-CaLBMN dari data lama
     function cleanLabel(str) {
       if (!str) return '';
       return String(str)
@@ -1114,7 +1106,6 @@
     }
 
     async function callServer(action, ...args) {
-      // 1. Jika dijalankan langsung di dalam Google Apps Script
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         return new Promise((resolve, reject) => {
           google.script.run
@@ -1123,7 +1114,6 @@
         });
       }
 
-      // 2. Jika dijalankan dari GitHub Pages melalui HTTP POST ke Web App
       const gasUrl = getConfiguredGasUrl();
       if (!gasUrl) {
         throw new Error('URL Web App Google Apps Script belum diatur.');
@@ -1176,7 +1166,6 @@
       return new Intl.NumberFormat('id-ID').format(n);
     }
 
-    // Modal Konfigurasi Server (Diakses dari dalam Dashboard)
     function openServerConfigModal() {
       document.getElementById('inputGasUrl').value = getConfiguredGasUrl();
       const m = document.getElementById('serverConfigModal');
@@ -1316,7 +1305,6 @@
         state.users = res.users || [];
         state.logs = res.logs || [];
 
-        // Jika ada laporan di database, pilih yang terbaru. Jika kosong, biarkan null.
         if (state.reports.length > 0) {
           state.activeReport = JSON.parse(JSON.stringify(state.reports[0]));
         } else {
@@ -1387,7 +1375,6 @@
     }
 
     function switchMainTab(tabName) {
-      // Jika pengguna membuka tab Editor atau Preview saat belum ada laporan sama sekali, siapkan form kosong
       if ((tabName === 'editor' || tabName === 'preview') && !state.activeReport) {
         createNewReport(false);
       }
@@ -1549,6 +1536,288 @@
       if (switchTab) {
         switchMainTab('editor');
         showToast('Formulir Laporan CaLBMN baru siap diisi.', 'info');
+      }
+    }
+
+    function ensureSubAssetStructure(key) {
+      const sa = state.activeReport.payload.subAssets;
+      if (!sa[key]) {
+        sa[key] = {
+          tambah: Array.from({ length: 6 }, () => ({ intra: 0, ekstra: 0 })),
+          kurang: Array.from({ length: 5 }, () => ({ intra: 0, ekstra: 0 })),
+          kondisi: Array.from({ length: 3 }, () => ({ qty: 0, nilai: 0 }))
+        };
+      }
+      return sa[key];
+    }
+
+    function loadActiveReportIntoEditor() {
+      if (!state.activeReport || !state.activeReport.payload) return;
+      const p = state.activeReport.payload;
+      const m = p.meta || {};
+
+      document.getElementById('editorBadgeId').textContent = state.activeReport.reportId || 'DRAFT BARU';
+      document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
+
+      const metaKeys = [
+        'periode', 'tahunAnggaran', 'tanggalCutoff', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
+        'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd',
+        'nipTtd', 'saldoAwalTahun', 'narasiNeraca', 'narasiGedung', 'narasiAsetLainnya'
+      ];
+      metaKeys.forEach(k => {
+        const el = document.getElementById('meta_' + k);
+        if (el) el.value = m[k] || '';
+      });
+
+      renderPersediaanEditor();
+      renderTanahEditor();
+      renderSubAssetEditor();
+      renderPenyusutanEditor();
+      renderBabVEditor();
+    }
+
+    function syncFormToPayload() {
+      if (!state.activeReport) return;
+      const m = state.activeReport.payload.meta;
+      const metaKeys = [
+        'periode', 'tahunAnggaran', 'tanggalCutoff', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
+        'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd',
+        'nipTtd', 'saldoAwalTahun', 'narasiNeraca', 'narasiGedung', 'narasiAsetLainnya'
+      ];
+      metaKeys.forEach(k => {
+        const el = document.getElementById('meta_' + k);
+        if (el) m[k] = el.value;
+      });
+      document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode} TA ${m.tahunAnggaran}`;
+    }
+
+    // Editor Persediaan
+    function renderPersediaanEditor() {
+      const pers = state.activeReport.payload.persediaan;
+      document.getElementById('persediaan_rusak').value = pers.rusak || 0;
+      document.getElementById('persediaan_usang').value = pers.usang || 0;
+
+      const tbody = document.getElementById('persediaanTableBody');
+      tbody.innerHTML = (pers.items || []).map((it, idx) => {
+        const akhir = Number(it.awal || 0) + Number(it.mutasi || 0);
+        return `
+          <tr>
+            <td class="p-2"><input type="text" value="${it.kode}" oninput="updatePersediaanItem(${idx}, 'kode', this.value)" class="w-full px-2 py-1 border rounded font-mono" /></td>
+            <td class="p-2"><input type="text" value="${it.uraian}" oninput="updatePersediaanItem(${idx}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
+            <td class="p-2"><input type="number" value="${it.awal}" oninput="updatePersediaanItem(${idx}, 'awal', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-2"><input type="number" value="${it.mutasi}" oninput="updatePersediaanItem(${idx}, 'mutasi', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(akhir)}</td>
+            <td class="p-2 text-center">
+              <button onclick="removePersediaanRow(${idx})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-xmark"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updatePersediaanItem(idx, field, val) {
+      const item = state.activeReport.payload.persediaan.items[idx];
+      item[field] = (field === 'awal' || field === 'mutasi') ? Number(val || 0) : val;
+      renderPersediaanEditor();
+      renderDashboard();
+    }
+
+    function addPersediaanRow() {
+      state.activeReport.payload.persediaan.items.push({ kode: '1171XX', uraian: 'Akun Persediaan Baru', awal: 0, mutasi: 0 });
+      renderPersediaanEditor();
+    }
+
+    function removePersediaanRow(idx) {
+      state.activeReport.payload.persediaan.items.splice(idx, 1);
+      renderPersediaanEditor();
+      renderDashboard();
+    }
+
+    function syncPersediaanExtra() {
+      const pers = state.activeReport.payload.persediaan;
+      pers.rusak = Number(document.getElementById('persediaan_rusak').value || 0);
+      pers.usang = Number(document.getElementById('persediaan_usang').value || 0);
+    }
+
+    // Editor Tanah
+    function renderTanahEditor() {
+      const t = state.activeReport.payload.tanah;
+      document.getElementById('tanahTambahContainer').innerHTML = (t.tambah || []).map((item, i) => `
+        <div class="flex items-center gap-2">
+          <span class="flex-1 text-xs text-slate-700">${item.uraian}</span>
+          <input type="number" value="${item.intra}" oninput="state.activeReport.payload.tanah.tambah[${i}].intra=Number(this.value||0);renderDashboard();" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+
+      document.getElementById('tanahKurangContainer').innerHTML = (t.kurang || []).map((item, i) => `
+        <div class="flex items-center gap-2">
+          <span class="flex-1 text-xs text-slate-700">${item.uraian}</span>
+          <input type="number" value="${item.intra}" oninput="state.activeReport.payload.tanah.kurang[${i}].intra=Number(this.value||0);renderDashboard();" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+
+      document.getElementById('tanahKondisiContainer').innerHTML = (t.kondisi || []).map((item, i) => `
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="text-xs text-slate-700 font-semibold">${item.uraian}</span>
+          <input type="number" placeholder="Bidang" value="${item.qty}" oninput="state.activeReport.payload.tanah.kondisi[${i}].qty=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="number" placeholder="Nilai Rp" value="${item.nilai}" oninput="state.activeReport.payload.tanah.kondisi[${i}].nilai=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+
+      document.getElementById('tanahMasalahContainer').innerHTML = (t.masalah || []).map((item, i) => `
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="text-xs text-slate-700">${item.uraian}</span>
+          <input type="number" placeholder="Bidang" value="${item.qty}" oninput="state.activeReport.payload.tanah.masalah[${i}].qty=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="number" placeholder="Nilai Rp" value="${item.nilai}" oninput="state.activeReport.payload.tanah.masalah[${i}].nilai=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+    }
+
+    // Editor Sub-Assets (PM, GB, JIJ, ATL, KDP, ATB)
+    function renderSubAssetEditor() {
+      const key = document.getElementById('activeSubAssetKey').value;
+      const sa = ensureSubAssetStructure(key);
+
+      document.getElementById('subAssetTambahBody').innerHTML = TAMBAH_LABELS.map((lbl, i) => {
+        const row = sa.tambah[i] || { intra: 0, ekstra: 0 };
+        return `
+          <tr>
+            <td class="p-2 text-slate-700">${lbl}</td>
+            <td class="p-2"><input type="number" value="${row.intra}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-2"><input type="number" value="${row.ekstra}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('subAssetKurangBody').innerHTML = KURANG_LABELS.map((lbl, i) => {
+        const row = sa.kurang[i] || { intra: 0, ekstra: 0 };
+        return `
+          <tr>
+            <td class="p-2 text-slate-700">${lbl}</td>
+            <td class="p-2"><input type="number" value="${row.intra}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-2"><input type="number" value="${row.ekstra}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('subAssetKondisiBody').innerHTML = KONDISI_LABELS.map((lbl, i) => {
+        const row = sa.kondisi[i] || { qty: 0, nilai: 0 };
+        return `
+          <tr>
+            <td class="p-2 font-semibold text-slate-700">${lbl}</td>
+            <td class="p-2"><input type="number" value="${row.qty}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'qty', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-2"><input type="number" value="${row.nilai}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'nilai', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateSubAsset(key, group, idx, field, val) {
+      const sa = ensureSubAssetStructure(key);
+      sa[group][idx][field] = Number(val || 0);
+      renderDashboard();
+    }
+
+    // Editor Penyusutan, BMN Dihentikan & Revaluasi
+    function renderPenyusutanEditor() {
+      const peny = state.activeReport.payload.penyusutan;
+      const rows = [
+        { code: 'pm', label: 'Peralatan dan Mesin' },
+        { code: 'gb', label: 'Gedung dan Bangunan' },
+        { code: 'jij', label: 'Jalan, Irigasi, dan Jaringan' },
+        { code: 'atl', label: 'Aset Tetap Lainnya' },
+        { code: 'kdp', label: 'Konstruksi Dalam Pengerjaan' },
+        { code: 'kemitraan', label: 'Kemitraan dengan Pihak Ketiga' },
+        { code: 'atb', label: 'Aset Tak Berwujud (Amortisasi)' },
+        { code: 'dihentikan', label: 'Aset Lain-lain (BMN Dihentikan)' }
+      ];
+
+      document.getElementById('penyusutanTableBody').innerHTML = rows.map(r => `
+        <tr>
+          <td class="p-2.5 font-semibold text-slate-700">${r.label}</td>
+          <td class="p-2.5"><input type="number" value="${peny[r.code + '_intra'] || 0}" oninput="state.activeReport.payload.penyusutan['${r.code}_intra']=Number(this.value||0)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
+          <td class="p-2.5"><input type="number" value="${peny[r.code + '_ekstra'] || 0}" oninput="state.activeReport.payload.penyusutan['${r.code}_ekstra']=Number(this.value||0)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
+        </tr>
+      `).join('');
+
+      const dihentikan = state.activeReport.payload.bmnDihentikanGolongan || [];
+      document.getElementById('bmnDihentikanContainer').innerHTML = dihentikan.map((d, i) => `
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="text-xs text-slate-700">${d.uraian}</span>
+          <input type="number" placeholder="Intra" value="${d.intra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="number" placeholder="Ekstra" value="${d.ekstra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+
+      const rev = state.activeReport.payload.revaluasiBmn || [];
+      document.getElementById('revaluasiContainer').innerHTML = rev.map((r, i) => `
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="text-xs text-slate-700">${r.nama}</span>
+          <input type="number" placeholder="Nilai Rp" value="${r.nilai}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nilai=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="text" placeholder="Keterangan" value="${r.ket || ''}" oninput="state.activeReport.payload.revaluasiBmn[${i}].ket=this.value" class="px-2.5 py-1.5 text-xs border rounded-lg" />
+        </div>
+      `).join('');
+    }
+
+    // Editor Bab V
+    function renderBabVEditor() {
+      const bv = state.activeReport.payload.babV;
+      document.getElementById('babV_ketIdle').value = bv.ketIdle || '';
+
+      document.getElementById('babVPerkembanganContainer').innerHTML = (bv.perkembangan || []).map((p, i) => `
+        <div class="flex items-center gap-2">
+          <input type="text" value="${p.periode}" oninput="state.activeReport.payload.babV.perkembangan[${i}].periode=this.value" class="flex-1 px-2.5 py-1.5 text-xs border rounded-lg" />
+          <input type="number" value="${p.nilai}" oninput="state.activeReport.payload.babV.perkembangan[${i}].nilai=Number(this.value||0)" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right font-semibold" />
+        </div>
+      `).join('');
+
+      document.getElementById('babVPspContainer').innerHTML = (bv.psp || []).map((item, i) => `
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="text-xs text-slate-700">${item.uraian}</span>
+          <input type="number" placeholder="Sudah PSP" value="${item.sudah}" oninput="state.activeReport.payload.babV.psp[${i}].sudah=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="number" placeholder="Belum PSP" value="${item.belum}" oninput="state.activeReport.payload.babV.psp[${i}].belum=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+
+      document.getElementById('babVPengelolaanBody').innerHTML = (bv.pengelolaan || []).map((row, i) => `
+        <tr>
+          <td class="p-1.5 text-center font-semibold">${row.no}</td>
+          <td class="p-1.5">${row.uraian}</td>
+          <td class="p-1.5"><input type="text" value="${row.guna || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].guna=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+          <td class="p-1.5"><input type="text" value="${row.manfaat || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].manfaat=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+          <td class="p-1.5"><input type="text" value="${row.pindah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].pindah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+          <td class="p-1.5"><input type="text" value="${row.hapus || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].hapus=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+        </tr>
+      `).join('');
+    }
+
+    function syncBabVIdleKet() {
+      state.activeReport.payload.babV.ketIdle = document.getElementById('babV_ketIdle').value;
+    }
+
+    // ========================================================================
+    // SIMPAN & HAPUS LAPORAN KE SERVER DATABASE (CODE.GS)
+    // ========================================================================
+    async function saveCurrentReport() {
+      if (!state.activeReport) return;
+      syncFormToPayload();
+      calculateActiveTotalNeraca();
+      showLoading('Menyimpan Laporan CaLBMN ke Database Spreadsheet...');
+      try {
+        const res = await callServer('apiSaveReport', state.activeReport, state.currentUser);
+        hideLoading();
+        if (res && res.success) {
+          state.activeReport.reportId = res.reportId;
+          state.reports = res.bundle.reports || state.reports;
+          state.logs = res.bundle.logs || state.logs;
+          renderAllViews();
+          showToast(res.message);
+        } else {
+          showToast(res ? res.message : 'Gagal menyimpan laporan.', 'error');
+        }
+      } catch (err) {
+        hideLoading();
+        showToast('Error saat menyimpan: ' + err.message, 'error');
       }
     }
 
@@ -1788,7 +2057,6 @@
       const m = p.meta || {};
       const wb = XLSX.utils.book_new();
 
-      // Sheet 1: Identitas & Ringkasan
       const wsMeta = XLSX.utils.aoa_to_sheet([
         ['CATATAN ATAS LAPORAN BARANG MILIK NEGARA (CaLBMN)'],
         ['Universitas Negeri Manado'],
@@ -1816,14 +2084,12 @@
       ]);
       XLSX.utils.book_append_sheet(wb, wsMeta, '1_Identitas_Narasi');
 
-      // Sheet 2: Persediaan
       const persRows = [['Kode Akun', 'Uraian Persediaan', 'Saldo Awal (Rp)', 'Mutasi (Rp)', 'Saldo Akhir (Rp)']];
       (p.persediaan.items || []).forEach(it => {
         persRows.push([it.kode, it.uraian, Number(it.awal || 0), Number(it.mutasi || 0), Number(it.awal || 0) + Number(it.mutasi || 0)]);
       });
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(persRows), '2_Persediaan');
 
-      // Sheet 3: Penyusutan & Bab V
       const bvRows = [['Periode Perkembangan Nilai BMN', 'Nilai (Rp)']];
       (p.babV.perkembangan || []).forEach(x => bvRows.push([x.periode, Number(x.nilai || 0)]));
       bvRows.push([], ['Uraian PSP', 'Sudah PSP (Rp)', 'Belum PSP (Rp)']);
