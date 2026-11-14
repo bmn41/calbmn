@@ -979,6 +979,10 @@
                     <input type="number" id="sa_pihakKetigaQty" oninput="syncSubAssetMeta()" class="w-full px-2.5 py-1.5 text-xs border rounded-lg text-right" />
                   </div>
                   <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Dimanfaatkan Pihak Ketiga (Nilai Rp)</label>
+                    <input type="number" id="sa_pihakKetigaNilai" oninput="syncSubAssetMeta()" class="w-full px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+                  </div>
+                  <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-1">Proses Penghapusan (Kuantitas)</label>
                     <input type="number" id="sa_prosesHapusQty" oninput="syncSubAssetMeta()" class="w-full px-2.5 py-1.5 text-xs border rounded-lg text-right" />
                   </div>
@@ -2188,23 +2192,58 @@
       switchMainTab(targetTab);
     }
 
+    // Fungsi Pengaman Anti-Null untuk baca & tulis nilai input
+    function setVal(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.value = (val !== undefined && val !== null) ? val : '';
+    }
+
+    function getVal(id, fallback = '') {
+      const el = document.getElementById(id);
+      return el ? el.value : fallback;
+    }
+
+    function getNum(id, fallback = 0) {
+      const el = document.getElementById(id);
+      return el ? Number(el.value || 0) : fallback;
+    }
+
+    function ensurePayloadIntegrity() {
+      if (!state.activeReport) return;
+      const sample = getDefaultSamplePayload();
+      if (!state.activeReport.payload) state.activeReport.payload = sample;
+      const p = state.activeReport.payload;
+      if (!p.meta) p.meta = sample.meta;
+      if (!p.persediaan) p.persediaan = sample.persediaan;
+      if (!p.persediaan.items) p.persediaan.items = sample.persediaan.items;
+      if (!p.tanah) p.tanah = sample.tanah;
+      if (!p.subAssets) p.subAssets = {};
+      if (!p.penyusutan) p.penyusutan = sample.penyusutan;
+      if (!p.kemitraanGolongan) p.kemitraanGolongan = sample.kemitraanGolongan;
+      if (!p.bmnDihentikanGolongan) p.bmnDihentikanGolongan = sample.bmnDihentikanGolongan;
+      if (!p.revaluasiBmn) p.revaluasiBmn = sample.revaluasiBmn;
+      if (!p.asetBersejarah) p.asetBersejarah = sample.asetBersejarah;
+      if (!p.selisihNeracaManual) p.selisihNeracaManual = sample.selisihNeracaManual;
+      if (!p.babV) p.babV = sample.babV;
+    }
+
     function loadActiveReportIntoEditor() {
       if (!state.activeReport || !state.activeReport.payload) return;
+      ensurePayloadIntegrity();
       const p = state.activeReport.payload;
       const m = p.meta || {};
 
-      document.getElementById('editorBadgeId').textContent = state.activeReport.reportId || 'DRAFT';
-      document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
+      const badgeEl = document.getElementById('editorBadgeId');
+      if (badgeEl) badgeEl.textContent = state.activeReport.reportId || 'DRAFT';
+      const titleEl = document.getElementById('editorTitleLabel');
+      if (titleEl) titleEl.textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
 
       const metaKeys = [
         'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
         'nilaiNeracaAwalIntra', 'nilaiNeracaAwalEkstra', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
         'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd', 'nipTtd'
       ];
-      metaKeys.forEach(k => {
-        const el = document.getElementById('meta_' + k);
-        if (el) el.value = m[k] !== undefined ? m[k] : '';
-      });
+      metaKeys.forEach(k => setVal('meta_' + k, m[k] !== undefined ? m[k] : ''));
 
       renderPersediaanEditor();
       renderTanahEditor();
@@ -2215,6 +2254,7 @@
 
     function syncFormToPayload() {
       if (!state.activeReport) return;
+      ensurePayloadIntegrity();
       const m = state.activeReport.payload.meta;
       const metaKeys = [
         'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
@@ -2225,18 +2265,21 @@
         const el = document.getElementById('meta_' + k);
         if (el) m[k] = el.value;
       });
-      m.nilaiNeracaAwalIntra = Number(document.getElementById('meta_nilaiNeracaAwalIntra').value || 0);
-      m.nilaiNeracaAwalEkstra = Number(document.getElementById('meta_nilaiNeracaAwalEkstra').value || 0);
-      document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode} TA ${m.tahunAnggaran}`;
+      m.nilaiNeracaAwalIntra = getNum('meta_nilaiNeracaAwalIntra', 0);
+      m.nilaiNeracaAwalEkstra = getNum('meta_nilaiNeracaAwalEkstra', 0);
+
+      const titleEl = document.getElementById('editorTitleLabel');
+      if (titleEl) titleEl.textContent = `Kertas Kerja CaLBMN ${m.periode} TA ${m.tahunAnggaran}`;
     }
 
-    // Persediaan
+    // Persediaan (Bebas ketik banyak karakter tanpa kehilangan fokus kursor)
     function renderPersediaanEditor() {
       const pers = state.activeReport.payload.persediaan;
-      document.getElementById('persediaan_rusak').value = pers.rusak || 0;
-      document.getElementById('persediaan_usang').value = pers.usang || 0;
+      setVal('persediaan_rusak', pers.rusak || 0);
+      setVal('persediaan_usang', pers.usang || 0);
 
       const tbody = document.getElementById('persediaanTableBody');
+      if (!tbody) return;
       tbody.innerHTML = (pers.items || []).map((it, idx) => {
         const akhir = Number(it.awal || 0) + Number(it.mutasi || 0);
         return `
@@ -2256,8 +2299,8 @@
 
     function updatePersediaanItem(idx, field, val) {
       const item = state.activeReport.payload.persediaan.items[idx];
+      if (!item) return;
       item[field] = (field === 'awal' || field === 'mutasi') ? Number(val || 0) : val;
-      // Hanya perbarui teks Saldo Akhir pada baris terkait agar kursor tidak terlepas
       const akhirEl = document.getElementById('pers_akhir_' + idx);
       if (akhirEl) {
         const akhir = Number(item.awal || 0) + Number(item.mutasi || 0);
@@ -2279,8 +2322,8 @@
 
     function syncPersediaanExtra() {
       const pers = state.activeReport.payload.persediaan;
-      pers.rusak = Number(document.getElementById('persediaan_rusak').value || 0);
-      pers.usang = Number(document.getElementById('persediaan_usang').value || 0);
+      pers.rusak = getNum('persediaan_rusak', 0);
+      pers.usang = getNum('persediaan_usang', 0);
     }
 
     // Tanah
@@ -2289,62 +2332,72 @@
       if (!t.tambah) t.tambah = [];
       if (!t.kurang) t.kurang = [];
 
-      document.getElementById('tanah_awalIntra').value = t.awalIntra || 0;
-      document.getElementById('tanah_pihakKetigaBidang').value = t.pihakKetigaBidang || 0;
-      document.getElementById('tanah_pihakKetigaNilai').value = t.pihakKetigaNilai || 0;
-      document.getElementById('tanah_prosesHapusBidang').value = t.prosesHapusBidang || 0;
-      document.getElementById('tanah_prosesHapusNilai').value = t.prosesHapusNilai || 0;
-      document.getElementById('tanah_dihentikanM2').value = t.dihentikanM2 || 0;
-      document.getElementById('tanah_dihentikanNilai').value = t.dihentikanNilai || 0;
+      setVal('tanah_awalIntra', t.awalIntra || 0);
+      setVal('tanah_pihakKetigaBidang', t.pihakKetigaBidang || 0);
+      setVal('tanah_pihakKetigaNilai', t.pihakKetigaNilai || 0);
+      setVal('tanah_prosesHapusBidang', t.prosesHapusBidang || 0);
+      setVal('tanah_prosesHapusNilai', t.prosesHapusNilai || 0);
+      setVal('tanah_dihentikanM2', t.dihentikanM2 || 0);
+      setVal('tanah_dihentikanNilai', t.dihentikanNilai || 0);
 
       const tambahBody = document.getElementById('tanahTambahContainer');
-      tambahBody.innerHTML = t.tambah.length === 0
-        ? `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">Belum ada mutasi tambah tanah.</td></tr>`
-        : t.tambah.map((item, i) => `
-          <tr>
-            <td class="p-1.5"><input type="text" list="listJenisMutasiTambah" value="${item.uraian || ''}" placeholder="Jenis transaksi..." oninput="state.activeReport.payload.tanah.tambah[${i}].uraian=this.value" class="w-full px-2 py-1 border rounded" /></td>
-            <td class="p-1.5"><input type="number" value="${item.intra || 0}" oninput="state.activeReport.payload.tanah.tambah[${i}].intra=Number(this.value||0);renderDashboard();" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-1.5 text-center"><button type="button" onclick="removeTanahMutasiRow('tambah', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-          </tr>
-        `).join('');
+      if (tambahBody) {
+        tambahBody.innerHTML = t.tambah.length === 0
+          ? `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">Belum ada mutasi tambah tanah.</td></tr>`
+          : t.tambah.map((item, i) => `
+            <tr>
+              <td class="p-1.5"><input type="text" list="listJenisMutasiTambah" value="${item.uraian || ''}" placeholder="Jenis transaksi..." oninput="state.activeReport.payload.tanah.tambah[${i}].uraian=this.value" class="w-full px-2 py-1 border rounded" /></td>
+              <td class="p-1.5"><input type="number" value="${item.intra || 0}" oninput="state.activeReport.payload.tanah.tambah[${i}].intra=Number(this.value||0);renderDashboard();" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-1.5 text-center"><button type="button" onclick="removeTanahMutasiRow('tambah', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+            </tr>
+          `).join('');
+      }
 
       const kurangBody = document.getElementById('tanahKurangContainer');
-      kurangBody.innerHTML = t.kurang.length === 0
-        ? `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">Belum ada mutasi kurang tanah.</td></tr>`
-        : t.kurang.map((item, i) => `
-          <tr>
-            <td class="p-1.5"><input type="text" list="listJenisMutasiKurang" value="${item.uraian || ''}" placeholder="Jenis transaksi..." oninput="state.activeReport.payload.tanah.kurang[${i}].uraian=this.value" class="w-full px-2 py-1 border rounded" /></td>
-            <td class="p-1.5"><input type="number" value="${item.intra || 0}" oninput="state.activeReport.payload.tanah.kurang[${i}].intra=Number(this.value||0);renderDashboard();" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-1.5 text-center"><button type="button" onclick="removeTanahMutasiRow('kurang', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-          </tr>
+      if (kurangBody) {
+        kurangBody.innerHTML = t.kurang.length === 0
+          ? `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">Belum ada mutasi kurang tanah.</td></tr>`
+          : t.kurang.map((item, i) => `
+            <tr>
+              <td class="p-1.5"><input type="text" list="listJenisMutasiKurang" value="${item.uraian || ''}" placeholder="Jenis transaksi..." oninput="state.activeReport.payload.tanah.kurang[${i}].uraian=this.value" class="w-full px-2 py-1 border rounded" /></td>
+              <td class="p-1.5"><input type="number" value="${item.intra || 0}" oninput="state.activeReport.payload.tanah.kurang[${i}].intra=Number(this.value||0);renderDashboard();" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-1.5 text-center"><button type="button" onclick="removeTanahMutasiRow('kurang', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+            </tr>
+          `).join('');
+      }
+
+      const kondEl = document.getElementById('tanahKondisiContainer');
+      if (kondEl) {
+        kondEl.innerHTML = (t.kondisi || []).map((item, i) => `
+          <div class="grid grid-cols-3 gap-2 items-center">
+            <span class="text-xs text-slate-700 font-semibold">${item.uraian}</span>
+            <input type="number" placeholder="Kuantitas (m2)" value="${item.qty}" oninput="state.activeReport.payload.tanah.kondisi[${i}].qty=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="number" placeholder="Nilai (Rp.)" value="${item.nilai}" oninput="state.activeReport.payload.tanah.kondisi[${i}].nilai=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          </div>
         `).join('');
+      }
 
-      document.getElementById('tanahKondisiContainer').innerHTML = (t.kondisi || []).map((item, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700 font-semibold">${item.uraian}</span>
-          <input type="number" placeholder="Kuantitas (m2)" value="${item.qty}" oninput="state.activeReport.payload.tanah.kondisi[${i}].qty=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Nilai (Rp.)" value="${item.nilai}" oninput="state.activeReport.payload.tanah.kondisi[${i}].nilai=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('tanahMasalahContainer').innerHTML = (t.masalah || []).map((item, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${item.uraian}</span>
-          <input type="number" step="any" placeholder="Bidang/m2" value="${item.qty}" oninput="state.activeReport.payload.tanah.masalah[${i}].qty=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" step="any" placeholder="Nilai (Rp.)" value="${item.nilai}" oninput="state.activeReport.payload.tanah.masalah[${i}].nilai=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
+      const mslEl = document.getElementById('tanahMasalahContainer');
+      if (mslEl) {
+        mslEl.innerHTML = (t.masalah || []).map((item, i) => `
+          <div class="grid grid-cols-3 gap-2 items-center">
+            <span class="text-xs text-slate-700">${item.uraian}</span>
+            <input type="number" step="any" placeholder="Bidang/m2" value="${item.qty}" oninput="state.activeReport.payload.tanah.masalah[${i}].qty=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="number" step="any" placeholder="Nilai (Rp.)" value="${item.nilai}" oninput="state.activeReport.payload.tanah.masalah[${i}].nilai=Number(this.value||0);renderDashboard();" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          </div>
+        `).join('');
+      }
     }
 
     function syncTanahMeta() {
       const t = state.activeReport.payload.tanah;
-      t.awalIntra = Number(document.getElementById('tanah_awalIntra').value || 0);
-      t.pihakKetigaBidang = Number(document.getElementById('tanah_pihakKetigaBidang').value || 0);
-      t.pihakKetigaNilai = Number(document.getElementById('tanah_pihakKetigaNilai').value || 0);
-      t.prosesHapusBidang = Number(document.getElementById('tanah_prosesHapusBidang').value || 0);
-      t.prosesHapusNilai = Number(document.getElementById('tanah_prosesHapusNilai').value || 0);
-      t.dihentikanM2 = Number(document.getElementById('tanah_dihentikanM2').value || 0);
-      t.dihentikanNilai = Number(document.getElementById('tanah_dihentikanNilai').value || 0);
+      t.awalIntra = getNum('tanah_awalIntra', 0);
+      t.pihakKetigaBidang = getNum('tanah_pihakKetigaBidang', 0);
+      t.pihakKetigaNilai = getNum('tanah_pihakKetigaNilai', 0);
+      t.prosesHapusBidang = getNum('tanah_prosesHapusBidang', 0);
+      t.prosesHapusNilai = getNum('tanah_prosesHapusNilai', 0);
+      t.dihentikanM2 = getNum('tanah_dihentikanM2', 0);
+      t.dihentikanNilai = getNum('tanah_dihentikanNilai', 0);
       renderDashboard();
     }
 
@@ -2362,76 +2415,83 @@
 
     // Sub-Assets (PM, GB, JIJ, ATL, KDP, Kemitraan, ATB, Dihentikan)
     function renderSubAssetEditor() {
-      const key = document.getElementById('activeSubAssetKey').value;
+      const key = getVal('activeSubAssetKey', 'pm_301');
       const sa = ensureSubAssetStructure(key);
 
-      document.getElementById('sa_qtyAwal').value = sa.qtyAwal || 0;
-      document.getElementById('sa_awalIntra').value = sa.awalIntra || 0;
-      document.getElementById('sa_awalEkstra').value = sa.awalEkstra || 0;
-      document.getElementById('sa_qtyTambah').value = sa.qtyTambah || 0;
-      document.getElementById('sa_qtyKurang').value = sa.qtyKurang || 0;
-      document.getElementById('sa_pihakKetigaQty').value = sa.pihakKetigaQty || 0;
-      document.getElementById('sa_pihakKetigaNilai').value = sa.pihakKetigaNilai || 0;
-      document.getElementById('sa_prosesHapusQty').value = sa.prosesHapusQty || 0;
-      document.getElementById('sa_prosesHapusNilai').value = sa.prosesHapusNilai || 0;
-      document.getElementById('sa_dihentikanQty').value = sa.dihentikanQty || 0;
-      document.getElementById('sa_dihentikanNilai').value = sa.dihentikanNilai || 0;
+      setVal('sa_qtyAwal', sa.qtyAwal || 0);
+      setVal('sa_awalIntra', sa.awalIntra || 0);
+      setVal('sa_awalEkstra', sa.awalEkstra || 0);
+      setVal('sa_qtyTambah', sa.qtyTambah || 0);
+      setVal('sa_qtyKurang', sa.qtyKurang || 0);
+      setVal('sa_pihakKetigaQty', sa.pihakKetigaQty || 0);
+      setVal('sa_pihakKetigaNilai', sa.pihakKetigaNilai || 0);
+      setVal('sa_prosesHapusQty', sa.prosesHapusQty || 0);
+      setVal('sa_prosesHapusNilai', sa.prosesHapusNilai || 0);
+      setVal('sa_dihentikanQty', sa.dihentikanQty || 0);
+      setVal('sa_dihentikanNilai', sa.dihentikanNilai || 0);
 
       const tambahBody = document.getElementById('subAssetTambahBody');
-      tambahBody.innerHTML = sa.tambah.length === 0
-        ? `<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Tidak ada penambahan selain Saldo Awal. Klik "+ Tambah Jenis Mutasi" jika ada.</td></tr>`
-        : sa.tambah.map((row, i) => `
-          <tr>
-            <td class="p-1.5"><input type="text" list="listJenisMutasiTambah" value="${row.uraian || ''}" placeholder="Jenis transaksi..." oninput="updateSubAsset('${key}', 'tambah', ${i}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
-            <td class="p-1.5"><input type="number" value="${row.intra || 0}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-1.5"><input type="number" value="${row.ekstra || 0}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-1.5 text-center"><button type="button" onclick="removeSubAssetMutasiRow('${key}', 'tambah', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-          </tr>
-        `).join('');
+      if (tambahBody) {
+        tambahBody.innerHTML = sa.tambah.length === 0
+          ? `<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Tidak ada penambahan selain Saldo Awal. Klik "+ Tambah Jenis Mutasi" jika ada.</td></tr>`
+          : sa.tambah.map((row, i) => `
+            <tr>
+              <td class="p-1.5"><input type="text" list="listJenisMutasiTambah" value="${row.uraian || ''}" placeholder="Jenis transaksi..." oninput="updateSubAsset('${key}', 'tambah', ${i}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
+              <td class="p-1.5"><input type="number" value="${row.intra || 0}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-1.5"><input type="number" value="${row.ekstra || 0}" oninput="updateSubAsset('${key}', 'tambah', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-1.5 text-center"><button type="button" onclick="removeSubAssetMutasiRow('${key}', 'tambah', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+            </tr>
+          `).join('');
+      }
 
       const kurangBody = document.getElementById('subAssetKurangBody');
-      kurangBody.innerHTML = sa.kurang.length === 0
-        ? `<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Tidak ada mutasi kurang. Klik "+ Tambah Jenis Mutasi" jika ada.</td></tr>`
-        : sa.kurang.map((row, i) => `
-          <tr>
-            <td class="p-1.5"><input type="text" list="listJenisMutasiKurang" value="${row.uraian || ''}" placeholder="Jenis transaksi..." oninput="updateSubAsset('${key}', 'kurang', ${i}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
-            <td class="p-1.5"><input type="number" value="${row.intra || 0}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-1.5"><input type="number" value="${row.ekstra || 0}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-1.5 text-center"><button type="button" onclick="removeSubAssetMutasiRow('${key}', 'kurang', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-          </tr>
-        `).join('');
+      if (kurangBody) {
+        kurangBody.innerHTML = sa.kurang.length === 0
+          ? `<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">Tidak ada mutasi kurang. Klik "+ Tambah Jenis Mutasi" jika ada.</td></tr>`
+          : sa.kurang.map((row, i) => `
+            <tr>
+              <td class="p-1.5"><input type="text" list="listJenisMutasiKurang" value="${row.uraian || ''}" placeholder="Jenis transaksi..." oninput="updateSubAsset('${key}', 'kurang', ${i}, 'uraian', this.value)" class="w-full px-2 py-1 border rounded" /></td>
+              <td class="p-1.5"><input type="number" value="${row.intra || 0}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'intra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-1.5"><input type="number" value="${row.ekstra || 0}" oninput="updateSubAsset('${key}', 'kurang', ${i}, 'ekstra', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-1.5 text-center"><button type="button" onclick="removeSubAssetMutasiRow('${key}', 'kurang', ${i})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+            </tr>
+          `).join('');
+      }
 
-      document.getElementById('subAssetKondisiBody').innerHTML = KONDISI_LABELS.map((lbl, i) => {
-        const row = sa.kondisi[i] || { qty: 0, nilai: 0 };
-        return `
-          <tr>
-            <td class="p-2 font-semibold text-slate-700">${lbl}</td>
-            <td class="p-2"><input type="number" value="${row.qty}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'qty', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td class="p-2"><input type="number" value="${row.nilai}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'nilai', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-          </tr>
-        `;
-      }).join('');
+      const kondBody = document.getElementById('subAssetKondisiBody');
+      if (kondBody) {
+        kondBody.innerHTML = KONDISI_LABELS.map((lbl, i) => {
+          const row = sa.kondisi[i] || { qty: 0, nilai: 0 };
+          return `
+            <tr>
+              <td class="p-2 font-semibold text-slate-700">${lbl}</td>
+              <td class="p-2"><input type="number" value="${row.qty}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'qty', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td class="p-2"><input type="number" value="${row.nilai}" oninput="updateSubAsset('${key}', 'kondisi', ${i}, 'nilai', this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     function syncSubAssetMeta() {
-      const key = document.getElementById('activeSubAssetKey').value;
+      const key = getVal('activeSubAssetKey', 'pm_301');
       const sa = ensureSubAssetStructure(key);
-      sa.qtyAwal = Number(document.getElementById('sa_qtyAwal').value || 0);
-      sa.awalIntra = Number(document.getElementById('sa_awalIntra').value || 0);
-      sa.awalEkstra = Number(document.getElementById('sa_awalEkstra').value || 0);
-      sa.qtyTambah = Number(document.getElementById('sa_qtyTambah').value || 0);
-      sa.qtyKurang = Number(document.getElementById('sa_qtyKurang').value || 0);
-      sa.pihakKetigaQty = Number(document.getElementById('sa_pihakKetigaQty').value || 0);
-      sa.pihakKetigaNilai = Number(document.getElementById('sa_pihakKetigaNilai').value || 0);
-      sa.prosesHapusQty = Number(document.getElementById('sa_prosesHapusQty').value || 0);
-      sa.prosesHapusNilai = Number(document.getElementById('sa_prosesHapusNilai').value || 0);
-      sa.dihentikanQty = Number(document.getElementById('sa_dihentikanQty').value || 0);
-      sa.dihentikanNilai = Number(document.getElementById('sa_dihentikanNilai').value || 0);
+      sa.qtyAwal = getNum('sa_qtyAwal', 0);
+      sa.awalIntra = getNum('sa_awalIntra', 0);
+      sa.awalEkstra = getNum('sa_awalEkstra', 0);
+      sa.qtyTambah = getNum('sa_qtyTambah', 0);
+      sa.qtyKurang = getNum('sa_qtyKurang', 0);
+      sa.pihakKetigaQty = getNum('sa_pihakKetigaQty', 0);
+      sa.pihakKetigaNilai = getNum('sa_pihakKetigaNilai', 0);
+      sa.prosesHapusQty = getNum('sa_prosesHapusQty', 0);
+      sa.prosesHapusNilai = getNum('sa_prosesHapusNilai', 0);
+      sa.dihentikanQty = getNum('sa_dihentikanQty', 0);
+      sa.dihentikanNilai = getNum('sa_dihentikanNilai', 0);
       renderDashboard();
     }
 
     function addSubAssetMutasiRow(group) {
-      const key = document.getElementById('activeSubAssetKey').value;
+      const key = getVal('activeSubAssetKey', 'pm_301');
       const sa = ensureSubAssetStructure(key);
       sa[group].push({ uraian: '', intra: 0, ekstra: 0 });
       renderSubAssetEditor();
@@ -2452,7 +2512,6 @@
     }
 
     // Penyusutan, Golongan Kemitraan, Golongan BMN Dihentikan, Revaluasi, Bersejarah & Perbandingan Neraca
-    // Penyusutan, Golongan Kemitraan, Golongan BMN Dihentikan, Revaluasi, Bersejarah & Perbandingan Neraca
     function renderPenyusutanEditor() {
       const p = state.activeReport.payload;
       const peny = p.penyusutan;
@@ -2467,87 +2526,87 @@
         { code: 'dihentikan', label: 'Aset yang dihentikan' }
       ];
 
-      document.getElementById('penyusutanTableBody').innerHTML = rows.map(r => {
-        const intra = Number(peny[r.code + '_intra'] || 0);
-        const ekstra = Number(peny[r.code + '_ekstra'] || 0);
-        return `
-          <tr>
-            <td class="p-2 font-semibold text-slate-700">${r.label}</td>
-            <td class="p-2"><input type="number" value="${intra}" oninput="updatePenyusutanVal('${r.code}', 'intra', this.value)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
-            <td class="p-2"><input type="number" value="${ekstra}" oninput="updatePenyusutanVal('${r.code}', 'ekstra', this.value)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
-            <td id="peny_gab_${r.code}" class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(intra + ekstra)}</td>
-          </tr>
-        `;
-      }).join('');
-
-      if (!p.kemitraanGolongan) {
-        p.kemitraanGolongan = [
-          { uraian: 'Tanah', intra: 0, ekstra: 0 },
-          { uraian: 'Peralatan dan Mesin', intra: 0, ekstra: 0 },
-          { uraian: 'Gedung dan Bangunan', intra: 0, ekstra: 0 },
-          { uraian: 'Jalan. Jembatan. Irigasi dan jaringan', intra: 0, ekstra: 0 },
-          { uraian: 'Aset Tetap Lainnya', intra: 0, ekstra: 0 }
-        ];
+      const penyBody = document.getElementById('penyusutanTableBody');
+      if (penyBody) {
+        penyBody.innerHTML = rows.map(r => {
+          const intra = Number(peny[r.code + '_intra'] || 0);
+          const ekstra = Number(peny[r.code + '_ekstra'] || 0);
+          return `
+            <tr>
+              <td class="p-2 font-semibold text-slate-700">${r.label}</td>
+              <td class="p-2"><input type="number" value="${intra}" oninput="updatePenyusutanVal('${r.code}', 'intra', this.value)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
+              <td class="p-2"><input type="number" value="${ekstra}" oninput="updatePenyusutanVal('${r.code}', 'ekstra', this.value)" class="w-full px-2.5 py-1.5 border rounded-lg text-right" /></td>
+              <td id="peny_gab_${r.code}" class="p-2 text-right font-bold text-slate-800">Rp ${formatRp(intra + ekstra)}</td>
+            </tr>
+          `;
+        }).join('');
       }
-      document.getElementById('kemitraanGolonganContainer').innerHTML = p.kemitraanGolongan.map((d, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${i + 1}. ${d.uraian}</span>
-          <input type="number" placeholder="Intra (Rp)" value="${d.intra}" oninput="state.activeReport.payload.kemitraanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Ekstra (Rp)" value="${d.ekstra}" oninput="state.activeReport.payload.kemitraanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
 
-      const dihentikan = p.bmnDihentikanGolongan || [];
-      document.getElementById('bmnDihentikanContainer').innerHTML = dihentikan.map((d, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${i + 1}. ${d.uraian}</span>
-          <input type="number" placeholder="Intra (Rp)" value="${d.intra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Ekstra (Rp)" value="${d.ekstra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      const rev = p.revaluasiBmn || [];
-      document.getElementById('revaluasiContainer').innerHTML = rev.map((r, i) => `
-        <div class="flex items-center gap-1.5">
-          <input type="text" placeholder="Nama Barang" value="${r.nama}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nama=this.value" class="flex-1 px-2 py-1.5 text-xs border rounded-lg" />
-          <input type="number" placeholder="Nilai Rp" value="${r.nilai}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nilai=Number(this.value||0)" class="w-36 px-2 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="text" placeholder="Keterangan" value="${r.ket || ''}" oninput="state.activeReport.payload.revaluasiBmn[${i}].ket=this.value" class="w-24 px-2 py-1.5 text-xs border rounded-lg" />
-          <button type="button" onclick="state.activeReport.payload.revaluasiBmn.splice(${i},1);renderPenyusutanEditor();" class="text-rose-500 px-1"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      `).join('');
-
-      if (!p.asetBersejarah) {
-        p.asetBersejarah = { unitAwal: 0, unitTambah: 0, unitKurang: 0, tambah: [], kurang: [] };
+      const kemEl = document.getElementById('kemitraanGolonganContainer');
+      if (kemEl) {
+        kemEl.innerHTML = (p.kemitraanGolongan || []).map((d, i) => `
+          <div class="grid grid-cols-3 gap-2 items-center">
+            <span class="text-xs text-slate-700">${i + 1}. ${d.uraian}</span>
+            <input type="number" placeholder="Intra (Rp)" value="${d.intra}" oninput="state.activeReport.payload.kemitraanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="number" placeholder="Ekstra (Rp)" value="${d.ekstra}" oninput="state.activeReport.payload.kemitraanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          </div>
+        `).join('');
       }
+
+      const dihEl = document.getElementById('bmnDihentikanContainer');
+      if (dihEl) {
+        dihEl.innerHTML = (p.bmnDihentikanGolongan || []).map((d, i) => `
+          <div class="grid grid-cols-3 gap-2 items-center">
+            <span class="text-xs text-slate-700">${i + 1}. ${d.uraian}</span>
+            <input type="number" placeholder="Intra (Rp)" value="${d.intra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="number" placeholder="Ekstra (Rp)" value="${d.ekstra}" oninput="state.activeReport.payload.bmnDihentikanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          </div>
+        `).join('');
+      }
+
+      const revEl = document.getElementById('revaluasiContainer');
+      if (revEl) {
+        revEl.innerHTML = (p.revaluasiBmn || []).map((r, i) => `
+          <div class="flex items-center gap-1.5">
+            <input type="text" placeholder="Nama Barang" value="${r.nama}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nama=this.value" class="flex-1 px-2 py-1.5 text-xs border rounded-lg" />
+            <input type="number" placeholder="Nilai Rp" value="${r.nilai}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nilai=Number(this.value||0)" class="w-36 px-2 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="text" placeholder="Keterangan" value="${r.ket || ''}" oninput="state.activeReport.payload.revaluasiBmn[${i}].ket=this.value" class="w-24 px-2 py-1.5 text-xs border rounded-lg" />
+            <button type="button" onclick="state.activeReport.payload.revaluasiBmn.splice(${i},1);renderPenyusutanEditor();" class="text-rose-500 px-1"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        `).join('');
+      }
+
       const ab = p.asetBersejarah;
       if (!ab.tambah) ab.tambah = [];
       if (!ab.kurang) ab.kurang = [];
-      document.getElementById('bersejarah_unitAwal').value = ab.unitAwal || 0;
-      document.getElementById('bersejarah_unitTambah').value = ab.unitTambah || 0;
-      document.getElementById('bersejarah_unitKurang').value = ab.unitKurang || 0;
+      setVal('bersejarah_unitAwal', ab.unitAwal || 0);
+      setVal('bersejarah_unitTambah', ab.unitTambah || 0);
+      setVal('bersejarah_unitKurang', ab.unitKurang || 0);
 
-      document.getElementById('bersejarahTambahContainer').innerHTML = ab.tambah.map((r, i) => `
-        <div class="grid grid-cols-12 gap-1.5 items-center">
-          <input type="text" value="${r.uraian || ''}" placeholder="Uraian transaksi..." oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].uraian=this.value" class="col-span-5 px-2 py-1 text-xs border rounded" />
-          <input type="number" value="${r.intra || 0}" placeholder="Intra" oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].intra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
-          <input type="number" value="${r.ekstra || 0}" placeholder="Ekstra" oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].ekstra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
-          <button type="button" onclick="state.activeReport.payload.asetBersejarah.tambah.splice(${i},1);renderPenyusutanEditor();" class="col-span-1 text-rose-500 text-center"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      `).join('');
-
-      document.getElementById('bersejarahKurangContainer').innerHTML = ab.kurang.map((r, i) => `
-        <div class="grid grid-cols-12 gap-1.5 items-center">
-          <input type="text" value="${r.uraian || ''}" placeholder="Uraian transaksi..." oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].uraian=this.value" class="col-span-5 px-2 py-1 text-xs border rounded" />
-          <input type="number" value="${r.intra || 0}" placeholder="Intra" oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].intra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
-          <input type="number" value="${r.ekstra || 0}" placeholder="Ekstra" oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].ekstra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
-          <button type="button" onclick="state.activeReport.payload.asetBersejarah.kurang.splice(${i},1);renderPenyusutanEditor();" class="col-span-1 text-rose-500 text-center"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      `).join('');
-
-      // Perbandingan Laporan Barang vs Laporan Keuangan
-      if (!p.selisihNeracaManual) {
-        p.selisihNeracaManual = { persediaan: 0, tanah: 0, pm: 0, gb: 0, jij: 0, atl: 0, kdp: 0, atb: 0, dihentikan: 0 };
+      const abTamEl = document.getElementById('bersejarahTambahContainer');
+      if (abTamEl) {
+        abTamEl.innerHTML = ab.tambah.map((r, i) => `
+          <div class="grid grid-cols-12 gap-1.5 items-center">
+            <input type="text" value="${r.uraian || ''}" placeholder="Uraian transaksi..." oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].uraian=this.value" class="col-span-5 px-2 py-1 text-xs border rounded" />
+            <input type="number" value="${r.intra || 0}" placeholder="Intra" oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].intra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+            <input type="number" value="${r.ekstra || 0}" placeholder="Ekstra" oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].ekstra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+            <button type="button" onclick="state.activeReport.payload.asetBersejarah.tambah.splice(${i},1);renderPenyusutanEditor();" class="col-span-1 text-rose-500 text-center"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        `).join('');
       }
+
+      const abKurEl = document.getElementById('bersejarahKurangContainer');
+      if (abKurEl) {
+        abKurEl.innerHTML = ab.kurang.map((r, i) => `
+          <div class="grid grid-cols-12 gap-1.5 items-center">
+            <input type="text" value="${r.uraian || ''}" placeholder="Uraian transaksi..." oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].uraian=this.value" class="col-span-5 px-2 py-1 text-xs border rounded" />
+            <input type="number" value="${r.intra || 0}" placeholder="Intra" oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].intra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+            <input type="number" value="${r.ekstra || 0}" placeholder="Ekstra" oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].ekstra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+            <button type="button" onclick="state.activeReport.payload.asetBersejarah.kurang.splice(${i},1);renderPenyusutanEditor();" class="col-span-1 text-rose-500 text-center"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        `).join('');
+      }
+
       const n = computeNeracaSummary(p);
       const compRows = [
         { key: 'persediaan', label: 'Persediaan', barang: n.persAkhir },
@@ -2561,19 +2620,22 @@
         { key: 'dihentikan', label: 'Aset Lain-Lain*)', barang: n.dihentikan.akhirIntra }
       ];
 
-      document.getElementById('perbandinganNeracaBody').innerHTML = compRows.map((r, idx) => {
-        const selisih = Number(p.selisihNeracaManual[r.key] || 0);
-        const lapKeu = r.barang - selisih;
-        return `
-          <tr>
-            <td class="p-2 text-center">${idx + 1}</td>
-            <td class="p-2 font-semibold text-slate-700">${r.label}</td>
-            <td class="p-2 text-right font-mono">${formatRp(r.barang)}</td>
-            <td class="p-2"><input type="number" value="${selisih}" oninput="updateSelisihNeracaVal('${r.key}', ${r.barang}, this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
-            <td id="lap_keu_${r.key}" class="p-2 text-right font-bold text-slate-800">${formatRp(lapKeu)}</td>
-          </tr>
-        `;
-      }).join('');
+      const compBody = document.getElementById('perbandinganNeracaBody');
+      if (compBody) {
+        compBody.innerHTML = compRows.map((r, idx) => {
+          const selisih = Number(p.selisihNeracaManual[r.key] || 0);
+          const lapKeu = r.barang - selisih;
+          return `
+            <tr>
+              <td class="p-2 text-center">${idx + 1}</td>
+              <td class="p-2 font-semibold text-slate-700">${r.label}</td>
+              <td class="p-2 text-right font-mono">${formatRp(r.barang)}</td>
+              <td class="p-2"><input type="number" value="${selisih}" oninput="updateSelisihNeracaVal('${r.key}', ${r.barang}, this.value)" class="w-full px-2 py-1 border rounded text-right" /></td>
+              <td id="lap_keu_${r.key}" class="p-2 text-right font-bold text-slate-800">${formatRp(lapKeu)}</td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
     function updatePenyusutanVal(code, type, val) {
@@ -2607,9 +2669,9 @@
 
     function syncAsetBersejarah() {
       const ab = state.activeReport.payload.asetBersejarah;
-      ab.unitAwal = Number(document.getElementById('bersejarah_unitAwal').value || 0);
-      ab.unitTambah = Number(document.getElementById('bersejarah_unitTambah').value || 0);
-      ab.unitKurang = Number(document.getElementById('bersejarah_unitKurang').value || 0);
+      ab.unitAwal = getNum('bersejarah_unitAwal', 0);
+      ab.unitTambah = getNum('bersejarah_unitTambah', 0);
+      ab.unitKurang = getNum('bersejarah_unitKurang', 0);
     }
 
     // Bab V
@@ -2625,55 +2687,69 @@
           { no: '5', uraian: 'Selesai serah terima', jumlah: '' }
         ];
       }
-      document.getElementById('babV_ketIdle').value = bv.ketIdle || '';
+      setVal('babV_ketIdle', bv.ketIdle || '');
 
-      document.getElementById('babVPerkembanganContainer').innerHTML = (bv.perkembangan || []).map((p, i) => `
-        <div class="grid grid-cols-12 gap-1.5 items-center">
-          <input type="text" value="${p.periode || ''}" oninput="state.activeReport.payload.babV.perkembangan[${i}].periode=this.value" class="col-span-5 px-2 py-1.5 text-xs border rounded-lg" />
-          <input type="number" value="${p.nilai || 0}" oninput="state.activeReport.payload.babV.perkembangan[${i}].nilai=Number(this.value||0)" class="col-span-3 px-2 py-1.5 text-xs border rounded-lg text-right font-semibold" />
-          <input type="number" value="${p.rupiah !== undefined ? p.rupiah : 0}" placeholder="Rp" oninput="state.activeReport.payload.babV.perkembangan[${i}].rupiah=Number(this.value||0)" class="col-span-2 px-2 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="text" value="${p.persen !== undefined ? p.persen : '0'}" placeholder="%" oninput="state.activeReport.payload.babV.perkembangan[${i}].persen=this.value" class="col-span-2 px-2 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('babVPspContainer').innerHTML = (bv.psp || []).map((item, i) => `
-        <div class="grid grid-cols-3 gap-2 items-center">
-          <span class="text-xs text-slate-700">${i + 1}. ${item.uraian}</span>
-          <input type="number" placeholder="Sudah PSP" value="${item.sudah}" oninput="state.activeReport.payload.babV.psp[${i}].sudah=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="number" placeholder="Belum PSP" value="${item.belum}" oninput="state.activeReport.payload.babV.psp[${i}].belum=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
-        </div>
-      `).join('');
-
-      document.getElementById('babVPengelolaanBody').innerHTML = (bv.pengelolaan || []).map((row, i) => `
-        <tr>
-          <td class="p-1.5 text-center font-semibold">${row.no}</td>
-          <td class="p-1.5">${row.uraian}</td>
-          <td class="p-1.5"><input type="text" value="${row.guna || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].guna=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.manfaat || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].manfaat=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.pindah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].pindah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.hapus || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].hapus=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-          <td class="p-1.5"><input type="text" value="${row.jumlah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].jumlah=this.value" class="w-full px-2 py-1 border rounded text-center font-semibold" /></td>
-        </tr>
-      `).join('');
-
-      document.getElementById('babVIdleBody').innerHTML = (bv.idle || []).map((row, i) => `
-        <tr>
-          <td class="p-1.5 text-center font-semibold">${row.no}</td>
-          <td class="p-1.5">${row.uraian}</td>
-          <td class="p-1.5"><input type="text" value="${row.jumlah || ''}" oninput="state.activeReport.payload.babV.idle[${i}].jumlah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
-        </tr>
-      `).join('');
-
-      const infoContainer = document.getElementById('babVInfoLainContainer');
-      infoContainer.innerHTML = bv.informasiLainnya.length === 0
-        ? `<p class="text-xs text-slate-400 italic">Belum ada poin Informasi Lainnya. Klik "+ Tambah Poin Informasi" jika terdapat catatan khusus (seperti sengketa lahan, rumah dinas, KDP, dll.).</p>`
-        : bv.informasiLainnya.map((txt, idx) => `
-          <div class="flex items-start gap-2">
-            <span class="font-bold text-slate-500 mt-2">-</span>
-            <textarea rows="3" oninput="state.activeReport.payload.babV.informasiLainnya[${idx}]=this.value" class="flex-1 px-3 py-2 text-xs border rounded-xl">${txt}</textarea>
-            <button type="button" onclick="state.activeReport.payload.babV.informasiLainnya.splice(${idx},1);renderBabVEditor();" class="mt-2 text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+      const perkEl = document.getElementById('babVPerkembanganContainer');
+      if (perkEl) {
+        perkEl.innerHTML = (bv.perkembangan || []).map((p, i) => `
+          <div class="grid grid-cols-12 gap-1.5 items-center">
+            <input type="text" value="${p.periode || ''}" oninput="state.activeReport.payload.babV.perkembangan[${i}].periode=this.value" class="col-span-5 px-2 py-1.5 text-xs border rounded-lg" />
+            <input type="number" value="${p.nilai || 0}" oninput="state.activeReport.payload.babV.perkembangan[${i}].nilai=Number(this.value||0)" class="col-span-3 px-2 py-1.5 text-xs border rounded-lg text-right font-semibold" />
+            <input type="number" value="${p.rupiah !== undefined ? p.rupiah : 0}" placeholder="Rp" oninput="state.activeReport.payload.babV.perkembangan[${i}].rupiah=Number(this.value||0)" class="col-span-2 px-2 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="text" value="${p.persen !== undefined ? p.persen : '0'}" placeholder="%" oninput="state.activeReport.payload.babV.perkembangan[${i}].persen=this.value" class="col-span-2 px-2 py-1.5 text-xs border rounded-lg text-right" />
           </div>
         `).join('');
+      }
+
+      const pspEl = document.getElementById('babVPspContainer');
+      if (pspEl) {
+        pspEl.innerHTML = (bv.psp || []).map((item, i) => `
+          <div class="grid grid-cols-3 gap-2 items-center">
+            <span class="text-xs text-slate-700">${i + 1}. ${item.uraian}</span>
+            <input type="number" placeholder="Sudah PSP" value="${item.sudah}" oninput="state.activeReport.payload.babV.psp[${i}].sudah=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+            <input type="number" placeholder="Belum PSP" value="${item.belum}" oninput="state.activeReport.payload.babV.psp[${i}].belum=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          </div>
+        `).join('');
+      }
+
+      const pengBody = document.getElementById('babVPengelolaanBody');
+      if (pengBody) {
+        pengBody.innerHTML = (bv.pengelolaan || []).map((row, i) => `
+          <tr>
+            <td class="p-1.5 text-center font-semibold">${row.no}</td>
+            <td class="p-1.5">${row.uraian}</td>
+            <td class="p-1.5"><input type="text" value="${row.guna || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].guna=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+            <td class="p-1.5"><input type="text" value="${row.manfaat || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].manfaat=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+            <td class="p-1.5"><input type="text" value="${row.pindah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].pindah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+            <td class="p-1.5"><input type="text" value="${row.hapus || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].hapus=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+            <td class="p-1.5"><input type="text" value="${row.jumlah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].jumlah=this.value" class="w-full px-2 py-1 border rounded text-center font-semibold" /></td>
+          </tr>
+        `).join('');
+      }
+
+      const idleBody = document.getElementById('babVIdleBody');
+      if (idleBody) {
+        idleBody.innerHTML = (bv.idle || []).map((row, i) => `
+          <tr>
+            <td class="p-1.5 text-center font-semibold">${row.no}</td>
+            <td class="p-1.5">${row.uraian}</td>
+            <td class="p-1.5"><input type="text" value="${row.jumlah || ''}" oninput="state.activeReport.payload.babV.idle[${i}].jumlah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+          </tr>
+        `).join('');
+      }
+
+      const infoContainer = document.getElementById('babVInfoLainContainer');
+      if (infoContainer) {
+        infoContainer.innerHTML = bv.informasiLainnya.length === 0
+          ? `<p class="text-xs text-slate-400 italic">Belum ada poin Informasi Lainnya. Klik "+ Tambah Poin Informasi" jika terdapat catatan khusus (seperti sengketa lahan, rumah dinas, KDP, dll.).</p>`
+          : bv.informasiLainnya.map((txt, idx) => `
+            <div class="flex items-start gap-2">
+              <span class="font-bold text-slate-500 mt-2">-</span>
+              <textarea rows="3" oninput="state.activeReport.payload.babV.informasiLainnya[${idx}]=this.value" class="flex-1 px-3 py-2 text-xs border rounded-xl">${txt}</textarea>
+              <button type="button" onclick="state.activeReport.payload.babV.informasiLainnya.splice(${idx},1);renderBabVEditor();" class="mt-2 text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          `).join('');
+      }
     }
 
     function addInformasiLainnyaRow() {
@@ -2683,7 +2759,7 @@
     }
 
     function syncBabVIdleKet() {
-      state.activeReport.payload.babV.ketIdle = document.getElementById('babV_ketIdle').value;
+      state.activeReport.payload.babV.ketIdle = getVal('babV_ketIdle', '');
     }
 
     async function saveCurrentReport() {
