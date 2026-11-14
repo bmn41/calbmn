@@ -24,7 +24,7 @@
     .navy-gradient {
       background: linear-gradient(135deg, #0a192f 0%, #0f2942 55%, #1e3a5f 100%);
     }
-    /* Kertas Pratinjau Dokumen Resmi CaLBMN */
+    /* Kertas Pratinjau Dokumen Resmi CaLBMN Persis Format Sheet1 */
     .calbmn-paper {
       background: #ffffff;
       color: #000000;
@@ -39,12 +39,12 @@
     .calbmn-paper table {
       width: 100%;
       border-collapse: collapse;
-      margin: 8px 0 14px 0;
+      margin: 6px 0 12px 0;
       font-size: 10.5pt;
     }
     .calbmn-paper th, .calbmn-paper td {
       border: 1px solid #000000;
-      padding: 4px 6px;
+      padding: 3.5px 6px;
       vertical-align: top;
     }
     .calbmn-paper th {
@@ -53,17 +53,11 @@
       text-align: center;
       vertical-align: middle;
     }
+    .calbmn-paper .no-border,
+    .calbmn-paper .no-border tr,
     .calbmn-paper .no-border td {
       border: none !important;
       padding: 1.5px 4px;
-    }
-    .calbmn-paper ol, .calbmn-paper ul {
-      margin: 4px 0 8px 20px;
-      padding: 0;
-    }
-    .calbmn-paper li {
-      margin-bottom: 3px;
-      text-align: justify;
     }
     /* Mode Cetak PDF */
     @media print {
@@ -429,25 +423,41 @@
           <option value="Pengembangan Nilai Aset (Langsung)"></option>
           <option value="Batal Transfer Keluar"></option>
           <option value="Perolehan hasil Tindak Lanjut Normalisasi"></option>
+          <option value="Perolehan Tindak Lanjut Normalisasi"></option>
           <option value="Penggunaan kembali BMN yang sudah dihentikan penggunaan aktif"></option>
           <option value="Penyelesaian Pembangunan Dengan KDP"></option>
           <option value="Koreksi Pencatatan Nilai Bertambah"></option>
           <option value="Koreksi Manual"></option>
           <option value="Perolehan/Penambahan KDP"></option>
+          <option value="Likuidasi KDP Masuk"></option>
+          <option value="Pengembangan KDP"></option>
+          <option value="Koreksi Nilai KDP Bertambah"></option>
           <option value="Likuidasi Masuk Henti Guna"></option>
+          <option value="Reklasifikasi Dari Aset Lainnya ke Aset Tetap"></option>
         </datalist>
 
         <datalist id="listJenisMutasiKurang">
+          <option value="Saldo Awal"></option>
           <option value="Penghapusan"></option>
+          <option value="Penghapusan/Penghentian"></option>
           <option value="Transfer Keluar"></option>
           <option value="Reklasifikasi Keluar"></option>
+          <option value="Reklasifikasi Masuk"></option>
+          <option value="Transfer Masuk"></option>
+          <option value="Pembelian"></option>
           <option value="Koreksi Pencatatan"></option>
           <option value="Koreksi Pencatatan Nilai Berkurang"></option>
+          <option value="Koreksi Nilai"></option>
           <option value="Penghentian Aset dari Penggunaan"></option>
+          <option value="Penghentiaan Aset Dari Penggunaan"></option>
           <option value="Transaksi Normalisasi BMN"></option>
           <option value="Penambahan Saldo Awal"></option>
           <option value="Koreksi Transfer Masuk"></option>
+          <option value="Pengembangan Nilai Aset"></option>
           <option value="Penyelesaian KDP"></option>
+          <option value="Transfer Keluar KDP"></option>
+          <option value="Koreksi Pencatatan KDP"></option>
+          <option value="Hibah Keluar KDP"></option>
           <option value="Hibah Keluar"></option>
         </datalist>
 
@@ -521,7 +531,7 @@
               <span id="editorBadgeId" class="px-3 py-1 rounded-lg bg-blue-900 text-white font-mono text-xs font-bold">-</span>
               <div>
                 <h2 id="editorTitleLabel" class="text-sm font-extrabold text-slate-900">Editor Kertas Kerja CaLBMN</h2>
-                <p class="text-[11px] text-slate-500">Bagian BMN yang tidak diisi transaksinya otomatis disembunyikan pada Output Laporan</p>
+                <p class="text-[11px] text-slate-500">Format Output 100% Identik dengan Sheet1 • Bagian BMN tanpa transaksi otomatis tidak ditampilkan</p>
               </div>
             </div>
 
@@ -561,7 +571,7 @@
             </button>
             <button onclick="switchEditorSubTab('penyusutan')" id="subTabBtn-penyusutan"
               class="px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
-              4. Penyusutan, Revaluasi, Bersejarah & Neraca (Bab IV.2.i - IV.3)
+              4. Penyusutan, Kemitraan, Revaluasi, Bersejarah & Neraca (Bab IV.2.h - IV.3)
             </button>
             <button onclick="switchEditorSubTab('babv')" id="subTabBtn-babv"
               class="px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60">
@@ -619,10 +629,14 @@
             </div>
 
             <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2 pt-2">B. Ringkasan Saldo Awal Tahun (Bab IV.1)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Label Judul Bab IV (Per Periode)</label>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Judul Ringkasan Bab IV (Per ...)</label>
                 <input type="text" id="meta_periodeRingkasanJudul" oninput="syncFormToPayload()" placeholder="Contoh: SEMESTER II 2025" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Tahun pada Subjudul IV.1</label>
+                <input type="text" id="meta_tahunSaldoAwal" oninput="syncFormToPayload()" placeholder="Contoh: 2025" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Saldo Awal Tahun</label>
@@ -669,7 +683,7 @@
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
               <div class="flex justify-between items-center border-b pb-2">
                 <div>
-                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab IV.2.a — Barang Persediaan</h3>
+                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab IV.2.a — Barang Persediaan.</h3>
                   <p class="text-[11px] text-slate-500">Jika seluruh akun bernilai 0, bagian Barang Persediaan otomatis tidak ditampilkan di output laporan.</p>
                 </div>
                 <button onclick="addPersediaanRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 text-xs font-bold">
@@ -742,7 +756,7 @@
                 <!-- Mutasi Tambah Tanah -->
                 <div class="border border-slate-200 rounded-xl p-4 space-y-3">
                   <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-emerald-800 uppercase">Mutasi Tambah Tanah (Dinamis)</h4>
+                    <h4 class="text-xs font-extrabold text-emerald-800 uppercase">Mutasi Tambah Tanah tersebut meliputi :</h4>
                     <button type="button" onclick="addTanahMutasiRow('tambah')"
                       class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold">
                       <i class="fa-solid fa-plus mr-1"></i>Tambah Jenis Mutasi
@@ -765,7 +779,7 @@
                 <!-- Mutasi Kurang Tanah -->
                 <div class="border border-slate-200 rounded-xl p-4 space-y-3">
                   <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-extrabold text-rose-800 uppercase">Mutasi Kurang Tanah (Dinamis)</h4>
+                    <h4 class="text-xs font-extrabold text-rose-800 uppercase">Mutasi Kurang Tanah tersebut meliputi :</h4>
                     <button type="button" onclick="addTanahMutasiRow('kurang')"
                       class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold">
                       <i class="fa-solid fa-plus mr-1"></i>Tambah Jenis Mutasi
@@ -788,11 +802,11 @@
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t">
                 <div>
-                  <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Rincian Kondisi Tanah (Kuantitas m2 & Nilai Rp)</h4>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Rincian Kondisi Tanah (Kuantitas m2 & Nilai Rp.)</h4>
                   <div id="tanahKondisiContainer" class="space-y-2"></div>
                 </div>
                 <div>
-                  <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Permasalahan Tanah (Kuantitas bidang/m2 & Nilai Rp)</h4>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Permasalahan Tanah (Kuantitas bidang/m2 & Nilai Rp.)</h4>
                   <div id="tanahMasalahContainer" class="space-y-2"></div>
                 </div>
               </div>
@@ -835,7 +849,7 @@
                     <option value="gb_403">3. Bangunan Menara (4.03)</option>
                     <option value="gb_404">4. Tugu Titik Kontrol/Pasti (4.04)</option>
                   </optgroup>
-                  <optgroup label="e. Jalan, Irigasi, dan Jaringan (5.01 - 5.04)">
+                  <optgroup label="e. Jalan Irigasi dan Jaringan (5.01 - 5.04)">
                     <option value="jij_501">1. Jalan dan Jembatan (5.01)</option>
                     <option value="jij_502">2. Bangunan Air (5.02)</option>
                     <option value="jij_503">3. Instalasi (5.03)</option>
@@ -903,8 +917,8 @@
                     <thead>
                       <tr class="bg-slate-50 border-b text-slate-600">
                         <th class="p-2 text-left">Uraian Jenis Transaksi</th>
-                        <th class="p-2 text-right w-32">Intrakomptabel (Rp)</th>
-                        <th class="p-2 text-right w-32">Ekstrakomptabel (Rp)</th>
+                        <th class="p-2 text-right w-32">Intrakomptabel (Rp.)</th>
+                        <th class="p-2 text-right w-32">Ekstrakomptabel (Rp.)</th>
                         <th class="p-2 text-center w-8"></th>
                       </tr>
                     </thead>
@@ -930,8 +944,8 @@
                     <thead>
                       <tr class="bg-slate-50 border-b text-slate-600">
                         <th class="p-2 text-left">Uraian Jenis Transaksi</th>
-                        <th class="p-2 text-right w-32">Intrakomptabel (Rp)</th>
-                        <th class="p-2 text-right w-32">Ekstrakomptabel (Rp)</th>
+                        <th class="p-2 text-right w-32">Intrakomptabel (Rp.)</th>
+                        <th class="p-2 text-right w-32">Ekstrakomptabel (Rp.)</th>
                         <th class="p-2 text-center w-8"></th>
                       </tr>
                     </thead>
@@ -962,6 +976,8 @@
                 <div class="grid grid-cols-2 gap-3">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-1">Dimanfaatkan Pihak Ketiga (Kuantitas)</label>
+                    <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Dimanfaatkan Pihak Ketiga (Kuantitas)</label>
                     <input type="number" id="sa_pihakKetigaQty" oninput="syncSubAssetMeta()" class="w-full px-2.5 py-1.5 text-xs border rounded-lg text-right" />
                   </div>
                   <div>
@@ -989,18 +1005,19 @@
             </div>
           </div>
 
-          <!-- SUB-TAB 4: PENYUSUTAN, BMN DIHENTIKAN PER GOLONGAN, REVALUASI & ASET BERSEJARAH -->
+          <!-- SUB-TAB 4: PENYUSUTAN, KEMITRAAN GOLONGAN, BMN DIHENTIKAN GOLONGAN, REVALUASI, BERSEJARAH & PERBANDINGAN NERACA -->
           <div id="editorSubTab-penyusutan" class="hidden space-y-6">
+            <!-- Akumulasi Penyusutan -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Akumulasi Penyusutan BMN per Kelompok Neraca</h3>
+              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Akumulasi Penyusutan BMN per Perkiraan Neraca (Bab IV.2 & IV.3.a)</h3>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs border-collapse">
                   <thead>
                     <tr class="bg-slate-50 border-b text-slate-600 font-bold">
-                      <th class="p-2.5 text-left">Kelompok Aset Neraca</th>
-                      <th class="p-2.5 text-right">Penyusutan Intrakomptabel (Rp)</th>
-                      <th class="p-2.5 text-right">Penyusutan Ekstrakomptabel (Rp)</th>
-                      <th class="p-2.5 text-right">Gabungan (Rp)</th>
+                      <th class="p-2.5 text-left">Uraian Neraca</th>
+                      <th class="p-2.5 text-right">Intrakomptabel (Rp.)</th>
+                      <th class="p-2.5 text-right">Ekstrakomptabel (Rp.)</th>
+                      <th class="p-2.5 text-right">Gabungan (Rp.)</th>
                     </tr>
                   </thead>
                   <tbody id="penyusutanTableBody" class="divide-y"></tbody>
@@ -1008,40 +1025,83 @@
               </div>
             </div>
 
+            <!-- Golongan Kemitraan & Golongan BMN Dihentikan -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Rincian BMN Dihentikan per Golongan Barang</h3>
-                <div id="bmnDihentikanContainer" class="space-y-2"></div>
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Rincian Aset Kemitraan per Golongan Barang (Bab IV.2.h.1)</h3>
+                <div id="kemitraanGolonganContainer" class="space-y-2"></div>
               </div>
 
               <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Rincian BMN Dihentikan per Golongan Barang (Bab IV.2.h.3)</h3>
+                <div id="bmnDihentikanContainer" class="space-y-2"></div>
+              </div>
+            </div>
+
+            <!-- Revaluasi BMN Dihentikan & Aset Bersejarah -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                 <div class="flex justify-between items-center border-b pb-2">
-                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">BMN Dihentikan Hasil Revaluasi</h3>
+                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">BMN Dihentikan Hasil Revaluasi BMN (Bab IV.2.h.3)</h3>
                   <button type="button" onclick="addRevaluasiRow()" class="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-900 text-xs font-bold">
                     <i class="fa-solid fa-plus mr-1"></i>Tambah Barang
                   </button>
                 </div>
                 <div id="revaluasiContainer" class="space-y-2"></div>
               </div>
+
+              <!-- Aset Bersejarah -->
+              <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab IV.2.i — BMN Berupa Aset Bersejarah</h3>
+                <p class="text-[11px] text-slate-500">Jika unit & mutasi bernilai 0, bagian Aset Bersejarah otomatis tidak ditampilkan di output laporan.</p>
+                <div class="grid grid-cols-3 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Saldo Awal (Unit)</label>
+                    <input type="number" id="bersejarah_unitAwal" oninput="syncAsetBersejarah()" class="w-full px-2.5 py-1.5 text-xs border rounded-xl text-right" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Mutasi Tambah (Unit)</label>
+                    <input type="number" id="bersejarah_unitTambah" oninput="syncAsetBersejarah()" class="w-full px-2.5 py-1.5 text-xs border rounded-xl text-right" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Mutasi Kurang (Unit)</label>
+                    <input type="number" id="bersejarah_unitKurang" oninput="syncAsetBersejarah()" class="w-full px-2.5 py-1.5 text-xs border rounded-xl text-right" />
+                  </div>
+                </div>
+                <div class="space-y-2 pt-2 border-t">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-emerald-800">Mutasi Tambah Aset Bersejarah</span>
+                    <button type="button" onclick="addBersejarahMutasiRow('tambah')" class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 text-[11px] font-bold">+ Tambah</button>
+                  </div>
+                  <div id="bersejarahTambahContainer" class="space-y-1.5"></div>
+                  <div class="flex justify-between items-center pt-2">
+                    <span class="text-xs font-bold text-rose-800">Mutasi Kurang Aset Bersejarah</span>
+                    <button type="button" onclick="addBersejarahMutasiRow('kurang')" class="px-2 py-0.5 rounded bg-rose-50 text-rose-800 text-[11px] font-bold">+ Tambah</button>
+                  </div>
+                  <div id="bersejarahKurangContainer" class="space-y-1.5"></div>
+                </div>
+              </div>
             </div>
 
-            <!-- Aset Bersejarah -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab IV.2.i — BMN Berupa Aset Bersejarah</h3>
-              <p class="text-xs text-slate-500">Jika seluruh unit bernilai 0, bagian Aset Bersejarah tidak ditampilkan di output laporan.</p>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-1">Saldo Awal (Unit)</label>
-                  <input type="number" id="bersejarah_unitAwal" oninput="syncAsetBersejarah()" class="w-full px-3 py-2 text-xs border rounded-xl text-right" />
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-1">Mutasi Tambah (Unit)</label>
-                  <input type="number" id="bersejarah_unitTambah" oninput="syncAsetBersejarah()" class="w-full px-3 py-2 text-xs border rounded-xl text-right" />
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-1">Mutasi Kurang (Unit)</label>
-                  <input type="number" id="bersejarah_unitKurang" oninput="syncAsetBersejarah()" class="w-full px-3 py-2 text-xs border rounded-xl text-right" />
-                </div>
+            <!-- Perbandingan Laporan Barang vs Laporan Keuangan (Bab IV.3.b) -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+              <div>
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab IV.3.b — Perbandingan Nilai BMN pada Laporan Barang dan Laporan Keuangan</h3>
+                <p class="text-xs text-slate-500 mt-1">Secara default Nilai Laporan Keuangan disamakan dengan Nilai Intrakomptabel Laporan Barang (Selisih = 0). Anda dapat menyesuaikan kolom Laporan Keuangan jika terdapat selisih.</p>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b text-slate-600 font-bold">
+                      <th class="p-2 text-center w-10">No</th>
+                      <th class="p-2 text-left">Akun Neraca</th>
+                      <th class="p-2 text-right">Laporan Barang (Intra Rp.)</th>
+                      <th class="p-2 text-right">Selisih Manual (Rp.)</th>
+                      <th class="p-2 text-right">Laporan Keuangan (Rp.)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="perbandinganNeracaBody" class="divide-y"></tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -1052,36 +1112,62 @@
               <!-- Perkembangan Nilai BMN -->
               <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                 <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.1 — Perkembangan Nilai BMN (5 Periode Terakhir)</h3>
+                <div class="grid grid-cols-12 gap-2 text-[11px] font-bold text-slate-500 px-1">
+                  <div class="col-span-5">Periode Laporan</div>
+                  <div class="col-span-3 text-right">Nilai BMN</div>
+                  <div class="col-span-2 text-right">Perkembangan (Rp)</div>
+                  <div class="col-span-2 text-right">Persen</div>
+                </div>
                 <div id="babVPerkembanganContainer" class="space-y-2"></div>
               </div>
 
               <!-- Penetapan Status Penggunaan (PSP) -->
               <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.2.a — Penetapan Status Penggunaan BMN (PSP)</h3>
+                <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.2.a — Penetapan Status Penggunaan BMN</h3>
+                <div class="grid grid-cols-3 gap-2 text-[11px] font-bold text-slate-500 px-1">
+                  <div>Uraian</div>
+                  <div class="text-right">Sudah Ditetapkan (Rp)</div>
+                  <div class="text-right">Belum Ditetapkan (Rp)</div>
+                </div>
                 <div id="babVPspContainer" class="space-y-2"></div>
               </div>
             </div>
 
             <!-- Pengelolaan BMN & BMN Idle -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.2.b & c — Pengelolaan BMN & BMN Idle</h3>
+              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2">Bab V.2.b — Pengelolaan BMN</h3>
               <div class="overflow-x-auto">
                 <table class="w-full text-xs border-collapse">
                   <thead>
                     <tr class="bg-slate-50 border-b text-slate-600 font-bold">
                       <th class="p-2 text-center w-10">No</th>
-                      <th class="p-2 text-left">Uraian Tahapan Pengelolaan BMN</th>
+                      <th class="p-2 text-left">Uraian</th>
                       <th class="p-2 text-center">Penggunaan</th>
                       <th class="p-2 text-center">Pemanfaatan</th>
                       <th class="p-2 text-center">Pemindahtanganan</th>
                       <th class="p-2 text-center">Penghapusan</th>
+                      <th class="p-2 text-center">Jumlah</th>
                     </tr>
                   </thead>
                   <tbody id="babVPengelolaanBody" class="divide-y"></tbody>
                 </table>
               </div>
+
+              <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950 border-b pb-2 pt-4">Bab V.2.c — Pengelolaan BMN Idle</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b text-slate-600 font-bold">
+                      <th class="p-2 text-center w-12">No</th>
+                      <th class="p-2 text-left">Uraian</th>
+                      <th class="p-2 text-center w-48">Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody id="babVIdleBody" class="divide-y"></tbody>
+                </table>
+              </div>
               <div class="pt-2">
-                <label class="block text-xs font-bold text-slate-600 mb-1">Keterangan / Penjelasan BMN Idle (Bab V.2.c)</label>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Kalimat Penjelasan BMN Idle di Bawah Tabel</label>
                 <input type="text" id="babV_ketIdle" oninput="syncBabVIdleKet()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl" />
               </div>
             </div>
@@ -1091,7 +1177,7 @@
               <div class="flex justify-between items-center border-b pb-2">
                 <div>
                   <h3 class="text-sm font-extrabold uppercase tracking-wider text-blue-950">Bab V.2.d — Informasi Lainnya</h3>
-                  <p class="text-xs text-slate-500">Tambahkan poin penjelasan tambahan (seperti permasalahan lahan, rumah dinas, KDP, dll.).</p>
+                  <p class="text-xs text-slate-500">Tambahkan poin penjelasan tambahan (seperti permasalahan sengketa lahan, rumah dinas, KDP, dll.).</p>
                 </div>
                 <button type="button" onclick="addInformasiLainnyaRow()" class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 text-xs font-bold">
                   <i class="fa-solid fa-plus mr-1"></i>Tambah Poin Informasi
@@ -1109,8 +1195,8 @@
       <div id="mainTab-preview" class="hidden space-y-5">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-3 no-print">
           <div>
-            <h2 class="text-sm font-extrabold text-slate-900">Pratinjau Output Laporan Resmi CaLBMN</h2>
-            <p class="text-xs text-slate-500">Format identik dengan dokumen standar CaLBMN UNIMA • Bagian tanpa transaksi otomatis disembunyikan</p>
+            <h2 class="text-sm font-extrabold text-slate-900">Pratinjau Output Laporan Resmi CaLBMN (100% Sesuai Format Sheet1)</h2>
+            <p class="text-xs text-slate-500">Seluruh narasi, struktur bab, dan nama tabel sama persis dengan format Sheet1 • Bagian tanpa transaksi otomatis disembunyikan</p>
           </div>
           <div class="flex flex-wrap gap-2">
             <button onclick="switchMainTab('editor')" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">
@@ -1274,74 +1360,90 @@
       activeReport: null
     };
 
-    // Definisi Seluruh Kelompok & Sub-Bidang BMN Persis Sesuai File Excel
+    // Definisi Seluruh Kelompok & Sub-Bidang BMN Persis Sesuai Sheet1
     const BMN_GROUPS = [
       {
         groupCode: 'pm',
         letter: 'c',
         title: 'Peralatan dan Mesin',
+        narrativeTitle: 'Peralatan dan Mesin',
+        rincianIntro: 'Rincian mutasi Peralatan dan Mesin per bidang barang adalah sebagai berikut:',
         penyKey: 'pm',
         penyTitle: 'Akumulasi Penyusutan Peralatan dan Mesin',
+        penyNarrativeName: 'peralatan dan mesin',
+        penyInParens: true,
         items: [
-          { key: 'pm_301', name: 'Alat Besar', code: '3.01' },
-          { key: 'pm_302', name: 'Alat Angkutan', code: '3.02' },
-          { key: 'pm_303', name: 'Alat Bengkel dan Alat Ukur', code: '3.03' },
-          { key: 'pm_304', name: 'Alat Pertanian', code: '3.04' },
-          { key: 'pm_305', name: 'Alat Kantor & Rumah Tangga', code: '3.05' },
-          { key: 'pm_306', name: 'Alat Studio. Komunikasi dan Pemancar', code: '3.06' },
-          { key: 'pm_307', name: 'Alat Kedokteran dan Kesehatan', code: '3.07' },
-          { key: 'pm_308', name: 'Alat Laboratorium', code: '3.08' },
-          { key: 'pm_309', name: 'Alat Persenjataan', code: '3.09' },
-          { key: 'pm_310', name: 'Komputer', code: '3.10' },
-          { key: 'pm_311', name: 'Alat Eksplorasi', code: '3.11' },
-          { key: 'pm_312', name: 'Alat Pengeboran', code: '3.12' },
-          { key: 'pm_313', name: 'Alat Produksi. Pengolahan dan Pemurnian', code: '3.13' },
-          { key: 'pm_315', name: 'Alat Keselamatan Kerja', code: '3.15' },
-          { key: 'pm_316', name: 'Alat Peraga', code: '3.16' },
-          { key: 'pm_317', name: 'Peralatan Proses/Produksi', code: '3.17' },
-          { key: 'pm_318', name: 'Rambu Papan Tambahan', code: '3.18' },
-          { key: 'pm_319', name: 'Peralatan Olah Raga', code: '3.19' }
+          { key: 'pm_301', name: 'Alat Besar', code: '3.01', kurangHasSaldoWord: false },
+          { key: 'pm_302', name: 'Alat Angkutan', code: '3.02', kurangHasSaldoWord: true },
+          { key: 'pm_303', name: 'Alat Bengkel dan Alat Ukur', code: '3.03', kurangHasSaldoWord: true },
+          { key: 'pm_304', name: 'Alat Pertanian', code: '3.04', kurangHasSaldoWord: true },
+          { key: 'pm_305', name: 'Alat Kantor & Rumah Tangga', code: '3.05', kurangHasSaldoWord: true },
+          { key: 'pm_306', name: 'Alat Studio. Komunikasi dan Pemancar', code: '3.06', kurangHasSaldoWord: true },
+          { key: 'pm_307', name: 'Alat Kedokteran dan Kesehatan', code: '3.07', kurangHasSaldoWord: true },
+          { key: 'pm_308', name: 'Alat Laboratorium', code: '3.08', kurangHasSaldoWord: true },
+          { key: 'pm_309', name: 'Alat Persenjataan', code: '3.09', kurangHasSaldoWord: true },
+          { key: 'pm_310', name: 'Komputer', code: '3.10', kurangHasSaldoWord: true },
+          { key: 'pm_311', name: 'Alat Eksplorasi', code: '3.11', kurangHasSaldoWord: true },
+          { key: 'pm_312', name: 'Alat Pengeboran', code: '3.12', kurangHasSaldoWord: true },
+          { key: 'pm_313', name: 'Alat Produksi. Pengolahan dan Pemurnian', code: '3.13', kurangHasSaldoWord: true },
+          { key: 'pm_315', name: 'Alat Keselamatan Kerja', code: '3.15', kurangHasSaldoWord: true },
+          { key: 'pm_316', name: 'Alat Peraga', code: '3.16', kurangHasSaldoWord: true },
+          { key: 'pm_317', name: 'Peralatan Proses/Produksi', code: '3.17', kurangHasSaldoWord: true },
+          { key: 'pm_318', name: 'Rambu Papan Tambahan', code: '3.18', kurangHasSaldoWord: true },
+          { key: 'pm_319', name: 'Peralatan Olah Raga', code: '3.19', kurangHasSaldoWord: true }
         ]
       },
       {
         groupCode: 'gb',
         letter: 'd',
         title: 'Gedung dan Bangunan',
+        narrativeTitle: 'Gedung dan Bangunan',
+        rincianIntro: 'Rincian mutasi Gedung dan Bangunan per bidang barang adalah sebagai berikut:',
         penyKey: 'gb',
         penyTitle: 'Akumulasi Penyusutan Gedung dan Bangunan',
+        penyNarrativeName: 'Gedung dan Bangunan',
+        penyInParens: true,
         items: [
-          { key: 'gb_401', name: 'Bangunan Gedung', code: '4.01' },
-          { key: 'gb_402', name: 'Monumen', code: '4.02' },
-          { key: 'gb_403', name: 'Bangunan Menara', code: '4.03' },
-          { key: 'gb_404', name: 'Tugu Titik Kontrol/Pasti', code: '4.04' }
+          { key: 'gb_401', name: 'Bangunan Gedung', code: '4.01', kurangHasSaldoWord: false },
+          { key: 'gb_402', name: 'Monumen', code: '4.02', kurangHasSaldoWord: false },
+          { key: 'gb_403', name: 'Bangunan Menara', code: '4.03', kurangHasSaldoWord: false },
+          { key: 'gb_404', name: 'Tugu Titik Kontrol/Pasti', code: '4.04', kurangHasSaldoWord: false }
         ]
       },
       {
         groupCode: 'jij',
         letter: 'e',
         title: 'Jalan Irigasi dan Jaringan',
+        narrativeTitle: 'Jalan, Irigasi, dan Jaringan',
+        rincianIntro: 'Rincian mutasi Jalan Irigasi dan Jaringan per bidang barang adalah sebagai berikut :',
         penyKey: 'jij',
         penyTitle: 'Akumulasi Penyusutan Jalan Irigasi dan Jaringan',
+        penyNarrativeName: 'Jalan. Irigasi. dan Jaringan',
+        penyInParens: true,
         items: [
-          { key: 'jij_501', name: 'Jalan dan Jembatan', code: '5.01' },
-          { key: 'jij_502', name: 'Bangunan Air', code: '5.02' },
-          { key: 'jij_503', name: 'Instalasi', code: '5.03' },
-          { key: 'jij_504', name: 'Jaringan', code: '5.04' }
+          { key: 'jij_501', name: 'Jalan dan Jembatan', code: '5.01', kurangHasSaldoWord: false },
+          { key: 'jij_502', name: 'Bangunan Air', code: '5.02', kurangHasSaldoWord: false },
+          { key: 'jij_503', name: 'Instalasi', code: '5.03', kurangHasSaldoWord: false },
+          { key: 'jij_504', name: 'Jaringan', code: '5.04', kurangHasSaldoWord: false }
         ]
       },
       {
         groupCode: 'atl',
         letter: 'f',
         title: 'Aset Tetap Lainnya',
+        narrativeTitle: 'Aset Tetap Lainnya',
+        rincianIntro: 'Rincian mutasi Aset Tetap Lainnya per bidang barang adalah sebagai berikut :',
         penyKey: 'atl',
         penyTitle: 'Akumulasi Penyusutan Aset Tetap Lainnya',
+        penyNarrativeName: 'Aset Tetap Lainnya',
+        penyInParens: false,
         items: [
-          { key: 'atl_601', name: 'Bahan Perpustakaan', code: '6.01' },
-          { key: 'atl_602', name: 'Barang Bercorak Kesenian/Kebudayaan/Olahraga', code: '6.02' },
-          { key: 'atl_603', name: 'Hewan', code: '6.03' },
-          { key: 'atl_604', name: 'Ikan', code: '6.04' },
-          { key: 'atl_605', name: 'Tanaman', code: '6.05' },
-          { key: 'atl_607', name: 'Aset Tetap Dalam Renovasi', code: '6.07' }
+          { key: 'atl_601', name: 'Bahan Perpustakaan', code: '6.01', kurangHasSaldoWord: false },
+          { key: 'atl_602', name: 'Barang Bercorak Kesenian/Kebudayaan/Olahraga', code: '6.02', kurangHasSaldoWord: false },
+          { key: 'atl_603', name: 'Hewan', code: '6.03', kurangHasSaldoWord: false },
+          { key: 'atl_604', name: 'Ikan', code: '6.04', kurangHasSaldoWord: false },
+          { key: 'atl_605', name: 'Tanaman', code: '6.05', kurangHasSaldoWord: false },
+          { key: 'atl_607', name: 'Aset Tetap Dalam Renovasi', code: '6.07', kurangHasSaldoWord: false }
         ]
       }
     ];
@@ -1362,6 +1464,7 @@
           tahunAnggaran: '2026',
           tanggalCutoff: '30 Juni 2026',
           periodeRingkasanJudul: 'SEMESTER II 2025',
+          tahunSaldoAwal: '2025',
           tanggalSaldoAwal: '01 Januari 2026',
           nilaiNeracaAwalIntra: 0,
           nilaiNeracaAwalEkstra: 0,
@@ -1423,6 +1526,13 @@
           atb_intra: 0, atb_ekstra: 0,
           dihentikan_intra: 0, dihentikan_ekstra: 0
         },
+        kemitraanGolongan: [
+          { uraian: 'Tanah', intra: 0, ekstra: 0 },
+          { uraian: 'Peralatan dan Mesin', intra: 0, ekstra: 0 },
+          { uraian: 'Gedung dan Bangunan', intra: 0, ekstra: 0 },
+          { uraian: 'Jalan. Jembatan. Irigasi dan jaringan', intra: 0, ekstra: 0 },
+          { uraian: 'Aset Tetap Lainnya', intra: 0, ekstra: 0 }
+        ],
         bmnDihentikanGolongan: [
           { uraian: 'Tanah', intra: 0, ekstra: 0 },
           { uraian: 'Peralatan dan Mesin', intra: 0, ekstra: 0 },
@@ -1440,16 +1550,25 @@
         ],
         asetBersejarah: {
           unitAwal: 0, unitTambah: 0, unitKurang: 0,
-          tambah: [],
-          kurang: []
+          tambah: [
+            { uraian: 'Perolehan Barang Bersejarah', intra: 0, ekstra: 0 },
+            { uraian: 'Perubahan/Koreksi Barang Bersejarah (Positif)', intra: 0, ekstra: 0 }
+          ],
+          kurang: [
+            { uraian: 'Perubahan/Koreksi Barang Bersejarah (Negatif)', intra: 0, ekstra: 0 },
+            { uraian: 'Penghapusan Barang Bersejarah', intra: 0, ekstra: 0 }
+          ]
+        },
+        selisihNeracaManual: {
+          persediaan: 0, tanah: 0, pm: 0, gb: 0, jij: 0, atl: 0, kdp: 0, atb: 0, dihentikan: 0
         },
         babV: {
           perkembangan: [
-            { periode: 'Semester I Tahun 2023', nilai: 0 },
-            { periode: 'Semester II Tahun 2023', nilai: 0 },
-            { periode: 'Semester I Tahun 2024', nilai: 0 },
-            { periode: 'Semester II T.A 2024', nilai: 0 },
-            { periode: 'Semester I T.A 2025', nilai: 0 }
+            { periode: 'Semester I Tahun 2023', nilai: 0, rupiah: 0, persen: '0' },
+            { periode: 'Semester II Tahun 2023', nilai: 0, rupiah: 0, persen: '0' },
+            { periode: 'Semester I Tahun 2024', nilai: 0, rupiah: 0, persen: '0' },
+            { periode: 'Semester II T.A 2024', nilai: 0, rupiah: 0, persen: '0' },
+            { periode: 'Semester I T.A 2025', nilai: 0, rupiah: 0, persen: '0' }
           ],
           psp: [
             { uraian: 'Tanah', sudah: 0, belum: 0 },
@@ -1458,17 +1577,17 @@
             { uraian: 'STB yg tak memiliki bukti kepemilikan', sudah: 0, belum: 0 }
           ],
           pengelolaan: [
-            { no: '1', uraian: 'Dalam proses pengajuan permohonan ke Pengguna Barang *)', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '2', uraian: 'Dalam proses pengajuan permohonan ke Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '3', uraian: 'Dalam proses Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '4', uraian: 'Selesai di Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '', uraian: 'a. Dikembalikan', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '', uraian: 'b. Ditolak', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '', uraian: 'c. Disetujui', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '5', uraian: 'Dalam proses tindak lanjut Pengguna Barang/Kuasa Pengguna Barang', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '6', uraian: 'Telah diterbitkan Keputusan dari Pengguna Barang', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '7', uraian: 'Tindak lanjut oleh Kuasa Pengguna Barang', guna: '', manfaat: '', pindah: '', hapus: '' },
-            { no: '8', uraian: 'Selesai serah terima', guna: '', manfaat: '', pindah: '', hapus: '' }
+            { no: '1', uraian: 'Dalam proses pengajuan permohonan ke Pengguna Barang *)', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '2', uraian: 'Dalam proses pengajuan permohonan ke Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '3', uraian: 'Dalam proses Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '4', uraian: 'Selesai di Pengelola Barang', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '', uraian: 'a. Dikembalikan', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '', uraian: 'b. Ditolak', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '', uraian: 'c. Disetujui', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '5', uraian: 'Dalam proses tindak lanjut Pengguna Barang/Kuasa Pengguna Barang', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '6', uraian: 'Telah diterbitkan Keputusan dari Pengguna Barang', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '7', uraian: 'Tindak lanjut oleh Kuasa Pengguna Barang', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' },
+            { no: '8', uraian: 'Selesai serah terima', guna: '', manfaat: '', pindah: '', hapus: '', jumlah: '' }
           ],
           idle: [
             { no: '1', uraian: 'Jumlah BMN yang teridentifikasi sebagai BMN Idle', jumlah: '' },
@@ -1807,6 +1926,7 @@
       sample.meta.uappbw = sample.meta.uakpb;
       sample.meta.kodeSatker = document.getElementById('initDraft_kodeSatker').value.trim();
       sample.meta.periodeRingkasanJudul = `${sample.meta.periode.toUpperCase()} ${sample.meta.tahunAnggaran}`;
+      sample.meta.tahunSaldoAwal = sample.meta.tahunAnggaran;
 
       const newDraftObj = {
         reportId: '',
@@ -1859,18 +1979,10 @@
         };
       }
       const item = sa[key];
-      if (item.qtyAwal === undefined) item.qtyAwal = 0;
-      if (item.awalIntra === undefined) item.awalIntra = 0;
-      if (item.awalEkstra === undefined) item.awalEkstra = 0;
-      if (item.qtyTambah === undefined) item.qtyTambah = 0;
-      if (item.qtyKurang === undefined) item.qtyKurang = 0;
-      if (item.pihakKetigaQty === undefined) item.pihakKetigaQty = 0;
-      if (item.pihakKetigaNilai === undefined) item.pihakKetigaNilai = 0;
-      if (item.prosesHapusQty === undefined) item.prosesHapusQty = 0;
-      if (item.prosesHapusNilai === undefined) item.prosesHapusNilai = 0;
-      if (item.dihentikanQty === undefined) item.dihentikanQty = 0;
-      if (item.dihentikanNilai === undefined) item.dihentikanNilai = 0;
-      item.tambah = (item.tambah || []).filter(r => r && String(r.uraian || '').toLowerCase() !== 'saldo awal').map(r => ({
+      ['qtyAwal', 'awalIntra', 'awalEkstra', 'qtyTambah', 'qtyKurang', 'pihakKetigaQty', 'pihakKetigaNilai', 'prosesHapusQty', 'prosesHapusNilai', 'dihentikanQty', 'dihentikanNilai'].forEach(f => {
+        if (item[f] === undefined) item[f] = 0;
+      });
+      item.tambah = (item.tambah || []).filter(r => r && !/^saldo awal/i.test(String(r.uraian || '').trim())).map(r => ({
         uraian: r.uraian || '',
         intra: Number(r.intra || 0),
         ekstra: Number(r.ekstra || 0)
@@ -1918,14 +2030,15 @@
         Number(sa.qtyAwal || 0) !== 0 ||
         (sa.tambah && sa.tambah.length > 0) ||
         (sa.kurang && sa.kurang.length > 0) ||
-        kondisiSum !== 0
+        kondisiSum !== 0 ||
+        Number(sa.dihentikanQty || 0) !== 0 ||
+        Number(sa.dihentikanNilai || 0) !== 0
       );
 
       return { awalIntra, awalEkstra, awalGab, tambahIntra, tambahEkstra, tambahGab, kurangIntra, kurangEkstra, kurangGab, akhirIntra, akhirEkstra, akhirGab, hasActivity };
     }
 
     function computeNeracaSummary(p) {
-      // 1. Persediaan
       let persAwal = 0, persMutasi = 0;
       ((p.persediaan && p.persediaan.items) || []).forEach(it => {
         persAwal += Number(it.awal || 0);
@@ -1934,7 +2047,6 @@
       const persAkhir = persAwal + persMutasi;
       const hasPersediaan = ((p.persediaan && p.persediaan.items) || []).some(it => Number(it.awal || 0) !== 0 || Number(it.mutasi || 0) !== 0);
 
-      // 2. Tanah
       const t = p.tanah || {};
       const tanahAwal = Number(t.awalIntra || 0);
       let tanahTambah = 0, tanahKurang = 0;
@@ -1949,7 +2061,6 @@
         (t.masalah || []).some(m => Number(m.qty || 0) !== 0 || Number(m.nilai || 0) !== 0)
       );
 
-      // 3. Kelompok Sub-Assets (PM, GB, JIJ, ATL, KDP, Kemitraan, ATB, Dihentikan)
       const groupTotals = {};
       BMN_GROUPS.forEach(g => {
         let gAwalIntra = 0, gAwalEkstra = 0, gTambahGab = 0, gKurangGab = 0, gAkhirIntra = 0, gAkhirEkstra = 0, anyActive = false;
@@ -2092,7 +2203,7 @@
       document.getElementById('editorTitleLabel').textContent = `Kertas Kerja CaLBMN ${m.periode || ''} TA ${m.tahunAnggaran || ''}`;
 
       const metaKeys = [
-        'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tanggalSaldoAwal',
+        'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
         'nilaiNeracaAwalIntra', 'nilaiNeracaAwalEkstra', 'uapb', 'uapbe1', 'uappbw', 'uakpb',
         'kodeSatker', 'alamat', 'telepon', 'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd', 'nipTtd'
       ];
@@ -2112,7 +2223,7 @@
       if (!state.activeReport) return;
       const m = state.activeReport.payload.meta;
       const metaKeys = [
-        'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tanggalSaldoAwal',
+        'periode', 'tahunAnggaran', 'tanggalCutoff', 'periodeRingkasanJudul', 'tahunSaldoAwal', 'tanggalSaldoAwal',
         'uapb', 'uapbe1', 'uappbw', 'uakpb', 'kodeSatker', 'alamat', 'telepon',
         'kotaTtd', 'tanggalTtd', 'jabatanTtd', 'namaTtd', 'nipTtd'
       ];
@@ -2341,9 +2452,10 @@
       renderDashboard();
     }
 
-    // Penyusutan, BMN Dihentikan, Revaluasi & Aset Bersejarah
+    // Penyusutan, Golongan Kemitraan, Golongan BMN Dihentikan, Revaluasi, Bersejarah & Perbandingan Neraca
     function renderPenyusutanEditor() {
-      const peny = state.activeReport.payload.penyusutan;
+      const p = state.activeReport.payload;
+      const peny = p.penyusutan;
       const rows = [
         { code: 'pm', label: 'Peralatan dan Mesin' },
         { code: 'gb', label: 'Gedung dan Bangunan' },
@@ -2368,7 +2480,24 @@
         `;
       }).join('');
 
-      const dihentikan = state.activeReport.payload.bmnDihentikanGolongan || [];
+      if (!p.kemitraanGolongan) {
+        p.kemitraanGolongan = [
+          { uraian: 'Tanah', intra: 0, ekstra: 0 },
+          { uraian: 'Peralatan dan Mesin', intra: 0, ekstra: 0 },
+          { uraian: 'Gedung dan Bangunan', intra: 0, ekstra: 0 },
+          { uraian: 'Jalan. Jembatan. Irigasi dan jaringan', intra: 0, ekstra: 0 },
+          { uraian: 'Aset Tetap Lainnya', intra: 0, ekstra: 0 }
+        ];
+      }
+      document.getElementById('kemitraanGolonganContainer').innerHTML = p.kemitraanGolongan.map((d, i) => `
+        <div class="grid grid-cols-3 gap-2 items-center">
+          <span class="text-xs text-slate-700">${i + 1}. ${d.uraian}</span>
+          <input type="number" placeholder="Intra (Rp)" value="${d.intra}" oninput="state.activeReport.payload.kemitraanGolongan[${i}].intra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="number" placeholder="Ekstra (Rp)" value="${d.ekstra}" oninput="state.activeReport.payload.kemitraanGolongan[${i}].ekstra=Number(this.value||0)" class="px-2.5 py-1.5 text-xs border rounded-lg text-right" />
+        </div>
+      `).join('');
+
+      const dihentikan = p.bmnDihentikanGolongan || [];
       document.getElementById('bmnDihentikanContainer').innerHTML = dihentikan.map((d, i) => `
         <div class="grid grid-cols-3 gap-2 items-center">
           <span class="text-xs text-slate-700">${i + 1}. ${d.uraian}</span>
@@ -2377,27 +2506,83 @@
         </div>
       `).join('');
 
-      const rev = state.activeReport.payload.revaluasiBmn || [];
+      const rev = p.revaluasiBmn || [];
       document.getElementById('revaluasiContainer').innerHTML = rev.map((r, i) => `
         <div class="flex items-center gap-1.5">
           <input type="text" placeholder="Nama Barang" value="${r.nama}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nama=this.value" class="flex-1 px-2 py-1.5 text-xs border rounded-lg" />
           <input type="number" placeholder="Nilai Rp" value="${r.nilai}" oninput="state.activeReport.payload.revaluasiBmn[${i}].nilai=Number(this.value||0)" class="w-36 px-2 py-1.5 text-xs border rounded-lg text-right" />
-          <input type="text" placeholder="Ket" value="${r.ket || ''}" oninput="state.activeReport.payload.revaluasiBmn[${i}].ket=this.value" class="w-24 px-2 py-1.5 text-xs border rounded-lg" />
+          <input type="text" placeholder="Keterangan" value="${r.ket || ''}" oninput="state.activeReport.payload.revaluasiBmn[${i}].ket=this.value" class="w-24 px-2 py-1.5 text-xs border rounded-lg" />
           <button type="button" onclick="state.activeReport.payload.revaluasiBmn.splice(${i},1);renderPenyusutanEditor();" class="text-rose-500 px-1"><i class="fa-solid fa-xmark"></i></button>
         </div>
       `).join('');
 
-      if (!state.activeReport.payload.asetBersejarah) {
-        state.activeReport.payload.asetBersejarah = { unitAwal: 0, unitTambah: 0, unitKurang: 0 };
+      if (!p.asetBersejarah) {
+        p.asetBersejarah = { unitAwal: 0, unitTambah: 0, unitKurang: 0, tambah: [], kurang: [] };
       }
-      const ab = state.activeReport.payload.asetBersejarah;
+      const ab = p.asetBersejarah;
+      if (!ab.tambah) ab.tambah = [];
+      if (!ab.kurang) ab.kurang = [];
       document.getElementById('bersejarah_unitAwal').value = ab.unitAwal || 0;
       document.getElementById('bersejarah_unitTambah').value = ab.unitTambah || 0;
       document.getElementById('bersejarah_unitKurang').value = ab.unitKurang || 0;
+
+      document.getElementById('bersejarahTambahContainer').innerHTML = ab.tambah.map((r, i) => `
+        <div class="grid grid-cols-12 gap-1.5 items-center">
+          <input type="text" value="${r.uraian || ''}" placeholder="Uraian transaksi..." oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].uraian=this.value" class="col-span-5 px-2 py-1 text-xs border rounded" />
+          <input type="number" value="${r.intra || 0}" placeholder="Intra" oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].intra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+          <input type="number" value="${r.ekstra || 0}" placeholder="Ekstra" oninput="state.activeReport.payload.asetBersejarah.tambah[${i}].ekstra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+          <button type="button" onclick="state.activeReport.payload.asetBersejarah.tambah.splice(${i},1);renderPenyusutanEditor();" class="col-span-1 text-rose-500 text-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      `).join('');
+
+      document.getElementById('bersejarahKurangContainer').innerHTML = ab.kurang.map((r, i) => `
+        <div class="grid grid-cols-12 gap-1.5 items-center">
+          <input type="text" value="${r.uraian || ''}" placeholder="Uraian transaksi..." oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].uraian=this.value" class="col-span-5 px-2 py-1 text-xs border rounded" />
+          <input type="number" value="${r.intra || 0}" placeholder="Intra" oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].intra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+          <input type="number" value="${r.ekstra || 0}" placeholder="Ekstra" oninput="state.activeReport.payload.asetBersejarah.kurang[${i}].ekstra=Number(this.value||0)" class="col-span-3 px-2 py-1 text-xs border rounded text-right" />
+          <button type="button" onclick="state.activeReport.payload.asetBersejarah.kurang.splice(${i},1);renderPenyusutanEditor();" class="col-span-1 text-rose-500 text-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      `).join('');
+
+      // Perbandingan Laporan Barang vs Laporan Keuangan
+      if (!p.selisihNeracaManual) {
+        p.selisihNeracaManual = { persediaan: 0, tanah: 0, pm: 0, gb: 0, jij: 0, atl: 0, kdp: 0, atb: 0, dihentikan: 0 };
+      }
+      const n = computeNeracaSummary(p);
+      const compRows = [
+        { key: 'persediaan', label: 'Persediaan', barang: n.persAkhir },
+        { key: 'tanah', label: 'Tanah', barang: n.tanahAkhir },
+        { key: 'pm', label: 'Peralatan dan Mesin', barang: n.pm.akhirIntra },
+        { key: 'gb', label: 'Gedung dan Bangunan', barang: n.gb.akhirIntra },
+        { key: 'jij', label: 'Jalan. Irigasi dan Jaringan', barang: n.jij.akhirIntra },
+        { key: 'atl', label: 'Aset Tetap Lainnya', barang: n.atl.akhirIntra },
+        { key: 'kdp', label: 'KDP', barang: n.kdp.akhirIntra },
+        { key: 'atb', label: 'Aset Tak Berwujud', barang: n.atb.akhirIntra },
+        { key: 'dihentikan', label: 'Aset Lain-Lain*)', barang: n.dihentikan.akhirIntra }
+      ];
+
+      document.getElementById('perbandinganNeracaBody').innerHTML = compRows.map((r, idx) => {
+        const selisih = Number(p.selisihNeracaManual[r.key] || 0);
+        const lapKeu = r.barang - selisih;
+        return `
+          <tr>
+            <td class="p-2 text-center">${idx + 1}</td>
+            <td class="p-2 font-semibold text-slate-700">${r.label}</td>
+            <td class="p-2 text-right font-mono">${formatRp(r.barang)}</td>
+            <td class="p-2"><input type="number" value="${selisih}" oninput="state.activeReport.payload.selisihNeracaManual['${r.key}']=Number(this.value||0);renderPenyusutanEditor();" class="w-full px-2 py-1 border rounded text-right" /></td>
+            <td class="p-2 text-right font-bold text-slate-800">${formatRp(lapKeu)}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function addRevaluasiRow() {
       state.activeReport.payload.revaluasiBmn.push({ nama: '', nilai: 0, ket: '' });
+      renderPenyusutanEditor();
+    }
+
+    function addBersejarahMutasiRow(group) {
+      state.activeReport.payload.asetBersejarah[group].push({ uraian: '', intra: 0, ekstra: 0 });
       renderPenyusutanEditor();
     }
 
@@ -2412,13 +2597,23 @@
     function renderBabVEditor() {
       const bv = state.activeReport.payload.babV;
       if (!bv.informasiLainnya) bv.informasiLainnya = [];
+      if (!bv.idle || bv.idle.length === 0) {
+        bv.idle = [
+          { no: '1', uraian: 'Jumlah BMN yang teridentifikasi sebagai BMN Idle', jumlah: '' },
+          { no: '2', uraian: 'Ditetapkan sebagai BMN Idle', jumlah: '' },
+          { no: '3', uraian: 'Pemberitahuan bukan sebagai BMN Idle ', jumlah: '' },
+          { no: '4', uraian: 'Telah diterbitkan Keputusan Penghapusan ', jumlah: '' },
+          { no: '5', uraian: 'Selesai serah terima', jumlah: '' }
+        ];
+      }
       document.getElementById('babV_ketIdle').value = bv.ketIdle || '';
 
       document.getElementById('babVPerkembanganContainer').innerHTML = (bv.perkembangan || []).map((p, i) => `
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-400 w-4">${i + 1}.</span>
-          <input type="text" value="${p.periode}" oninput="state.activeReport.payload.babV.perkembangan[${i}].periode=this.value" class="flex-1 px-2.5 py-1.5 text-xs border rounded-lg" />
-          <input type="number" value="${p.nilai}" oninput="state.activeReport.payload.babV.perkembangan[${i}].nilai=Number(this.value||0)" class="w-44 px-2.5 py-1.5 text-xs border rounded-lg text-right font-semibold" />
+        <div class="grid grid-cols-12 gap-1.5 items-center">
+          <input type="text" value="${p.periode || ''}" oninput="state.activeReport.payload.babV.perkembangan[${i}].periode=this.value" class="col-span-5 px-2 py-1.5 text-xs border rounded-lg" />
+          <input type="number" value="${p.nilai || 0}" oninput="state.activeReport.payload.babV.perkembangan[${i}].nilai=Number(this.value||0)" class="col-span-3 px-2 py-1.5 text-xs border rounded-lg text-right font-semibold" />
+          <input type="number" value="${p.rupiah !== undefined ? p.rupiah : 0}" placeholder="Rp" oninput="state.activeReport.payload.babV.perkembangan[${i}].rupiah=Number(this.value||0)" class="col-span-2 px-2 py-1.5 text-xs border rounded-lg text-right" />
+          <input type="text" value="${p.persen !== undefined ? p.persen : '0'}" placeholder="%" oninput="state.activeReport.payload.babV.perkembangan[${i}].persen=this.value" class="col-span-2 px-2 py-1.5 text-xs border rounded-lg text-right" />
         </div>
       `).join('');
 
@@ -2438,6 +2633,15 @@
           <td class="p-1.5"><input type="text" value="${row.manfaat || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].manfaat=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
           <td class="p-1.5"><input type="text" value="${row.pindah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].pindah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
           <td class="p-1.5"><input type="text" value="${row.hapus || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].hapus=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
+          <td class="p-1.5"><input type="text" value="${row.jumlah || ''}" oninput="state.activeReport.payload.babV.pengelolaan[${i}].jumlah=this.value" class="w-full px-2 py-1 border rounded text-center font-semibold" /></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('babVIdleBody').innerHTML = (bv.idle || []).map((row, i) => `
+        <tr>
+          <td class="p-1.5 text-center font-semibold">${row.no}</td>
+          <td class="p-1.5">${row.uraian}</td>
+          <td class="p-1.5"><input type="text" value="${row.jumlah || ''}" oninput="state.activeReport.payload.babV.idle[${i}].jumlah=this.value" class="w-full px-2 py-1 border rounded text-center" /></td>
         </tr>
       `).join('');
 
@@ -2505,15 +2709,18 @@
     }
 
     // ========================================================================
-    // GENERATOR OUTPUT LAPORAN PERSIS FILE EXCEL (DENGAN FILTER KOSONG)
+    // GENERATOR OUTPUT LAPORAN PERSIS 100% SHEET1 (DENGAN FILTER KOSONG)
     // ========================================================================
-    function renderSubAssetSectionHtml(numIndex, itemMeta, sa, m) {
+    function renderSubAssetSectionHtml(numIndex, groupCode, itemMeta, sa, m) {
       const s = computeSubAssetSummary(sa);
       if (!s.hasActivity) return ''; // Jangan tampilkan jika tidak diisi transaksinya
 
       const titleLabel = itemMeta.code ? `${itemMeta.name} (${itemMeta.code})` : itemMeta.name;
+      const kurangTitle = itemMeta.kurangHasSaldoWord
+        ? `Mutasi Kurang Saldo ${itemMeta.name} tersebut meliputi :`
+        : `Mutasi Kurang ${itemMeta.name} tersebut meliputi :`;
 
-      // Baris Mutasi Tambah: Saldo Awal (jika ada) + baris mutasi tambah yang ditambahkan user
+      // Tabel Mutasi Tambah (4 Kolom: Uraian | Intra | Ekstra | Gabungan)
       const tambahRows = [];
       if (s.awalIntra !== 0 || s.awalEkstra !== 0 || sa.tambah.length > 0) {
         tambahRows.push({ uraian: 'Saldo Awal', intra: s.awalIntra, ekstra: s.awalEkstra });
@@ -2557,7 +2764,7 @@
           return `<tr><td>${r.uraian || '-'}</td><td style="text-align:right">${formatRp(r.intra)}</td><td style="text-align:right">${formatRp(r.ekstra)}</td><td style="text-align:right">${formatRp(g)}</td></tr>`;
         }).join('');
         kurangTableHtml = `
-          <div style="margin-top:6px;">Mutasi Kurang Saldo ${itemMeta.name} tersebut meliputi :</div>
+          <div style="margin-top:6px;">${kurangTitle}</div>
           <table>
             <thead>
               <tr>
@@ -2580,7 +2787,13 @@
         `;
       }
 
-      // Kondisi Tabel
+      // Narasi Pihak Ketiga & Proses Penghapusan sesuai Sheet1 per kelompok
+      const prosesHapusText = (groupCode === 'gb')
+        ? `sedang dalam proses penghapusan adalah ${formatRp(sa.prosesHapusQty)} dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.`
+        : (groupCode === 'jij')
+          ? `sedang dalam proses penghapusan/pemindahtanganan adalah sebanyak ${formatRp(sa.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.`
+          : `sedang dalam proses penghapusan/pemindahtanganan adalah ${formatRp(sa.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.`;
+
       let totalKondisiQty = 0, totalKondisiNilai = 0;
       const kondisiRowsHtml = KONDISI_LABELS.map((lbl, idx) => {
         const k = (sa.kondisi && sa.kondisi[idx]) ? sa.kondisi[idx] : { qty: 0, nilai: 0 };
@@ -2588,6 +2801,11 @@
         totalKondisiNilai += Number(k.nilai || 0);
         return `<tr><td>${lbl}</td><td style="text-align:right">${formatRp(k.qty)}</td><td style="text-align:right">${formatRp(k.nilai)}</td></tr>`;
       }).join('');
+
+      // Di Sheet1, kalimat "Kelompok barang ... yang statusnya dihentikan..." tampil pada c. Peralatan dan Mesin
+      const hentiGunaHtml = (groupCode === 'pm' || Number(sa.dihentikanQty || 0) !== 0 || Number(sa.dihentikanNilai || 0) !== 0)
+        ? `<p style="margin:4px 0;">Kelompok barang ${itemMeta.name} yang statusnya dihentikan dari penggunaan operasional pemerintah adalah ${formatRp(sa.dihentikanQty)} unit/Rp.${formatRp(sa.dihentikanNilai)}</p>`
+        : '';
 
       return `
         <div style="margin-left:14px; margin-top:10px;">
@@ -2598,28 +2816,48 @@
           ${tambahTableHtml}
           ${kurangTableHtml}
           <p style="text-align:justify; margin:4px 0;">
-            Dari jumlah ${itemMeta.name} di atas. yang statusnya sedang dimanfaatkan oleh pihak ketiga adalah sejumlah ${formatRp(sa.pihakKetigaQty)} dengan nilai sebesar Rp.${formatRp(sa.pihakKetigaNilai)}${Number(sa.pihakKetigaNilai || 0) === 0 ? ' (Nihil)' : ''}. sedang dalam proses penghapusan/pemindahtanganan adalah ${formatRp(sa.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.
+            Dari jumlah ${itemMeta.name} di atas. yang statusnya sedang dimanfaatkan oleh pihak ketiga adalah sejumlah ${formatRp(sa.pihakKetigaQty)} dengan nilai sebesar Rp.${formatRp(sa.pihakKetigaNilai)}${Number(sa.pihakKetigaNilai || 0) === 0 ? ' (Nihil)' : ''}. ${prosesHapusText}
           </p>
-          ${totalKondisiQty > 0 || totalKondisiNilai > 0 ? `
-            <div>Dari jumlah Saldo ${itemMeta.name} di atas. berdasarkan status kondisinya adalah sebagai berikut :</div>
-            <table>
-              <thead>
-                <tr><th>Uraian Kondisi</th><th style="width:120px">Kuantitas</th><th style="width:150px">Nilai (Rp.)</th></tr>
-              </thead>
-              <tbody>
-                ${kondisiRowsHtml}
-                <tr style="font-weight:bold; background:#f3f4f6;">
-                  <td>Jumlah</td>
-                  <td style="text-align:right">${formatRp(totalKondisiQty)}</td>
-                  <td style="text-align:right">${formatRp(totalKondisiNilai)}</td>
-                </tr>
-              </tbody>
-            </table>
-          ` : ''}
-          <p style="margin:4px 0;">
-            Kelompok barang ${itemMeta.name} yang statusnya dihentikan dari penggunaan operasional pemerintah adalah ${formatRp(sa.dihentikanQty)} unit/Rp.${formatRp(sa.dihentikanNilai)}
-          </p>
+          <div>Dari jumlah Saldo ${itemMeta.name} di atas. berdasarkan status kondisinya adalah sebagai berikut :</div>
+          <table>
+            <thead>
+              <tr><th>Uraian Kondisi</th><th style="width:120px">Kuantitas</th><th style="width:150px">Nilai (Rp.)</th></tr>
+            </thead>
+            <tbody>
+              ${kondisiRowsHtml}
+              <tr style="font-weight:bold; background:#f3f4f6;">
+                <td>Jumlah</td>
+                <td style="text-align:right">${formatRp(totalKondisiQty)}</td>
+                <td style="text-align:right">${formatRp(totalKondisiNilai)}</td>
+              </tr>
+            </tbody>
+          </table>
+          ${hentiGunaHtml}
         </div>
+      `;
+    }
+
+    function renderThreeColMutationTable(title, rows, totalIntra, totalEkstra) {
+      if (!rows || rows.length === 0) return '';
+      return `
+        <div style="margin-top:6px;">${title}</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Uraian Jenis Transaksi</th>
+              <th style="width:150px">Intrakomptabel (Rp.)</th>
+              <th style="width:150px">Ekstrakomptabel (Rp.)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `<tr><td>${r.uraian || '-'}</td><td style="text-align:right">${formatRp(r.intra)}</td><td style="text-align:right">${formatRp(r.ekstra)}</td></tr>`).join('')}
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td>Jumlah</td>
+              <td style="text-align:right">${formatRp(totalIntra)}</td>
+              <td style="text-align:right">${formatRp(totalEkstra)}</td>
+            </tr>
+          </tbody>
+        </table>
       `;
     }
 
@@ -2638,7 +2876,7 @@
       // Kumpulkan bagian mutasi Bab IV.2 (a, b, c, d, e, f, g, h, i) yang memiliki transaksi
       const activeSections = [];
 
-      // a. Barang Persediaan
+      // a. Barang Persediaan.
       if (n.hasPersediaan) {
         const activePersItems = (p.persediaan.items || []).filter(it => Number(it.awal || 0) !== 0 || Number(it.mutasi || 0) !== 0);
         const persRowsHtml = activePersItems.map(it => {
@@ -2648,6 +2886,7 @@
         const rusakUsangTotal = Number(p.persediaan.rusak || 0) + Number(p.persediaan.usang || 0);
 
         activeSections.push({
+          letter: 'a',
           title: 'Barang Persediaan.',
           content: `
             <p style="text-align:justify; margin:4px 0;">
@@ -2724,10 +2963,11 @@
         const mslRows = (t.masalah || []).map(ms => {
           totMslQty += Number(ms.qty || 0);
           totMslNil += Number(ms.nilai || 0);
-          return `<tr><td>${ms.uraian}</td><td style="text-align:right">${formatRp(ms.qty)}</td><td style="text-align:right">${formatRp(ms.nilai)}</td></tr>`;
+          return `<tr><td>${ms.uraian}</td><td style="text-align:right">${ms.qty ? new Intl.NumberFormat('id-ID').format(ms.qty) : ''}</td><td style="text-align:right">${ms.nilai ? formatRp(ms.nilai) : ''}</td></tr>`;
         }).join('');
 
         activeSections.push({
+          letter: 'b',
           title: 'Tanah',
           content: `
             <p style="text-align:justify; margin:4px 0;">
@@ -2747,21 +2987,19 @@
               </tbody>
             </table>
             <p style="margin:4px 0;">Tanah yang statusnya dihentikan dari penggunaan operasional pemerintah adalah ${formatRp(t.dihentikanM2)} m2/Rp.${formatRp(t.dihentikanNilai)}</p>
-            ${totMslQty > 0 || totMslNil > 0 ? `
-              <div>Terdapat/Tidak terdapat permasalahan pada BMN berupa tanah yang dikuasai/ditatausahakan oleh ${m.uakpb}, yaitu :</div>
-              <table>
-                <thead><tr><th>Permasalahan Tanah</th><th style="width:150px">Kuantitas (bidang/m2)</th><th style="width:160px">Nilai (Rp.)</th></tr></thead>
-                <tbody>
-                  ${mslRows}
-                  <tr style="font-weight:bold; background:#f3f4f6;"><td>JUMLAH</td><td style="text-align:right">${formatRp(totMslQty)}</td><td style="text-align:right">${formatRp(totMslNil)}</td></tr>
-                </tbody>
-              </table>
-            ` : ''}
+            <div>Tidak terdapat permasalahan pada BMN berupa tanah yang dikuasai/ditatausahakan oleh ${m.uakpb}, yaitu :</div>
+            <table>
+              <thead><tr><th>Permasalahan Tanah</th><th style="width:150px">Kuantitas (bidang/m2)</th><th style="width:160px">Nilai (Rp.)</th></tr></thead>
+              <tbody>
+                ${mslRows}
+                <tr style="font-weight:bold; background:#f3f4f6;"><td>JUMLAH</td><td style="text-align:right">${new Intl.NumberFormat('id-ID').format(totMslQty)}</td><td style="text-align:right">${formatRp(totMslNil)}</td></tr>
+              </tbody>
+            </table>
           `
         });
       }
 
-      // c, d, e, f (Peralatan dan Mesin, Gedung dan Bangunan, Jalan Irigasi Jaringan, Aset Tetap Lainnya)
+      // c, d, e, f (Peralatan dan Mesin, Gedung dan Bangunan, Jalan Irigasi dan Jaringan, Aset Tetap Lainnya)
       BMN_GROUPS.forEach(g => {
         const gTot = n[g.groupCode];
         const penyVal = Number(peny[g.penyKey + '_intra'] || 0) + Number(peny[g.penyKey + '_ekstra'] || 0);
@@ -2771,7 +3009,7 @@
         let subHtml = '';
         g.items.forEach(itemMeta => {
           const sa = (p.subAssets && p.subAssets[itemMeta.key]) ? p.subAssets[itemMeta.key] : null;
-          const rendered = renderSubAssetSectionHtml(subCounter, itemMeta, sa, m);
+          const rendered = renderSubAssetSectionHtml(subCounter, g.groupCode, itemMeta, sa, m);
           if (rendered) {
             subHtml += rendered;
             subCounter++;
@@ -2779,52 +3017,71 @@
         });
 
         if (penyVal !== 0) {
+          const formattedPeny = g.penyInParens ? `(Rp.${formatRp(penyVal)})` : `Rp. ${formatRp(penyVal)}`;
           subHtml += `
             <div style="margin-left:14px; margin-top:10px;">
               <div style="font-weight:bold;">${subCounter}. ${g.penyTitle}</div>
               <p style="text-align:justify; margin:4px 0;">
-                ${g.penyTitle} pada Laporan Barang Kuasa Pengguna ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar (Rp.${formatRp(penyVal)}).
+                Akumulasi Penyusutan ${g.penyNarrativeName} pada Laporan Barang Kuasa Pengguna ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar ${formattedPeny}.
               </p>
             </div>
           `;
         }
 
         activeSections.push({
+          letter: g.letter,
           title: g.title,
           content: `
             <p style="text-align:justify; margin:4px 0;">
-              Saldo ${g.title} pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(gTot.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebesar Rp.${formatRp(gTot.awalGab)}. mutasi tambah sebesar Rp.${formatRp(gTot.tambahGab)}${gTot.tambahGab === 0 ? ' (nihil)' : ''}. dan mutasi kurang sebesar Rp.${formatRp(gTot.kurangGab)}${gTot.kurangGab === 0 ? ' (nihil)' : ''}.
+              Saldo ${g.narrativeTitle} pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(gTot.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebesar Rp.${formatRp(gTot.awalGab)}. mutasi tambah sebesar Rp.${formatRp(gTot.tambahGab)}${gTot.tambahGab === 0 ? ' (nihil)' : ''}. dan mutasi kurang sebesar Rp.${formatRp(gTot.kurangGab)}${gTot.kurangGab === 0 ? ' (nihil)' : ''}.
             </p>
-            <div>Rincian mutasi ${g.title} per bidang barang adalah sebagai berikut:</div>
+            <div>${g.rincianIntro}</div>
             ${subHtml}
           `
         });
       });
 
-      // g. Konstruksi Dalam Pengerjaan (KDP)
+      // g. Konstruksi Dalam Pengerjaan (KDP) — Sesuai Sheet1 (Tabel 3 Kolom tanpa kolom Gabungan)
       if (n.kdp.hasActivity) {
         const saKdp = ensureSubAssetStructure('kdp_701');
+        const sKdp = n.kdp;
+        const kdpTambahRows = [];
+        if (sKdp.awalIntra !== 0 || sKdp.awalEkstra !== 0 || saKdp.tambah.length > 0) {
+          kdpTambahRows.push({ uraian: 'Saldo Awal KDP', intra: sKdp.awalIntra, ekstra: sKdp.awalEkstra });
+        }
+        (saKdp.tambah || []).forEach(r => kdpTambahRows.push(r));
+
+        const kdpTambahHtml = renderThreeColMutationTable('Mutasi tambah Konstruksi Dalam Pengerjaan (KDP) tersebut meliputi :', kdpTambahRows, sKdp.awalIntra + sKdp.tambahIntra, sKdp.awalEkstra + sKdp.tambahEkstra);
+        const kdpKurangHtml = renderThreeColMutationTable('Mutasi Kurang Konstruksi Dalam Pengerjaan (KDP) tersebut meliputi :', saKdp.kurang, sKdp.kurangIntra, sKdp.kurangEkstra);
+
         activeSections.push({
+          letter: 'g',
           title: 'Konstruksi Dalam Pengerjaan (KDP)',
-          content: renderSubAssetSectionHtml(1, { name: 'Konstruksi Dalam Pengerjaan (KDP)', code: '' }, saKdp, m)
+          content: `
+            <p style="text-align:justify; margin:4px 0;">
+              Saldo Konstruksi Dalam Pengerjaan (KDP) pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(sKdp.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebesar Rp.${formatRp(sKdp.awalGab)}. mutasi tambah sebesar Rp.${formatRp(sKdp.tambahGab)}${sKdp.tambahGab === 0 ? ' (nihil)' : ''} dan mutasi kurang sebesar Rp.${formatRp(sKdp.kurangGab)}${sKdp.kurangGab === 0 ? ' (nihil)' : ''}.
+            </p>
+            ${kdpTambahHtml}
+            ${kdpKurangHtml}
+            <p style="text-align:justify; margin:4px 0;">
+              Dari jumlah KDP di atas. yang statusnya sedang dimanfaatkan oleh pihak ketiga adalah sejumlah ${formatRp(saKdp.pihakKetigaQty)} dengan nilai sebesar Rp.${formatRp(saKdp.pihakKetigaNilai)}${Number(saKdp.pihakKetigaNilai || 0) === 0 ? ' (Nihil)' : ''}. sedang dalam proses penghapusan/pemindahtanganan adalah ${formatRp(saKdp.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(saKdp.prosesHapusNilai)}${Number(saKdp.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.
+            </p>
+          `
         });
       }
 
-      // h. Aset Lainnya
+      // h. Aset Lainnya — Sesuai Sheet1 (1. Kemitraan, 2. Aset Tak Berwujud, 3. BMN Yang Dihentikan)
       const penyKemitraan = Number(peny.kemitraan_intra || 0) + Number(peny.kemitraan_ekstra || 0);
       const penyAtb = Number(peny.atb_intra || 0) + Number(peny.atb_ekstra || 0);
       const penyDihentikan = Number(peny.dihentikan_intra || 0) + Number(peny.dihentikan_ekstra || 0);
-      const totalPenyAsetLainnya = penyKemitraan + penyAtb + penyDihentikan;
-
       const revItemsActive = (p.revaluasiBmn || []).filter(r => Number(r.nilai || 0) !== 0 || (r.ket && r.ket.trim() !== ''));
       const dihentikanGolActive = (p.bmnDihentikanGolongan || []).some(d => Number(d.intra || 0) !== 0 || Number(d.ekstra || 0) !== 0);
+      const kemitraanGolActive = (p.kemitraanGolongan || []).some(d => Number(d.intra || 0) !== 0 || Number(d.ekstra || 0) !== 0);
+
       const hasAsetLainnya = (
-        n.kemitraan.hasActivity ||
-        n.atb.hasActivity ||
-        n.dihentikan.hasActivity ||
-        revItemsActive.length > 0 ||
-        dihentikanGolActive ||
-        totalPenyAsetLainnya !== 0
+        n.kemitraan.hasActivity || kemitraanGolActive || penyKemitraan !== 0 ||
+        n.atb.hasActivity || penyAtb !== 0 ||
+        n.dihentikan.hasActivity || dihentikanGolActive || revItemsActive.length > 0 || penyDihentikan !== 0
       );
 
       if (hasAsetLainnya) {
@@ -2836,283 +3093,250 @@
         let alSubCounter = 1;
         let alSubHtml = '';
 
-        // 1. Aset Kemitraan Dengan Pihak Ketiga
-        if (n.kemitraan.hasActivity) {
+        // 1. Aset Kemitraan Dengan Pihak Ketiga (Tampil jika diisi transaksinya)
+        if (n.kemitraan.hasActivity || kemitraanGolActive || penyKemitraan !== 0) {
           const saKem = ensureSubAssetStructure('al_kemitraan');
-          alSubHtml += renderSubAssetSectionHtml(alSubCounter, { name: 'Aset Kemitraan Dengan Pihak Ketiga', code: '' }, saKem, m);
+          const sKem = n.kemitraan;
+          const kemTambahRows = [];
+          if (sKem.awalIntra !== 0 || sKem.awalEkstra !== 0 || saKem.tambah.length > 0) {
+            kemTambahRows.push({ uraian: 'Saldo Awal', intra: sKem.awalIntra, ekstra: sKem.awalEkstra });
+          }
+          (saKem.tambah || []).forEach(r => kemTambahRows.push(r));
+
+          let kemGolTotIntra = 0, kemGolTotEkstra = 0;
+          const kemGolRowsHtml = (p.kemitraanGolongan || []).map((g, idx) => {
+            kemGolTotIntra += Number(g.intra || 0);
+            kemGolTotEkstra += Number(g.ekstra || 0);
+            return `<tr><td style="width:35px;text-align:center">${idx + 1}.</td><td>${g.uraian}</td><td style="text-align:right">${formatRp(g.intra)}</td><td style="text-align:right">${formatRp(g.ekstra)}</td></tr>`;
+          }).join('');
+
+          alSubHtml += `
+            <div style="margin-left:14px; margin-top:10px;">
+              <div style="font-weight:bold;">${alSubCounter}. Aset Kemitraan Dengan Pihak Ketiga</div>
+              <p style="text-align:justify; margin:4px 0;">
+                Saldo Aset Kemitraan Dengan Pihak Ketiga pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(sKem.akhirGab)}${sKem.akhirGab === 0 ? ' (Nihil)' : ''}. Jumlah tersebut terdiri atas saldo awal sebesar Rp.${formatRp(sKem.awalGab)} dengan nilai sebesar Rp.${formatRp(sKem.awalGab)}${sKem.awalGab === 0 ? ' (Nihil)' : ''}. mutasi tambah sejumlah ${formatRp(saKem.qtyTambah)} dengan nilai sebesar Rp.${formatRp(sKem.tambahGab)}${sKem.tambahGab === 0 ? ' (Nihil)' : ''}. dan mutasi kurang sejumlah ${formatRp(saKem.qtyKurang)} dengan nilai sebesar Rp.${formatRp(sKem.kurangGab)}${sKem.kurangGab === 0 ? ' (Nihil)' : ''}.
+              </p>
+              ${sKem.akhirGab === 0 ? `<p style="margin:2px 0;">Satuan kerja ${m.uakpb} tidak mengelola Aset Kemitraan Dengan Pihak Ketiga.</p>` : ''}
+              ${renderThreeColMutationTable('Mutasi Tambah Aset Kemitraan Dengan Pihak Ketiga tersebut meliputi :', kemTambahRows, sKem.awalIntra + sKem.tambahIntra, sKem.awalEkstra + sKem.tambahEkstra)}
+              ${renderThreeColMutationTable('Mutasi Kurang Aset Kemitraan Dengan Pihak Ketiga tersebut meliputi :', saKem.kurang, sKem.kurangIntra, sKem.kurangEkstra)}
+              ${kemitraanGolActive ? `
+                <div style="margin-top:6px;">Rincian Aset Kemitraan Dengan Pihak Ketiga pada Laporan Barang Kuasa Pengguna Periode ${m.periode} Tahun Anggaran ${m.tahunAnggaran} per 31 Desember per golongan barang adalah sebagai berikut :</div>
+                <table>
+                  <thead><tr><th colspan="2">Golongan Barang</th><th style="width:150px">Intrakomptabel (Rp)</th><th style="width:150px">Ekstrakomptabel (Rp.)</th></tr></thead>
+                  <tbody>
+                    ${kemGolRowsHtml}
+                    <tr style="font-weight:bold; background:#f3f4f6;"><td colspan="2">Jumlah</td><td style="text-align:right">${formatRp(kemGolTotIntra)}</td><td style="text-align:right">${formatRp(kemGolTotEkstra)}</td></tr>
+                  </tbody>
+                </table>
+              ` : ''}
+              <div style="font-weight:bold; margin-top:6px;">Akumulasi Penyusutan Aset Kemitraan Dengan Pihak Ketiga</div>
+              <p style="margin:2px 0;">Akumulasi Penyusutan Aset Kemitraan Dengan Pihak Ketiga pada Laporan Barang Kuasa Pengguna ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(penyKemitraan)}${penyKemitraan === 0 ? ' (Nihil)' : ''}.</p>
+            </div>
+          `;
           alSubCounter++;
         }
 
         // 2. Aset Tak Berwujud
         if (n.atb.hasActivity || penyAtb !== 0) {
           const saAtb = ensureSubAssetStructure('atb_801');
-          const renderedAtb = renderSubAssetSectionHtml(alSubCounter, { name: 'Aset Tak Berwujud', code: '' }, saAtb, m);
-          if (renderedAtb) {
-            alSubHtml += renderedAtb;
-            alSubCounter++;
+          const sAtb = n.atb;
+          const atbTambahRows = [];
+          if (sAtb.awalIntra !== 0 || sAtb.awalEkstra !== 0 || saAtb.tambah.length > 0) {
+            atbTambahRows.push({ uraian: 'Saldo Awal', intra: sAtb.awalIntra, ekstra: sAtb.awalEkstra });
           }
-          if (penyAtb !== 0) {
-            alSubHtml += `
-              <div style="margin-left:14px; margin-top:8px;">
-                <div style="font-weight:bold;">${alSubCounter}. Akumulasi Amortisasi Aset Tak Berwujud</div>
-                <p style="text-align:justify; margin:4px 0;">
-                  Akumulasi Amortisasi Aset Tak Berwujud pada Laporan Barang Kuasa Pengguna ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar (Rp.${formatRp(penyAtb)}).
-                </p>
-              </div>
-            `;
-            alSubCounter++;
-          }
+          (saAtb.tambah || []).forEach(r => atbTambahRows.push(r));
+
+          alSubHtml += `
+            <div style="margin-left:14px; margin-top:10px;">
+              <div style="font-weight:bold;">${alSubCounter}. Aset Tak Berwujud</div>
+              <p style="text-align:justify; margin:4px 0;">
+                Saldo Aset Tak Berwujud pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(sAtb.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebesar ${formatRp(saAtb.qtyAwal)} dengan nilai sebesar Rp.${formatRp(sAtb.awalGab)}. mutasi tambah sejumlah ${formatRp(saAtb.qtyTambah)} dengan nilai sebesar Rp.${formatRp(sAtb.tambahGab)}${sAtb.tambahGab === 0 ? ' (nihil)' : ''} dan mutasi kurang sejumlah ${formatRp(saAtb.qtyKurang)} dengan nilai sebesar Rp.${formatRp(sAtb.kurangGab)}${sAtb.kurangGab === 0 ? ' (nihil)' : ''}.
+              </p>
+              ${renderThreeColMutationTable('Mutasi Tambah Aset Tak Berwujud tersebut meliputi :', atbTambahRows, sAtb.awalIntra + sAtb.tambahIntra, sAtb.awalEkstra + sAtb.tambahEkstra)}
+              ${renderThreeColMutationTable('Mutasi Kurang Aset Tak Berwujud tersebut meliputi :', saAtb.kurang, sAtb.kurangIntra, sAtb.kurangEkstra)}
+              <p style="text-align:justify; margin:4px 0;">
+                Dari jumlah Aset Tak Berwujud di atas. yang statusnya sedang dimanfaatkan oleh pihak ketiga adalah sejumlah ${formatRp(saAtb.pihakKetigaQty)} dengan nilai sebesar Rp.${formatRp(saAtb.pihakKetigaNilai)}${Number(saAtb.pihakKetigaNilai || 0) === 0 ? ' (Nihil)' : ''}. sedang dalam proses penghapusan/pemindahtanganan adalah ${formatRp(saAtb.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(saAtb.prosesHapusNilai)}${Number(saAtb.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.
+              </p>
+              <p style="margin:4px 0;">
+                Aset Tak Berwujud yang statusnya dihentikan dari penggunaan operasional pemerintah adalah ${formatRp(saAtb.dihentikanQty)} unit/Rp ${formatRp(saAtb.dihentikanNilai)}.
+              </p>
+            </div>
+          `;
+          alSubCounter++;
         }
 
         // 3. BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah
         if (n.dihentikan.hasActivity || dihentikanGolActive || revItemsActive.length > 0 || penyDihentikan !== 0) {
           const saDih = ensureSubAssetStructure('al_dihentikan');
-          const sDih = computeSubAssetSummary(saDih);
-
-          // Tabel Mutasi Tambah BMN Dihentikan
+          const sDih = n.dihentikan;
           const dihTambahRows = [];
           if (sDih.awalIntra !== 0 || sDih.awalEkstra !== 0 || saDih.tambah.length > 0) {
             dihTambahRows.push({ uraian: 'Saldo Awal', intra: sDih.awalIntra, ekstra: sDih.awalEkstra });
           }
           (saDih.tambah || []).forEach(r => dihTambahRows.push(r));
 
-          let dihTambahHtml = '';
-          if (dihTambahRows.length > 0) {
-            dihTambahHtml = `
-              <div style="margin-top:6px;">Mutasi Tambah BMN yang dihentikan penggunaannya tersebut meliputi:</div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Uraian Jenis Transaksi</th>
-                    <th style="width:130px">Intrakomptabel (Rp.)</th>
-                    <th style="width:130px">Ekstrakomptabel (Rp.)</th>
-                    <th style="width:130px">Gabungan (Rp.)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${dihTambahRows.map(r => {
-                    const g = Number(r.intra || 0) + Number(r.ekstra || 0);
-                    return `<tr><td>${r.uraian || '-'}</td><td style="text-align:right">${formatRp(r.intra)}</td><td style="text-align:right">${formatRp(r.ekstra)}</td><td style="text-align:right">${formatRp(g)}</td></tr>`;
-                  }).join('')}
-                  <tr style="font-weight:bold; background:#f3f4f6;">
-                    <td>Jumlah</td>
-                    <td style="text-align:right">${formatRp(sDih.awalIntra + sDih.tambahIntra)}</td>
-                    <td style="text-align:right">${formatRp(sDih.awalEkstra + sDih.tambahEkstra)}</td>
-                    <td style="text-align:right">${formatRp(sDih.awalGab + sDih.tambahGab)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            `;
-          }
-
-          let dihKurangHtml = '';
-          if (saDih.kurang && saDih.kurang.length > 0) {
-            dihKurangHtml = `
-              <div style="margin-top:6px;">Mutasi Kurang BMN yang dihentikan penggunaannya tersebut meliputi:</div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Uraian Jenis Transaksi</th>
-                    <th style="width:130px">Intrakomptabel (Rp.)</th>
-                    <th style="width:130px">Ekstrakomptabel (Rp.)</th>
-                    <th style="width:130px">Gabungan (Rp.)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${saDih.kurang.map(r => {
-                    const g = Number(r.intra || 0) + Number(r.ekstra || 0);
-                    return `<tr><td>${r.uraian || '-'}</td><td style="text-align:right">${formatRp(r.intra)}</td><td style="text-align:right">${formatRp(r.ekstra)}</td><td style="text-align:right">${formatRp(g)}</td></tr>`;
-                  }).join('')}
-                  <tr style="font-weight:bold; background:#f3f4f6;">
-                    <td>Jumlah</td>
-                    <td style="text-align:right">${formatRp(sDih.kurangIntra)}</td>
-                    <td style="text-align:right">${formatRp(sDih.kurangEkstra)}</td>
-                    <td style="text-align:right">${formatRp(sDih.kurangGab)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            `;
-          }
-
-          // Tabel Rincian BMN Dihentikan per Golongan Barang
           let golIntraTot = 0, golEkstraTot = 0;
           const golRowsHtml = (p.bmnDihentikanGolongan || []).map((g, idx) => {
             const intra = Number(g.intra || 0);
             const ekstra = Number(g.ekstra || 0);
             golIntraTot += intra;
             golEkstraTot += ekstra;
-            return `
-              <tr>
-                <td style="text-align:center; width:35px;">${idx + 1}</td>
-                <td>${g.uraian}</td>
-                <td style="text-align:right">${formatRp(intra)}</td>
-                <td style="text-align:right">${formatRp(ekstra)}</td>
-                <td style="text-align:right">${formatRp(intra + ekstra)}</td>
-              </tr>
-            `;
+            return `<tr><td style="width:35px;text-align:center">${idx + 1}.</td><td>${g.uraian}</td><td style="text-align:right">${intra !== 0 ? formatRp(intra) : ''}</td><td style="text-align:right">${ekstra !== 0 ? formatRp(ekstra) : ''}</td></tr>`;
           }).join('');
 
-          const golTableHtml = dihentikanGolActive ? `
-            <div style="margin-top:6px;">Rincian nilai BMN yang dihentikan dari penggunaan operasional pemerintah per golongan barang adalah sebagai berikut :</div>
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:35px">No</th>
-                  <th>Uraian Golongan Barang</th>
-                  <th style="width:130px">Intrakomptabel (Rp.)</th>
-                  <th style="width:130px">Ekstrakomptabel (Rp.)</th>
-                  <th style="width:130px">Gabungan (Rp.)</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${golRowsHtml}
-                <tr style="font-weight:bold; background:#f3f4f6;">
-                  <td colspan="2" style="text-align:center">JUMLAH</td>
-                  <td style="text-align:right">${formatRp(golIntraTot)}</td>
-                  <td style="text-align:right">${formatRp(golEkstraTot)}</td>
-                  <td style="text-align:right">${formatRp(golIntraTot + golEkstraTot)}</td>
-                </tr>
-              </tbody>
-            </table>
-          ` : '';
-
-          // Tabel Revaluasi BMN Dihentikan
           let revTotal = 0;
           const revRowsHtml = revItemsActive.map((rv, idx) => {
             revTotal += Number(rv.nilai || 0);
-            return `
-              <tr>
-                <td style="text-align:center; width:35px;">${idx + 1}</td>
-                <td>${rv.nama || '-'}</td>
-                <td style="text-align:right">${formatRp(rv.nilai)}</td>
-                <td>${rv.ket || ''}</td>
-              </tr>
-            `;
+            return `<tr><td style="text-align:center; width:35px;">${idx + 1}</td><td>${rv.nama || '-'}</td><td style="text-align:right">${formatRp(rv.nilai)}</td><td>${rv.ket || ''}</td></tr>`;
           }).join('');
-
-          const revTableHtml = revItemsActive.length > 0 ? `
-            <div style="margin-top:6px;">Dari saldo BMN yang dihentikan penggunaannya di atas, terdapat BMN yang merupakan hasil pelaksanaan Inventarisasi dan Penilaian Kembali (Revaluasi) sebagai berikut :</div>
-            <table>
-              <thead>
-                <tr>
-                  <th style="width:35px">No</th>
-                  <th>Nama/Jenis Barang</th>
-                  <th style="width:150px">Nilai (Rp.)</th>
-                  <th style="width:160px">Keterangan</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${revRowsHtml}
-                <tr style="font-weight:bold; background:#f3f4f6;">
-                  <td colspan="2" style="text-align:center">JUMLAH</td>
-                  <td style="text-align:right">${formatRp(revTotal)}</td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-          ` : '';
 
           alSubHtml += `
             <div style="margin-left:14px; margin-top:10px;">
               <div style="font-weight:bold;">${alSubCounter}. BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah</div>
               <p style="text-align:justify; margin:4px 0;">
-                Saldo BMN yang dihentikan penggunaannya dari operasional pemerintah pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} sebesar Rp.${formatRp(sDih.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebanyak ${formatRp(saDih.qtyAwal)} unit dengan nilai sebesar Rp.${formatRp(sDih.awalGab)}, mutasi tambah sebanyak ${formatRp(saDih.qtyTambah)} unit dengan nilai sebesar Rp.${formatRp(sDih.tambahGab)}${sDih.tambahGab === 0 ? ' (nihil)' : ''}, dan mutasi kurang sebanyak ${formatRp(saDih.qtyKurang)} unit dengan nilai sebesar Rp.${formatRp(sDih.kurangGab)}${sDih.kurangGab === 0 ? ' (nihil)' : ''}.
+                Saldo BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(sDih.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebesar ${formatRp(saDih.qtyAwal)} dengan nilai sebesar Rp. ${formatRp(sDih.awalGab)} mutasi tambah sejumlah ${formatRp(saDih.qtyTambah)} dengan nilai sebesar Rp.${formatRp(sDih.tambahGab)}${sDih.tambahGab === 0 ? ' (nihil)' : ''} dan mutasi kurang sejumlah ${formatRp(saDih.qtyKurang)} dengan nilai sebesar Rp.${formatRp(sDih.kurangGab)}${sDih.kurangGab === 0 ? ' (nihil)' : ''}.
               </p>
-              ${dihTambahHtml}
-              ${dihKurangHtml}
-              ${golTableHtml}
-              ${revTableHtml}
-            </div>
-          `;
-          alSubCounter++;
-        }
-
-        if (penyDihentikan !== 0) {
-          alSubHtml += `
-            <div style="margin-left:14px; margin-top:8px;">
-              <div style="font-weight:bold;">${alSubCounter}. Akumulasi Penyusutan Aset Lainnya (BMN Dihentikan dari Penggunaan)</div>
-              <p style="text-align:justify; margin:4px 0;">
-                Akumulasi Penyusutan BMN yang dihentikan dari penggunaan operasional pemerintah pada Laporan Barang Kuasa Pengguna ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar (Rp.${formatRp(penyDihentikan)}).
-              </p>
+              ${renderThreeColMutationTable('Mutasi Tambah BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah tersebut meliputi :', dihTambahRows, sDih.awalIntra + sDih.tambahIntra, sDih.awalEkstra + sDih.tambahEkstra)}
+              ${renderThreeColMutationTable('Mutasi Kurang BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah tersebut meliputi :', saDih.kurang, sDih.kurangIntra, sDih.kurangEkstra)}
+              ${dihentikanGolActive ? `
+                <div style="margin-top:6px;">Rincian BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah pada Laporan Barang Kuasa Pengguna. untuk CaLBMN Periode ${m.periode} Tahun Anggaran ${m.tahunAnggaran} per 31 Desember per golongan barang adalah sebagai berikut:</div>
+                <table>
+                  <thead><tr><th colspan="2">Golongan Barang</th><th style="width:150px">Intrakomptabel (Rp)</th><th style="width:150px">Ekstrakomptabel (Rp.)</th></tr></thead>
+                  <tbody>
+                    ${golRowsHtml}
+                    <tr style="font-weight:bold; background:#f3f4f6;"><td colspan="2">Jumlah</td><td style="text-align:right">${formatRp(golIntraTot)}</td><td style="text-align:right">${golEkstraTot !== 0 ? formatRp(golEkstraTot) : ''}</td></tr>
+                  </tbody>
+                </table>
+              ` : ''}
+              ${revItemsActive.length > 0 ? `
+                <div style="margin-top:6px;">BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah merupakan hasil revaluasi BMN sebagai berikut :</div>
+                <table>
+                  <thead><tr><th style="width:35px">No</th><th>Nama Barang</th><th style="width:150px">Nilai</th><th style="width:160px">Keterangan</th></tr></thead>
+                  <tbody>
+                    ${revRowsHtml}
+                    <tr style="font-weight:bold; background:#f3f4f6;"><td colspan="2">Jumlah</td><td style="text-align:right">${formatRp(revTotal)}</td><td></td></tr>
+                  </tbody>
+                </table>
+              ` : ''}
             </div>
           `;
           alSubCounter++;
         }
 
         activeSections.push({
+          letter: 'h',
           title: 'Aset Lainnya',
           content: `
             <p style="text-align:justify; margin:4px 0;">
-              Saldo Aset Lainnya pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(alAkhir)}. Jumlah tersebut terdiri atas saldo awal sebesar Rp.${formatRp(alAwal)}. mutasi tambah sebesar Rp.${formatRp(alTambah)}${alTambah === 0 ? ' (nihil)' : ''}. dan mutasi kurang sebesar Rp.${formatRp(alKurang)}${alKurang === 0 ? ' (nihil)' : ''}.
+              Saldo Aset lainnya pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebesar Rp.${formatRp(alAkhir)}. Jumlah tersebut terdiri atas saldo awal sebesar Rp.${formatRp(alAwal)}. mutasi tambah sebesar Rp.${formatRp(alTambah)}${alTambah === 0 ? ' (nihil)' : ''}. dan mutasi kurang sebesar Rp.${formatRp(alKurang)}${alKurang === 0 ? ' (nihil)' : ''}.
             </p>
-            <div>Rincian Aset Lainnya per bidang barang adalah sebagai berikut:</div>
             ${alSubHtml}
           `
         });
       }
 
       // i. BMN Berupa Aset Bersejarah
-      const ab = p.asetBersejarah || { unitAwal: 0, unitTambah: 0, unitKurang: 0 };
+      const ab = p.asetBersejarah || { unitAwal: 0, unitTambah: 0, unitKurang: 0, tambah: [], kurang: [] };
       const abUnitAwal = Number(ab.unitAwal || 0);
       const abUnitTambah = Number(ab.unitTambah || 0);
       const abUnitKurang = Number(ab.unitKurang || 0);
       const abUnitAkhir = abUnitAwal + abUnitTambah - abUnitKurang;
-      if (abUnitAwal !== 0 || abUnitTambah !== 0 || abUnitKurang !== 0) {
+      const abTambahActive = (ab.tambah || []).some(r => Number(r.intra || 0) !== 0 || Number(r.ekstra || 0) !== 0);
+      const abKurangActive = (ab.kurang || []).some(r => Number(r.intra || 0) !== 0 || Number(r.ekstra || 0) !== 0);
+
+      if (abUnitAwal !== 0 || abUnitTambah !== 0 || abUnitKurang !== 0 || abTambahActive || abKurangActive) {
+        let abTamIntra = 0, abTamEkstra = 0;
+        (ab.tambah || []).forEach(r => { abTamIntra += Number(r.intra || 0); abTamEkstra += Number(r.ekstra || 0); });
+        let abKurIntra = 0, abKurEkstra = 0;
+        (ab.kurang || []).forEach(r => { abKurIntra += Number(r.intra || 0); abKurEkstra += Number(r.ekstra || 0); });
+
         activeSections.push({
+          letter: 'i',
           title: 'BMN Berupa Aset Bersejarah',
           content: `
             <p style="text-align:justify; margin:4px 0;">
-              Kuantitas BMN berupa Aset Bersejarah pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebanyak ${formatRp(abUnitAkhir)} unit. Jumlah tersebut terdiri atas saldo awal sebanyak ${formatRp(abUnitAwal)} unit, mutasi tambah sebanyak ${formatRp(abUnitTambah)} unit, dan mutasi kurang sebanyak ${formatRp(abUnitKurang)} unit.
+              Saldo BMN berupa aset bersejarah pada satuan kerja ${m.uakpb} per ${m.tanggalCutoff} adalah sebanyak ${formatRp(abUnitAkhir)} unit. Jumlah tersebut terdiri atas saldo awal sebanyak ${formatRp(abUnitAwal)} unit. mutasi tambah sebanyak ${formatRp(abUnitTambah)} unit. dan mutasi kurang sebanyak ${formatRp(abUnitKurang)}. unit.
             </p>
+            ${renderThreeColMutationTable('Mutasi Tambah BMN Berupa Aset Bersejarah tersebut meliputi :', ab.tambah, abTamIntra, abTamEkstra)}
+            ${renderThreeColMutationTable('Mutasi Kurang BMN Berupa Aset Bersejarah tersebut meliputi :', ab.kurang, abKurIntra, abKurEkstra)}
           `
         });
       }
 
-      // Susun penomoran huruf otomatis (a., b., c., dst.) untuk bagian BMN yang memiliki transaksi
-      const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
       const renderedMutasiSectionsHtml = activeSections.length === 0
         ? `<p style="font-style:italic; color:#475569; margin:8px 0;">Tidak terdapat transaksi mutasi BMN yang diisi pada periode ini.</p>`
-        : activeSections.map((sec, idx) => `
+        : activeSections.map(sec => `
             <div style="margin-top:12px;">
-              <div style="font-weight:bold; font-size:11pt;">${letters[idx] || (idx + 1)}. ${sec.title}</div>
+              <div style="font-weight:bold; font-size:11pt;">${sec.letter}. ${sec.title}</div>
               ${sec.content}
             </div>
           `).join('');
 
       // ======================================================================
-      // 3. TABEL NILAI BMN PADA NERACA (BAB IV.3)
+      // BAB IV.3: a. BMN per akun neraca & b. Perbandingan Laporan Barang vs Keuangan
       // ======================================================================
-      const neracaRowsData = [
-        { no: 1, akun: 'Persediaan', intra: n.persAkhir, ekstra: 0, peny: 0 },
-        { no: 2, akun: 'Tanah', intra: n.tanahAkhir, ekstra: 0, peny: 0 },
-        { no: 3, akun: 'Peralatan dan Mesin', intra: n.pm.akhirIntra, ekstra: n.pm.akhirEkstra, peny: Number(peny.pm_intra || 0) + Number(peny.pm_ekstra || 0) },
-        { no: 4, akun: 'Gedung dan Bangunan', intra: n.gb.akhirIntra, ekstra: n.gb.akhirEkstra, peny: Number(peny.gb_intra || 0) + Number(peny.gb_ekstra || 0) },
-        { no: 5, akun: 'Jalan. Irigasi dan Jaringan', intra: n.jij.akhirIntra, ekstra: n.jij.akhirEkstra, peny: Number(peny.jij_intra || 0) + Number(peny.jij_ekstra || 0) },
-        { no: 6, akun: 'Aset Tetap Lainnya', intra: n.atl.akhirIntra, ekstra: n.atl.akhirEkstra, peny: Number(peny.atl_intra || 0) + Number(peny.atl_ekstra || 0) },
-        { no: 7, akun: 'KDP', intra: n.kdp.akhirIntra, ekstra: n.kdp.akhirEkstra, peny: Number(peny.kdp_intra || 0) + Number(peny.kdp_ekstra || 0) },
-        { no: 8, akun: 'Kemitraan dengan Pihak Ketiga', intra: n.kemitraan.akhirIntra, ekstra: n.kemitraan.akhirEkstra, peny: Number(peny.kemitraan_intra || 0) + Number(peny.kemitraan_ekstra || 0) },
-        { no: 9, akun: 'Aset Tak Berwujud', intra: n.atb.akhirIntra, ekstra: n.atb.akhirEkstra, peny: Number(peny.atb_intra || 0) + Number(peny.atb_ekstra || 0) },
-        { no: 10, akun: 'Aset yang dihentikan', intra: n.dihentikan.akhirIntra, ekstra: n.dihentikan.akhirEkstra, peny: Number(peny.dihentikan_intra || 0) + Number(peny.dihentikan_ekstra || 0) }
-      ];
+      const sub1Intra = n.persAkhir, sub1Ekstra = 0, sub1Gab = n.persAkhir;
+      const sub2Intra = n.tanahAkhir + n.pm.akhirIntra + n.gb.akhirIntra + n.jij.akhirIntra + n.atl.akhirIntra + n.kdp.akhirIntra;
+      const sub2Ekstra = n.pm.akhirEkstra + n.gb.akhirEkstra + n.jij.akhirEkstra + n.atl.akhirEkstra + n.kdp.akhirEkstra;
+      const sub2Gab = sub2Intra + sub2Ekstra;
 
-      let totNeracaIntra = 0, totNeracaEkstra = 0, totNeracaGab = 0, totNeracaPeny = 0, totNeracaBuku = 0;
-      const neracaTableRowsHtml = neracaRowsData.map(r => {
-        const gab = r.intra + r.ekstra;
-        const buku = gab - r.peny;
-        totNeracaIntra += r.intra;
-        totNeracaEkstra += r.ekstra;
-        totNeracaGab += gab;
-        totNeracaPeny += r.peny;
-        totNeracaBuku += buku;
+      const sub3Intra = n.kemitraan.akhirIntra + n.atb.akhirIntra + n.dihentikan.akhirIntra;
+      const sub3Ekstra = n.kemitraan.akhirEkstra + n.atb.akhirEkstra + n.dihentikan.akhirEkstra;
+      const sub3Gab = sub3Intra + sub3Ekstra;
+
+      const totNeracaIntra = sub1Intra + sub2Intra + sub3Intra;
+      const totNeracaEkstra = sub1Ekstra + sub2Ekstra + sub3Ekstra;
+      const totNeracaGab = totNeracaIntra + totNeracaEkstra;
+
+      // Tabel 2 Bab IV.3.a: Akumulasi Penyusutan per Perkiraan Neraca
+      const pPmI = Number(peny.pm_intra || 0), pPmE = Number(peny.pm_ekstra || 0), pPmG = pPmI + pPmE;
+      const pGbI = Number(peny.gb_intra || 0), pGbE = Number(peny.gb_ekstra || 0), pGbG = pGbI + pGbE;
+      const pJijI = Number(peny.jij_intra || 0), pJijE = Number(peny.jij_ekstra || 0), pJijG = pJijI + pJijE;
+      const pAtlI = Number(peny.atl_intra || 0), pAtlE = Number(peny.atl_ekstra || 0), pAtlG = pAtlI + pAtlE;
+      const pKdpI = Number(peny.kdp_intra || 0), pKdpE = Number(peny.kdp_ekstra || 0), pKdpG = pKdpI + pKdpE;
+      const subPeny2I = pPmI + pGbI + pJijI + pAtlI + pKdpI;
+      const subPeny2E = pPmE + pGbE + pJijE + pAtlE + pKdpE;
+      const subPeny2G = subPeny2I + subPeny2E;
+
+      const pKemI = Number(peny.kemitraan_intra || 0), pKemE = Number(peny.kemitraan_ekstra || 0), pKemG = pKemI + pKemE;
+      const pAtbI = Number(peny.atb_intra || 0), pAtbE = Number(peny.atb_ekstra || 0), pAtbG = pAtbI + pAtbE;
+      const pDihI = Number(peny.dihentikan_intra || 0), pDihE = Number(peny.dihentikan_ekstra || 0), pDihG = pDihI + pDihE;
+      const subPeny3I = pKemI + pAtbI + pDihI;
+      const subPeny3E = pKemE + pAtbE + pDihE;
+      const subPeny3G = subPeny3I + subPeny3E;
+
+      const totPenyIntra = subPeny2I + subPeny3I;
+      const totPenyEkstra = subPeny2E + subPeny3E;
+      const totPenyGab = totPenyIntra + totPenyEkstra;
+
+      const nilaiBmnNeracaNetto = totNeracaIntra - totPenyIntra;
+
+      // Tabel 3 Bab IV.3.b: Perbandingan Laporan Barang & Laporan Keuangan
+      const selManual = p.selisihNeracaManual || {};
+      const compData = [
+        { no: 1, akun: 'Persediaan', brg: n.persAkhir, sel: Number(selManual.persediaan || 0) },
+        { no: 2, akun: 'Tanah', brg: n.tanahAkhir, sel: Number(selManual.tanah || 0) },
+        { no: 3, akun: 'Peralatan dan Mesin', brg: n.pm.akhirIntra, sel: Number(selManual.pm || 0) },
+        { no: 4, akun: 'Gedung dan Bangunan', brg: n.gb.akhirIntra, sel: Number(selManual.gb || 0) },
+        { no: 5, akun: 'Jalan. Irigasi dan Jaringan', brg: n.jij.akhirIntra, sel: Number(selManual.jij || 0) },
+        { no: 6, akun: 'Aset Tetap Lainnya', brg: n.atl.akhirIntra, sel: Number(selManual.atl || 0) },
+        { no: 7, akun: 'KDP', brg: n.kdp.akhirIntra, sel: Number(selManual.kdp || 0) },
+        { no: 8, akun: 'Aset Tak Berwujud', brg: n.atb.akhirIntra, sel: Number(selManual.atb || 0) },
+        { no: 9, akun: 'Aset Lain-Lain*)', brg: n.dihentikan.akhirIntra, sel: Number(selManual.dihentikan || 0) }
+      ];
+      let totCompBrg = 0, totCompKeu = 0, totCompSel = 0;
+      const compRowsHtml = compData.map(r => {
+        const keu = r.brg - r.sel;
+        totCompBrg += r.brg;
+        totCompKeu += keu;
+        totCompSel += r.sel;
         return `
           <tr>
             <td style="text-align:center">${r.no}</td>
             <td>${r.akun}</td>
-            <td style="text-align:right">${formatRp(r.intra)}</td>
-            <td style="text-align:right">${formatRp(r.ekstra)}</td>
-            <td style="text-align:right">${formatRp(gab)}</td>
-            <td style="text-align:right">${r.peny !== 0 ? '(' + formatRp(r.peny) + ')' : '0'}</td>
-            <td style="text-align:right; font-weight:bold;">${formatRp(buku)}</td>
+            <td style="text-align:right">${formatRp(r.brg)}</td>
+            <td style="text-align:right">${formatRp(keu)}</td>
+            <td style="text-align:right">${formatRp(r.sel)}</td>
           </tr>
         `;
       }).join('');
@@ -3120,24 +3344,15 @@
       // ======================================================================
       // BAB V: PERKEMBANGAN NILAI BMN, PSP, PENGELOLAAN, IDLE & INFO LAINNYA
       // ======================================================================
-      const perkembanganList = bv.perkembangan || [];
-      const perkembanganRowsHtml = perkembanganList.map((item, idx) => {
-        const prevNilai = idx > 0 ? Number(perkembanganList[idx - 1].nilai || 0) : 0;
-        const currNilai = Number(item.nilai || 0);
-        let persenText = '-';
-        if (idx > 0 && prevNilai > 0) {
-          const diffPct = ((currNilai - prevNilai) / prevNilai) * 100;
-          persenText = diffPct.toFixed(2).replace('.', ',') + '%';
-        }
-        return `
-          <tr>
-            <td style="text-align:center">${idx + 1}</td>
-            <td>${item.periode || '-'}</td>
-            <td style="text-align:right">${formatRp(currNilai)}</td>
-            <td style="text-align:center">${persenText}</td>
-          </tr>
-        `;
-      }).join('');
+      const perkembanganRowsHtml = (bv.perkembangan || []).map((item, idx) => `
+        <tr>
+          <td style="text-align:center">${idx + 1}</td>
+          <td>${item.periode || '-'}</td>
+          <td style="text-align:right">${formatRp(item.nilai)}</td>
+          <td style="text-align:right">${formatRp(item.rupiah !== undefined ? item.rupiah : 0)}</td>
+          <td style="text-align:center">${item.persen !== undefined ? item.persen : '0'}</td>
+        </tr>
+      `).join('');
 
       let totPspSudah = 0, totPspBelum = 0;
       const pspRowsHtml = (bv.psp || []).map((item, idx) => {
@@ -3147,11 +3362,10 @@
         totPspBelum += blm;
         return `
           <tr>
-            <td style="text-align:center">${idx + 1}</td>
+            <td style="text-align:center">${idx + 1}.</td>
             <td>${item.uraian}</td>
             <td style="text-align:right">${formatRp(sdh)}</td>
             <td style="text-align:right">${formatRp(blm)}</td>
-            <td style="text-align:right">${formatRp(sdh + blm)}</td>
           </tr>
         `;
       }).join('');
@@ -3160,10 +3374,11 @@
         <tr>
           <td style="text-align:center">${row.no || ''}</td>
           <td>${row.uraian || ''}</td>
-          <td style="text-align:center">${row.guna || ''}</td>
-          <td style="text-align:center">${row.manfaat || ''}</td>
-          <td style="text-align:center">${row.pindah || ''}</td>
-          <td style="text-align:center">${row.hapus || ''}</td>
+          <td style="text-align:right">${row.guna ? formatRp(row.guna) : ''}</td>
+          <td style="text-align:right">${row.manfaat ? formatRp(row.manfaat) : ''}</td>
+          <td style="text-align:right">${row.pindah ? formatRp(row.pindah) : ''}</td>
+          <td style="text-align:right">${row.hapus ? formatRp(row.hapus) : ''}</td>
+          <td style="text-align:right">${row.jumlah ? formatRp(row.jumlah) : ''}</td>
         </tr>
       `).join('');
 
@@ -3171,129 +3386,446 @@
         <tr>
           <td style="text-align:center; width:40px;">${row.no || ''}</td>
           <td>${row.uraian || ''}</td>
-          <td style="text-align:center; width:140px;">${row.jumlah || '-'}</td>
+          <td style="text-align:center; width:140px;">${row.jumlah || ''}</td>
         </tr>
       `).join('');
 
       const infoLainnyaActive = (bv.informasiLainnya || []).filter(txt => txt && txt.trim() !== '');
       const infoLainnyaHtml = infoLainnyaActive.length > 0
-        ? `<ul style="list-style-type:disc; margin-left:20px;">${infoLainnyaActive.map(txt => `<li>${txt}</li>`).join('')}</ul>`
-        : `<p style="margin:4px 0;">-</p>`;
+        ? `<table class="no-border">${infoLainnyaActive.map(txt => `<tr><td style="width:15px; vertical-align:top;">-</td><td style="text-align:justify;">${txt}</td></tr>`).join('')}</table>`
+        : '';
 
       const saldoAwalIntra = Number(m.nilaiNeracaAwalIntra || 0);
       const saldoAwalEkstra = Number(m.nilaiNeracaAwalEkstra || 0);
-      const saldoAwalIntraStr = saldoAwalIntra === 0 ? 'Nihil' : 'Rp.' + formatRp(saldoAwalIntra);
-      const saldoAwalEkstraStr = saldoAwalEkstra === 0 ? 'Nihil' : 'Rp.' + formatRp(saldoAwalEkstra);
+      const saldoAwalIntraStr = saldoAwalIntra === 0 ? 'Nihil' : 'sebesar Rp.' + formatRp(saldoAwalIntra);
+      const saldoAwalEkstraStr = saldoAwalEkstra === 0 ? 'Nihil' : 'sebesar Rp.' + formatRp(saldoAwalEkstra);
       const tglTtdDisplay = m.tanggalTtd && m.tanggalTtd.trim() !== '' ? `${m.kotaTtd || 'Tondano'}, ${m.tanggalTtd}` : `${m.kotaTtd || 'Tondano'}, `;
 
       // ======================================================================
-      // RENDER KESELURUHAN DOKUMEN STANDAR CaLBMN
+      // RENDER KESELURUHAN DOKUMEN PERSIS 100% SHEET1
       // ======================================================================
       const fullDocumentHtml = `
-        <div style="text-align:center; margin-bottom:18px;">
-          <div style="font-size:13pt; font-weight:bold; text-transform:uppercase;">CATATAN ATAS LAPORAN BARANG MILIK NEGARA</div>
-          <div style="font-size:12pt; font-weight:bold; text-transform:uppercase;">PERIODE ${m.periode || ''} TAHUN ANGGARAN ${m.tahunAnggaran || ''}</div>
+        <!-- Blok Lampiran Kanan Atas (Row 2-5 Sheet1) -->
+        <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+          <div style="text-align:left; font-size:10pt; line-height:1.35;">
+            <div>Lampiran IV</div>
+            <div>Peraturan Menteri Keuangan Republik Indonesia</div>
+            <div>Nomor : 181/PMK.06/2016</div>
+            <div>Tentang Penatausahaan Barang Milik Negara</div>
+          </div>
         </div>
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">BAB I. PENDAHULUAN</div>
+        <!-- Blok Identitas Kiri Atas (Row 7 Sheet1) -->
+        <div style="font-size:10.5pt; margin-bottom:14px;">
+          <div>Laporan Barang UAKPB ${m.kodeSatker || ''} ${m.uakpb || ''}</div>
+          <div>Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}</div>
+        </div>
 
-        <div style="font-weight:bold; margin-top:6px;">A. Dasar Hukum</div>
-        <ol>
-          <li>Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara;</li>
-          <li>Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara;</li>
-          <li>Peraturan Pemerintah Nomor 71 Tahun 2010 tentang Standar Akuntansi Pemerintahan;</li>
-          <li>Peraturan Pemerintah Nomor 27 Tahun 2014 tentang Pengelolaan Barang Milik Negara/Daerah sebagaimana telah diubah dengan Peraturan Pemerintah Nomor 28 Tahun 2020;</li>
-          <li>Peraturan Menteri Keuangan tentang Penatausahaan Barang Milik Negara.</li>
-        </ol>
+        <!-- Judul Utama Tengah (Row 9-12 Sheet1) -->
+        <div style="text-align:center; margin-bottom:18px;">
+          <div style="font-size:12pt; font-weight:bold; text-transform:uppercase;">CATATAN ATAS LAPORAN BARANG MILIK NEGARA</div>
+          <div style="font-size:11.5pt; font-weight:bold; text-transform:uppercase;">PADA ${(m.uakpb || 'UNIVERSITAS NEGERI MANADO').toUpperCase()}</div>
+          <div style="font-size:11pt; font-weight:bold;">${m.kodeSatker || ''}</div>
+          <div style="font-size:11pt; font-weight:bold; margin-top:4px;">Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}</div>
+        </div>
 
-        <div style="font-weight:bold; margin-top:6px;">B. Entitas Pelaporan</div>
-        <p style="text-align:justify; margin:4px 0;">
-          Catatan atas Laporan Barang Milik Negara (CaLBMN) ini disusun oleh entitas pelaporan Barang Milik Negara dengan identitas satuan kerja sebagai berikut:
-        </p>
-        <table class="no-border" style="margin:4px 0 8px 10px;">
-          <tr><td style="width:140px; font-weight:bold;">UAPB</td><td style="width:15px;">:</td><td>${m.uapb || ''}</td></tr>
-          <tr><td style="font-weight:bold;">UAPBE1</td><td>:</td><td>${m.uapbe1 || ''}</td></tr>
-          <tr><td style="font-weight:bold;">UAPPBW</td><td>:</td><td>${m.uappbw || ''}</td></tr>
-          <tr><td style="font-weight:bold;">UAKPB</td><td>:</td><td>${m.uakpb || ''}</td></tr>
-          <tr><td style="font-weight:bold;">Kode Satker</td><td>:</td><td>${m.kodeSatker || ''}</td></tr>
-          <tr><td style="font-weight:bold;">Alamat</td><td>:</td><td>${m.alamat || ''}</td></tr>
-          <tr><td style="font-weight:bold;">Nomor Telp.</td><td>:</td><td>${m.telepon || ''}</td></tr>
+        <!-- I. PENDAHULUAN -->
+        <div style="font-weight:bold; font-size:11pt; margin-top:12px;">I. PENDAHULUAN</div>
+
+        <div style="font-weight:bold; margin-top:6px;">A. DASAR HUKUM</div>
+        <table class="no-border" style="margin-left:8px;">
+          <tr><td style="width:24px;">1</td><td style="text-align:justify;">Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara;</td></tr>
+          <tr><td>2</td><td style="text-align:justify;">Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara;</td></tr>
+          <tr><td>3</td><td style="text-align:justify;">Undang-Undang Nomor 15 Tahun 2004 tentang Pemeriksaan Pengelolaan dan Tanggung Jawab Keuangan;</td></tr>
+          <tr><td>4</td><td style="text-align:justify;">Peraturan Pemerintah Nomor 71 Tahun 2010 tentang Standar Akuntansi Pemerintahan;</td></tr>
+          <tr><td>5</td><td style="text-align:justify;">Peraturan Pemerintah Nomor 6 Tahun 2006 tentang Pengelolaan Barang Milik Negara/Daerah;</td></tr>
+          <tr><td>6</td><td style="text-align:justify;">Peraturan Pemerintah Nomor 8 Tahun 2006 tentang Pelaporan Keuangan dan Kinerja Instansi Pemerintah;</td></tr>
+          <tr><td>7</td><td style="text-align:justify;">Peraturan Pemerintah Nomor 45 Tahun 2013 tentang Tata Cara Pelaksanaan Anggaran Pendapatan dan Belanja Negara;</td></tr>
+          <tr><td>8</td><td style="text-align:justify;">Peraturan Menteri Keuangan Republik Indonesia Nomor 96/PMK.06/2007 tentang Tata Cara Pelaksanaan Penggunaan. Pemenfaatan. Penghapusandan Pemindahtanganan Barang Milik Negara;</td></tr>
+          <tr><td>9</td><td style="text-align:justify;">Peraturan Menteri Keuangan Republik Indonesia Nomor 97/PMK.06/2007 tentang Penggolongan dan Kodefikasi Barang Milik Negara;</td></tr>
+          <tr><td>10</td><td style="text-align:justify;">Peraturan Menteri Keuangan Republik Indonesia Nomor 120/PMK.06/2007 tentang Penatausahaan Barang Milik Negara;</td></tr>
+          <tr><td>11</td><td style="text-align:justify;">Peraturan Menteri Keuangan Republik Indonesia Nomor 171/PMK.05/2007 sebagaimana telah diubah dengan Peraturan Menteri Keuangan Nomor 233/PMK.05/2011 tentang Sistem Akuntansi dan Pelaporan Keuangan Pemerintah Pusat;</td></tr>
+          <tr><td>12</td><td style="text-align:justify;">Peraturan Menteri Keuangan Republik Indonesia Nomor 177/PMK.05/2015 tentang Pedoman Penyusunan dan Penyampaian Laporan Keuangan Kementerian Negara/Lembaga.</td></tr>
         </table>
 
-        <div style="font-weight:bold; margin-top:6px;">C. Periode Pelaporan</div>
+        <div style="font-weight:bold; margin-top:8px;">B. ENTITAS PELAPORAN</div>
+        <table class="no-border" style="margin:4px 0 8px 10px;">
+          <tr><td style="width:140px;">UAPB</td><td style="width:15px;">:</td><td>${m.uapb || ''}</td></tr>
+          <tr><td>UAPBE1</td><td>:</td><td>${m.uapbe1 || ''}</td></tr>
+          <tr><td>UAPPBW</td><td>:</td><td>${m.uappbw || ''}</td></tr>
+          <tr><td>UAKPB</td><td>:</td><td>${m.uakpb || ''}</td></tr>
+          <tr><td>Kode Satker</td><td>:</td><td>${m.kodeSatker || ''}</td></tr>
+          <tr><td>Alamat</td><td>:</td><td>${m.alamat || ''}</td></tr>
+          <tr><td>Nomor Telp.</td><td>:</td><td>${m.telepon || ''}</td></tr>
+        </table>
+
+        <div style="font-weight:bold; margin-top:8px;">C. PERIODE PELAPORAN</div>
         <p style="text-align:justify; margin:4px 0;">
-          Laporan Barang Milik Negara dan Catatan atas Laporan Barang Milik Negara ini disajikan untuk periode <b>${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}</b> dengan tanggal cut-off per <b>${m.tanggalCutoff || ''}</b>.
+          Laporan Barang Milik Negara (BMN) Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}. untuk CaL BMN laporan ini merupakan laporan yang mencakup seluruh aspek BMN yang dikelola oleh ${m.uakpb || ''}. Laporan BMN ini dihasilkan melalui Sistem Akuntansi Instansi (SAI) yaitu serangkaian prosedur manual maupun yang terkomputerisasi mulai dari pengumpulan data. pencatatan dan pengikhtisaran sampai dengan pelaporan posisi BMN di Neraca pada Kementerian Negara/Lembaga.
         </p>
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">BAB II. KEBIJAKAN AKUNTANSI BARANG MILIK NEGARA</div>
+        <!-- II. KEBIJAKAN PENATAUSAHAAN BARANG MILIK NEGARA -->
+        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">II. KEBIJAKAN PENATAUSAHAAN BARANG MILIK NEGARA</div>
         <p style="text-align:justify; margin:4px 0;">
-          Kebijakan akuntansi Barang Milik Negara berpedoman pada Standar Akuntansi Pemerintahan (SAP) Berbasis Akrual sebagaimana diatur dalam Peraturan Pemerintah Nomor 71 Tahun 2010. Barang Milik Negara meliputi Persediaan, Aset Tetap (Tanah, Peralatan dan Mesin, Gedung dan Bangunan, Jalan, Irigasi dan Jaringan, Aset Tetap Lainnya, serta Konstruksi Dalam Pengerjaan), dan Aset Lainnya (Kemitraan dengan Pihak Ketiga, Aset Tak Berwujud, dan Aset Lain-lain/BMN yang Dihentikan Penggunaannya dari Operasional Pemerintah).
+          Penatausahaan adalah rangkaian kegiatan yang meliputi pembukuan, inventarisasi, dan pelaporan BMN sesuai dengan ketentuan yang berlaku. Tujuan dari Penatausahaan BMN adalah mewujudkan tertib administrasi dan mendukung tertib pengelolaan BMN. Semua barang milik negara tercatat dengan baik. Sedangkan sasaran dari Penatausahaan BMN adalah :
+        </p>
+        <table class="no-border" style="margin-left:8px;">
+          <tr><td style="width:20px;">1</td><td style="text-align:justify;">Pengelolaan BMN dapat dilakukan berdasarkan asas fungsional, kepastian hukum, transparansi dan keterbukaan, efisiensi, akuntabilitas, serta kepastian nilai.</td></tr>
+          <tr><td>2</td><td style="text-align:justify;">Nilai/data BMN baik untuk kebutuhan laporan manajemen maupun untuk kebutuhan laporan sebagai bahan penyusunan Neraca Pemerintah Pusat (pada LKPP) sudah menggambarkan jumlah, kondisi dan nilai BMN yang wajar</td></tr>
+        </table>
+        <div style="margin-top:4px;">Ruang lingkup penatausahaan BMN adalah:</div>
+        <div style="margin-left:10px; margin-top:2px;">
+          <div><b>a. Pembukuan/pencatatan :</b></div>
+          <div style="margin-left:14px;">• Semua BMN terdata, tertata dan tercatat dalam Daftar Barang</div>
+          <div style="margin-left:14px;">• Sudah menggunakan aplikasi (tidak manual)-SAKTI</div>
+          <div style="margin-left:14px;">• Pengunaan penggolongan dan kodefikasi yang tepat</div>
+          <div style="margin-left:14px;">• Pengisian format harus lengkap (Buku Barang dan KIB)</div>
+          <div style="margin-left:14px;">• Data antara barang dan keuangan harus sama</div>
+          <div style="margin-left:14px;">• Pencatatan dan penghapusan data dari Daftar Barang harus terkoordinasi</div>
+          <div style="margin-top:3px;"><b>b. Inventarisasi</b></div>
+          <div style="margin-left:14px;">• Pelaksanaan inventarisasi harus terkoordinasi</div>
+          <div style="margin-left:14px;">• Pelaksana inventarisasi dilakukan oleh Satker</div>
+          <div style="margin-top:3px;"><b>c. Pelaporan</b></div>
+          <div style="margin-left:14px;">• Pelaporan harus berjenjang</div>
+          <div style="margin-left:14px;">• Harus sudah disetujui oleh setiap pimpinan penatausahaan</div>
+          <div style="margin-left:14px;">• Tanggal penyampaian laporan sesuai dengan jadwal</div>
+        </div>
+
+        <!-- III. PENDEKATAN PENYUSUNAN LAPORAN -->
+        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">III. PENDEKATAN PENYUSUNAN LAPORAN </div>
+        <p style="text-align:justify; margin:4px 0;">
+          Laporan Barang Kuasa Pengguna Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} merupakan laporan yang mencakup seluruh aspek BMN yang ditatausahakan dan dikelola oleh ${m.uakpb || ''}.
         </p>
         <p style="text-align:justify; margin:4px 0;">
-          BMN disajikan berdasarkan nilai perolehan dikurangi dengan akumulasi penyusutan/amortisasi. Barang intrakomptabel adalah BMN yang memenuhi kriteria kapitalisasi aset tetap, sedangkan barang ekstrakomptabel adalah BMN yang nilainya di bawah batas minimum kapitalisasi namun tetap ditatausahakan dalam daftar barang.
+          Laporan BMN ini disusun menggunakan sistem aplikasi sebagai alat bantu guna mempermudah dalam melakukan Penatausahaan BMN. Laporan BMN ini terdiri atas:
+        </p>
+        <table class="no-border" style="margin-left:8px;">
+          <tr><td style="width:24px;">1</td><td>Neraca; </td></tr>
+          <tr><td>2</td><td>Laporan Barang Persediaan; </td></tr>
+          <tr><td>3</td><td>Laporan Aset Tetap (Intrakomptabel, Ekstrakomptabel, dan Gabungan); </td></tr>
+          <tr><td>4</td><td>Laporan Konstruksi Dalam Pengerjaan (KDP); </td></tr>
+          <tr><td>5</td><td>Laporan Aset Tak Berwujud; </td></tr>
+          <tr><td>6</td><td>Laporan Barang Bersejarah; </td></tr>
+          <tr><td>7</td><td>Laporan Kondisi Barang; (untuk Semester II) </td></tr>
+          <tr><td>8</td><td>Laporan Penyusutan; </td></tr>
+          <tr><td>9</td><td>Laporan Barang Hilang Yang Telah Diusulkan Penghapusannya Kepada Pengelola Barang; </td></tr>
+          <tr><td>10</td><td>Laporan Barang Rusak Berat Yang Telah Diusulkan Penghapusannya Kepada Pengelola Barang; </td></tr>
+          <tr><td>11</td><td>Laporan Barang Bantuan Pemerintah Yang Belum Ditetapkan Statusnya (BPYBDS); </td></tr>
+          <tr><td>12</td><td>Catatan atas Laporan Barang Milik Negara; </td></tr>
+          <tr><td>13</td><td>Berita Acara Rekonsiliasi (BAR) internal SAKTI pada satuan kerja ${m.uakpb || ''}; </td></tr>
+          <tr><td>14</td><td>Laporan PNBP yang terkait dengan pengelolaan BMN; dan </td></tr>
+          <tr><td>15</td><td>Arsip Data Komputer (ADK).</td></tr>
+        </table>
+
+        <!-- IV. RINGKASAN BARANG MILIK NEGARA -->
+        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">IV. RINGKASAN BARANG MILIK NEGARA PER ${m.periodeRingkasanJudul || 'SEMESTER II 2025'}</div>
+
+        <div style="font-weight:bold; margin-top:6px;">1. Saldo Awal Tahun ${m.tahunSaldoAwal || '2025'}</div>
+        <p style="text-align:justify; margin:4px 0;">
+          Nilai Neraca BMN per ${m.tanggalSaldoAwal || '01 Januari 2026'} menurut satuan kerja ${m.uakpb || ''} adalah ${saldoAwalIntraStr}. dan nilai BMN ekstrakomptabel ${saldoAwalEkstraStr}.
         </p>
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">BAB III. PENDEKATAN PENYUSUNAN LAPORAN</div>
+        <div style="font-weight:bold; margin-top:8px;">2. Ringkasan Mutasi Barang Milik Negara Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''}</div>
         <p style="text-align:justify; margin:4px 0;">
-          Laporan Barang Kuasa Pengguna (LBKP) Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} disusun berdasarkan hasil penatausahaan dokumen sumber transaksi perolehan, perubahan, mutasi tambah, mutasi kurang, penyusutan, serta hasil rekonsiliasi internal antara unit penatausahaan BMN dengan unit akuntansi keuangan pada satuan kerja ${m.uakpb || ''}.
-        </p>
-
-        <div style="font-weight:bold; font-size:11pt; margin-top:14px;">BAB IV. RINGKASAN BARANG MILIK NEGARA PER ${m.periodeRingkasanJudul || (m.periode + ' ' + m.tahunAnggaran).toUpperCase()}</div>
-
-        <div style="font-weight:bold; margin-top:6px;">1. Ringkasan BMN Pada Saldo Awal Tahun</div>
-        <p style="text-align:justify; margin:4px 0;">
-          Nilai Neraca BMN per ${m.tanggalSaldoAwal || '01 Januari ' + (m.tahunAnggaran || '')} menurut satuan kerja ${m.uakpb || ''} adalah ${saldoAwalIntraStr}. dan nilai BMN ekstrakomptabel ${saldoAwalEkstraStr}.
-        </p>
-
-        <div style="font-weight:bold; margin-top:8px;">2. Ringkasan Mutasi BMN Periode ${m.periode || ''} Tahun ${m.tahunAnggaran || ''}</div>
-        <p style="text-align:justify; margin:4px 0;">
-          Penjelasan secara rinci atas nilai BMN per akun neraca pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} disajikan sebagai berikut:
+          Mutasi BMN per Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} adalah sebagai berikut :
         </p>
 
         ${renderedMutasiSectionsHtml}
 
-        <div style="font-weight:bold; margin-top:14px;">3. Nilai BMN Pada Neraca</div>
+        <!-- IV.3 Barang Milik Negara pada satuan kerja ... -->
+        <div style="font-weight:bold; margin-top:14px;">3. Barang Milik Negara pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''}</div>
+
+        <div style="font-weight:bold; margin-top:6px;">a. BMN per akun neraca</div>
         <p style="text-align:justify; margin:4px 0;">
-          Nilai BMN pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} adalah sebesar Rp.${formatRp(totNeracaGab)} (Nilai Buku sebesar Rp.${formatRp(totNeracaBuku)}). Nilai BMN tersebut disajikan berdasarkan klasifikasi pos-pos perkiraan Neraca yaitu Persediaan, Tanah, Peralatan dan Mesin, Gedung dan Bangunan, Jalan, Irigasi, dan Jaringan, Aset Tetap Lainnya, Konstruksi Dalam Pengerjaan, dan Aset Lainnya dengan rincian sebagai berikut:
+          Nilai BMN pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} adalah sebesar Rp. ${formatRp(nilaiBmnNeracaNetto)}. nilai BMN tersebut disajikan berdasarkan klasifikasi pos-pos perkiraan Neraca yaitu Persediaan. Tanah. Peralatan dan Mesin. Gedung dan Bangunan. Jalan. Irigasi. dan Jaringan. Aset Tetap Lainnya. Konstruksi Dalam Pengerjaan. dan Aset Lainnya.
         </p>
+        <div style="margin-top:4px;">Penyajian nilai BMN dalam pos perkiraan Neraca tersebut dengan rincian sebagai berikut :</div>
+
+        <!-- Tabel 1 Bab IV.3.a: Pos Perkiraan Neraca -->
         <table>
           <thead>
             <tr>
-              <th style="width:30px">No</th>
-              <th>Akun Neraca</th>
-              <th style="width:110px">Intrakomptabel (Rp.)</th>
-              <th style="width:105px">Ekstrakomptabel (Rp.)</th>
-              <th style="width:110px">Gabungan (Rp.)</th>
-              <th style="width:115px">Akumulasi Penyusutan Gabungan (Rp.)</th>
-              <th style="width:115px">Nilai Buku Gabungan (Rp.)</th>
+              <th rowspan="2" style="width:40px;">No</th>
+              <th rowspan="2">Uraian Neraca</th>
+              <th style="width:135px;">Intrakomptabel</th>
+              <th style="width:135px;">Ekstrakomptabel</th>
+              <th style="width:140px;">Gabungan</th>
+            </tr>
+            <tr>
+              <th>Rp.</th>
+              <th>Rp.</th>
+              <th>Rp.</th>
             </tr>
           </thead>
           <tbody>
-            ${neracaTableRowsHtml}
+            <tr style="font-weight:bold;">
+              <td style="text-align:center;">I</td>
+              <td>Aset Lancar</td>
+              <td></td>
+              <td></td>
+              <td style="text-align:right;">0</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">1</td>
+              <td>Persediaan</td>
+              <td style="text-align:right;">${formatRp(n.persAkhir)}</td>
+              <td style="text-align:right;">0</td>
+              <td style="text-align:right;">${formatRp(n.persAkhir)}</td>
+            </tr>
             <tr style="font-weight:bold; background:#f3f4f6;">
-              <td colspan="2" style="text-align:center">Total</td>
-              <td style="text-align:right">${formatRp(totNeracaIntra)}</td>
-              <td style="text-align:right">${formatRp(totNeracaEkstra)}</td>
-              <td style="text-align:right">${formatRp(totNeracaGab)}</td>
-              <td style="text-align:right">${totNeracaPeny !== 0 ? '(' + formatRp(totNeracaPeny) + ')' : '0'}</td>
-              <td style="text-align:right">${formatRp(totNeracaBuku)}</td>
+              <td colspan="2">Sub Jumlah (1)</td>
+              <td style="text-align:right;">${formatRp(sub1Intra)}</td>
+              <td style="text-align:right;">${formatRp(sub1Ekstra)}</td>
+              <td style="text-align:right;">${formatRp(sub1Gab)}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+              <td style="text-align:center;">II</td>
+              <td colspan="4">Aset Tetap</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">1</td>
+              <td>Tanah</td>
+              <td style="text-align:right;">${formatRp(n.tanahAkhir)}</td>
+              <td style="text-align:right;">0</td>
+              <td style="text-align:right;">${formatRp(n.tanahAkhir)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">2</td>
+              <td>Peralatan dan Mesin</td>
+              <td style="text-align:right;">${formatRp(n.pm.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.pm.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.pm.akhirGab)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">3</td>
+              <td>Gedung dan Bangunan</td>
+              <td style="text-align:right;">${formatRp(n.gb.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.gb.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.gb.akhirGab)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">4</td>
+              <td>Jalan. Irigasi dan Jaringan</td>
+              <td style="text-align:right;">${formatRp(n.jij.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.jij.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.jij.akhirGab)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">5</td>
+              <td>Aset Tetap Lainnya</td>
+              <td style="text-align:right;">${formatRp(n.atl.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.atl.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.atl.akhirGab)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">6</td>
+              <td>KDP</td>
+              <td style="text-align:right;">${formatRp(n.kdp.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.kdp.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.kdp.akhirGab)}</td>
+            </tr>
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td colspan="2">Sub Jumlah (2)</td>
+              <td style="text-align:right;">${formatRp(sub2Intra)}</td>
+              <td style="text-align:right;">${formatRp(sub2Ekstra)}</td>
+              <td style="text-align:right;">${formatRp(sub2Gab)}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+              <td style="text-align:center;">III</td>
+              <td colspan="4">Aset Lainnya</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">1</td>
+              <td>Kemitraan dengan Pihak Ketiga</td>
+              <td style="text-align:right;">${formatRp(n.kemitraan.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.kemitraan.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.kemitraan.akhirGab)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">2</td>
+              <td>Aset Tak Berwujud</td>
+              <td style="text-align:right;">${formatRp(n.atb.akhirIntra)}</td>
+              <td style="text-align:right;">${formatRp(n.atb.akhirEkstra)}</td>
+              <td style="text-align:right;">${formatRp(n.atb.akhirGab)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">3</td>
+              <td>Aset yang dihentikan penggunaan operasional Pemerintah</td>
+              <td style="text-align:right;">${formatRp(n.dihentikan.akhirIntra)}</td>
+              <td style="text-align:right;">${n.dihentikan.akhirEkstra !== 0 ? formatRp(n.dihentikan.akhirEkstra) : ''}</td>
+              <td style="text-align:right;">${formatRp(n.dihentikan.akhirGab)}</td>
+            </tr>
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td colspan="2">Sub Jumlah (3)</td>
+              <td style="text-align:right;">${formatRp(sub3Intra)}</td>
+              <td style="text-align:right;">${formatRp(sub3Ekstra)}</td>
+              <td style="text-align:right;">${formatRp(sub3Gab)}</td>
+            </tr>
+            <tr style="font-weight:bold; background:#e2e8f0;">
+              <td colspan="2">Total</td>
+              <td style="text-align:right;">${formatRp(totNeracaIntra)}</td>
+              <td style="text-align:right;">${formatRp(totNeracaEkstra)}</td>
+              <td style="text-align:right;">${formatRp(totNeracaGab)}</td>
             </tr>
           </tbody>
         </table>
 
-        <div style="font-weight:bold; font-size:11pt; margin-top:16px;">BAB V. INFORMASI BMN LAINNYA</div>
+        <div style="margin-top:8px;">
+          Rincian nilai Akumulasi Penyusutan BMN pada Laporan Barang Kuasa Pengguna Semesteran. untuk CaLBMN Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} per 31 Desember per perkiraan Neraca adalah sebagai berikut :
+        </div>
 
-        <div style="font-weight:bold; margin-top:6px;">1. Perkembangan Nilai BMN</div>
+        <!-- Tabel 2 Bab IV.3.a: Rincian Akumulasi Penyusutan per Perkiraan Neraca -->
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" style="width:40px;">No</th>
+              <th rowspan="2">Uraian Neraca</th>
+              <th style="width:135px;">Intrakomptabel</th>
+              <th style="width:135px;">Ekstrakomptabel</th>
+              <th style="width:140px;">Gabungan</th>
+            </tr>
+            <tr>
+              <th>Rp.</th>
+              <th>Rp.</th>
+              <th>Rp.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="font-weight:bold;">
+              <td style="text-align:center;">I</td>
+              <td colspan="4">Aset Tetap</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">1</td>
+              <td>Peralatan dan Mesin</td>
+              <td style="text-align:right;">${formatRp(pPmI)}</td>
+              <td style="text-align:right;">${formatRp(pPmE)}</td>
+              <td style="text-align:right;">${formatRp(pPmG)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">2</td>
+              <td>Gedung dan Bangunan</td>
+              <td style="text-align:right;">${formatRp(pGbI)}</td>
+              <td style="text-align:right;">${formatRp(pGbE)}</td>
+              <td style="text-align:right;">${formatRp(pGbG)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">3</td>
+              <td>Jalan. Irigasi dan Jaringan</td>
+              <td style="text-align:right;">${formatRp(pJijI)}</td>
+              <td style="text-align:right;">${formatRp(pJijE)}</td>
+              <td style="text-align:right;">${formatRp(pJijG)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">4</td>
+              <td>Aset Tetap Lainnya</td>
+              <td style="text-align:right;">${formatRp(pAtlI)}</td>
+              <td style="text-align:right;">${formatRp(pAtlE)}</td>
+              <td style="text-align:right;">${formatRp(pAtlG)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">5</td>
+              <td>KDP</td>
+              <td style="text-align:right;">${formatRp(pKdpI)}</td>
+              <td style="text-align:right;">${formatRp(pKdpE)}</td>
+              <td style="text-align:right;">${formatRp(pKdpG)}</td>
+            </tr>
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td colspan="2">Sub Jumlah (2)</td>
+              <td style="text-align:right;">${formatRp(subPeny2I)}</td>
+              <td style="text-align:right;">${formatRp(subPeny2E)}</td>
+              <td style="text-align:right;">${formatRp(subPeny2G)}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+              <td style="text-align:center;">II</td>
+              <td colspan="4">Aset Lainnya</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">1</td>
+              <td>Kemitraan dengan Pihak Ketiga</td>
+              <td style="text-align:right;">${formatRp(pKemI)}</td>
+              <td style="text-align:right;">${formatRp(pKemE)}</td>
+              <td style="text-align:right;">${formatRp(pKemG)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">2</td>
+              <td>Aset Tak Berwujud</td>
+              <td style="text-align:right;">${formatRp(pAtbI)}</td>
+              <td style="text-align:right;">${formatRp(pAtbE)}</td>
+              <td style="text-align:right;">${formatRp(pAtbG)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:center;">3</td>
+              <td>Aset yang dihentikan</td>
+              <td style="text-align:right;">${formatRp(pDihI)}</td>
+              <td style="text-align:right;">${formatRp(pDihE)}</td>
+              <td style="text-align:right;">${formatRp(pDihG)}</td>
+            </tr>
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td colspan="2">Sub Jumlah (3)</td>
+              <td style="text-align:right;">${formatRp(subPeny3I)}</td>
+              <td style="text-align:right;">${formatRp(subPeny3E)}</td>
+              <td style="text-align:right;">${formatRp(subPeny3G)}</td>
+            </tr>
+            <tr style="font-weight:bold; background:#e2e8f0;">
+              <td colspan="2">Total</td>
+              <td style="text-align:right;">${formatRp(totPenyIntra)}</td>
+              <td style="text-align:right;">${formatRp(totPenyEkstra)}</td>
+              <td style="text-align:right;">${formatRp(totPenyGab)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Bab IV.3.b: Perbandingan Nilai BMN pada Laporan Barang dan Laporan Keuangan -->
+        <div style="font-weight:bold; margin-top:10px;">b. Perbandingan Nilai BMN pada Laporan Barang dan Laporan Keuangan</div>
         <p style="text-align:justify; margin:4px 0;">
-          Perkembangan nilai BMN pada satuan kerja ${m.uakpb || ''} dalam 5 (lima) periode laporan terakhir disajikan sebagai berikut:
+          Perbandingan antara nilai BMN yang disajikan dalam laporan barang dan laporan keuangan pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} per akun neraca adalah sebagai berikut:
         </p>
         <table>
           <thead>
             <tr>
-              <th style="width:40px">No</th>
-              <th>Periode Pelaporan</th>
-              <th style="width:160px">Nilai BMN (Rp.)</th>
-              <th style="width:120px">Persentase Naik/(Turun)</th>
+              <th style="width:35px;">No</th>
+              <th>Akun Neraca</th>
+              <th style="width:145px;">Laporan Barang</th>
+              <th style="width:145px;">Laporan Keuangan</th>
+              <th style="width:120px;">Selisih</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${compRowsHtml}
+            <tr style="font-weight:bold; background:#f3f4f6;">
+              <td colspan="2">Total</td>
+              <td style="text-align:right;">${formatRp(totCompBrg)}</td>
+              <td style="text-align:right;">${formatRp(totCompKeu)}</td>
+              <td style="text-align:right;">${formatRp(totCompSel)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="font-size:10pt; margin-top:2px;">*) Aset lain-lain pada laporan barang adalah nilai BMN yang dihentikan penggunaannya dari operasional pemerintah.</div>
+        <p style="text-align:justify; margin:6px 0;">
+          ${totCompSel === 0
+            ? 'Berdasarkan rekapitulasi data perbandingan nilai BMN tersebut di atas. tidak terdapat selisih penyajian nilai BMN antara laporan barang dan laporan keuangan.'
+            : 'Berdasarkan rekapitulasi data perbandingan nilai BMN tersebut di atas. terdapat selisih penyajian nilai BMN antara laporan barang dan laporan keuangan sebesar Rp.' + formatRp(totCompSel) + '.'}
+        </p>
+
+        <!-- V. INFORMASI BMN LAINNYA -->
+        <div style="font-weight:bold; font-size:11pt; margin-top:16px;">V. INFORMASI BMN LAINNYA</div>
+
+        <div style="font-weight:bold; margin-top:6px;">1. Perkembangan Nilai BMN</div>
+        <p style="text-align:justify; margin:4px 0;">
+          Perkembangan Nilai BMN secara gabungan (intrakomptabel dan ekstrakomptabel) selama 5 (lima) periode laporan terakhir. dapat disajikan sebagai berikut:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2" style="width:40px;">No</th>
+              <th rowspan="2">Periode Laporan</th>
+              <th rowspan="2" style="width:150px;">Nilai BMN</th>
+              <th colspan="2">Perkembangan</th>
+            </tr>
+            <tr>
+              <th style="width:140px;">Rupiah</th>
+              <th style="width:90px;">Persen</th>
             </tr>
           </thead>
           <tbody>
@@ -3303,24 +3835,25 @@
 
         <div style="font-weight:bold; margin-top:10px;">2. Informasi Pengelolaan BMN</div>
 
-        <div style="font-weight:bold; margin-top:6px;">a. Penetapan Status Penggunaan BMN (PSP)</div>
+        <div style="font-weight:bold; margin-top:6px;">a. Penetapan Status Penggunaan BMN</div>
+        <p style="text-align:justify; margin:4px 0;">
+          Nilai BMN yang sudah ditetapkan status penggunaannya pada Laporan Barang Kuasa Pengguna. untuk CaLBMN ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} per ${m.tanggalCutoff || ''}
+        </p>
         <table>
           <thead>
             <tr>
-              <th style="width:35px">No</th>
-              <th>Uraian Kelompok BMN</th>
-              <th style="width:130px">Sudah Ditetapkan Status Penggunaannya (Rp.)</th>
-              <th style="width:130px">Belum Ditetapkan Status Penggunaannya (Rp.)</th>
-              <th style="width:130px">Total (Rp.)</th>
+              <th style="width:40px;">No</th>
+              <th>Uraian </th>
+              <th style="width:160px;">Sudah Ditetapkan <br/>Status Penggunaan<br/>(Rp)</th>
+              <th style="width:160px;">Belum Ditetapkan <br/>Status Penggunaan<br/>(Rp)</th>
             </tr>
           </thead>
           <tbody>
             ${pspRowsHtml}
             <tr style="font-weight:bold; background:#f3f4f6;">
-              <td colspan="2" style="text-align:center">Jumlah</td>
-              <td style="text-align:right">${formatRp(totPspSudah)}</td>
-              <td style="text-align:right">${formatRp(totPspBelum)}</td>
-              <td style="text-align:right">${formatRp(totPspSudah + totPspBelum)}</td>
+              <td colspan="2">Jumlah</td>
+              <td style="text-align:right;">${formatRp(totPspSudah)}</td>
+              <td style="text-align:right;">${formatRp(totPspBelum)}</td>
             </tr>
           </tbody>
         </table>
@@ -3329,40 +3862,49 @@
         <table>
           <thead>
             <tr>
-              <th style="width:35px">No</th>
+              <th style="width:35px;">No</th>
               <th>Uraian</th>
-              <th style="width:95px">Penggunaan</th>
-              <th style="width:95px">Pemanfaatan</th>
-              <th style="width:110px">Pemindahtanganan</th>
-              <th style="width:95px">Penghapusan</th>
+              <th style="width:85px;">Penggunaan</th>
+              <th style="width:85px;">Pemanfaatan</th>
+              <th style="width:105px;">Pemindahtanganan</th>
+              <th style="width:85px;">Penghapusan</th>
+              <th style="width:85px;">Jumlah</th>
             </tr>
           </thead>
           <tbody>
             ${pengelolaanRowsHtml}
           </tbody>
         </table>
+        <div style="font-size:10pt; margin-top:2px;">
+          <div>Keterangan : </div>
+          <div>*) hanya diperlakukan untuk proses pengelolaan di tingkat UAKPB. UAPPB-W. dan UAPPB-E1</div>
+        </div>
 
-        <div style="font-weight:bold; margin-top:8px;">c. BMN Idle</div>
+        <div style="font-weight:bold; margin-top:8px;">c. Pengelolaan BMN Idle</div>
         <table>
           <thead>
             <tr>
-              <th style="width:40px">No</th>
+              <th style="width:40px;">No</th>
               <th>Uraian</th>
-              <th style="width:140px">Jumlah</th>
+              <th style="width:140px;">Jumlah</th>
             </tr>
           </thead>
           <tbody>
             ${idleRowsHtml}
           </tbody>
         </table>
-        <p style="margin:4px 0 10px 0;">Keterangan: ${bv.ketIdle || '-'}</p>
+        <p style="margin:4px 0 10px 0;">${bv.ketIdle || 'Tidak terdapat BMN Idle pada satuan kerja ' + (m.uakpb || 'Universitas Negeri Manado')}</p>
 
         <div style="font-weight:bold; margin-top:8px;">d. Informasi Lainnya</div>
         ${infoLainnyaHtml}
 
+        <p style="text-align:justify; margin:14px 0 10px 0;">
+          Demikian Cataatan Atas Laporan Barang Milik Negara ini dibuat untuk dijadikan sebagai penjelasan atas Laporan Barang Milik Negara Unit Akuntansi Kuasa Pengguna Barang dan bagian yang tak terpisahkan dengan Laporan Keuangan Satuan Kerja ${m.uakpb || 'Universitas Negeri Manado'}.
+        </p>
+
         <!-- Blok Tanda Tangan -->
-        <div style="margin-top:36px; display:flex; justify-content:flex-end;">
-          <div style="width:310px; text-align:left; font-size:11pt;">
+        <div style="margin-top:28px; display:flex; justify-content:flex-end;">
+          <div style="width:320px; text-align:left; font-size:11pt;">
             <div>${tglTtdDisplay}</div>
             <div style="font-weight:bold; margin-bottom:65px;">${m.jabatanTtd || ''}</div>
             <div style="font-weight:bold; text-decoration:underline;">${m.namaTtd || ''}</div>
@@ -3372,6 +3914,148 @@
       `;
 
       document.getElementById('printArea').innerHTML = fullDocumentHtml;
+    }
+
+    // Override presisi untuk narasi & judul tabel per sub-bidang BMN agar 100% identik dengan Sheet1
+    function renderSubAssetSectionHtml(numIndex, groupCode, itemMeta, sa, m) {
+      const s = computeSubAssetSummary(sa);
+      if (!s.hasActivity) return '';
+
+      const titleLabel = itemMeta.code ? `${itemMeta.name} (${itemMeta.code})` : itemMeta.name;
+      const tambahTitle = (itemMeta.key === 'pm_309')
+        ? `Mutasi Tambah Alat ${itemMeta.name} tersebut meliputi :`
+        : `Mutasi Tambah ${itemMeta.name} tersebut meliputi :`;
+      const kurangTitle = itemMeta.kurangHasSaldoWord
+        ? `Mutasi Kurang Saldo ${itemMeta.name} tersebut meliputi :`
+        : `Mutasi Kurang ${itemMeta.name} tersebut meliputi :`;
+
+      // Kalimat pembuka spesifik per kelompok (pm, gb, jij, atl) sesuai Sheet1
+      let openingNarrative = '';
+      if (groupCode === 'pm') {
+        const displayName = (itemMeta.key === 'pm_318') ? `Peralatan ${itemMeta.name}` : itemMeta.name;
+        openingNarrative = `Saldo ${displayName} pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} sebesar Rp.${formatRp(s.akhirGab)}. Jumlah tersebut terdiri atas saldo awal total jumlah barang ${formatRp(sa.qtyAwal)} dengan nilai sebesar Rp.${formatRp(s.awalGab)}, mutasi tambah jumlah barang ${formatRp(sa.qtyTambah)} dengan nilai sebesar Rp.${formatRp(s.tambahGab)}${s.tambahGab === 0 ? ' (nihil)' : ''}, dan mutasi kurang jumlah barang ${formatRp(sa.qtyKurang)} dengan nilai sebesar Rp.${formatRp(s.kurangGab)}${s.kurangGab === 0 ? ' (nihil)' : ''}.`;
+      } else if (groupCode === 'gb') {
+        openingNarrative = `Saldo ${itemMeta.name} pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} adalah sebesar Rp.${formatRp(s.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebanyak ${formatRp(sa.qtyAwal)} dengan nilai sebesar Rp.${formatRp(s.awalGab)}. mutasi tambah sejumlah ${formatRp(sa.qtyTambah)} dengan nilai sebesar Rp.${formatRp(s.tambahGab)}${s.tambahGab === 0 ? ' (nihil)' : ''} dan mutasi kurang sejumlah ${formatRp(sa.qtyKurang)} dengan nilai sebesar Rp.${formatRp(s.kurangGab)}${s.kurangGab === 0 ? ' (nihil)' : ''}.`;
+      } else if (groupCode === 'jij') {
+        if (itemMeta.key === 'jij_501') {
+          openingNarrative = `Saldo ${itemMeta.name} pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} adalah sebesar Rp.${formatRp(s.akhirGab)}. Jumlah tersebut terdiri atas saldo awal dengan nilai sebesar Rp.${formatRp(s.awalGab)}. mutasi tambah dengan nilai sebesar Rp.${formatRp(s.tambahGab)}${s.tambahGab === 0 ? ' (nihil)' : ''}. dan mutasi kurang dengan nilai sebesar Rp.${formatRp(s.kurangGab)}${s.kurangGab === 0 ? ' (nihil)' : ''}.`;
+        } else {
+          openingNarrative = `Saldo ${itemMeta.name} pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} adalah sebesar Rp.${formatRp(s.akhirGab)}. Jumlah tersebut terdiri atas saldo awal sebanyak ${formatRp(sa.qtyAwal)} dengan nilai sebesar Rp.${formatRp(s.awalGab)}. mutasi tambah sebanyak ${formatRp(sa.qtyTambah)} dengan nilai sebesar Rp.${formatRp(s.tambahGab)}${s.tambahGab === 0 ? ' (nihil)' : ''}. dan mutasi kurang sejumlah ${formatRp(sa.qtyKurang)} dengan nilai sebesar Rp.${formatRp(s.kurangGab)}${s.kurangGab === 0 ? ' (nihil)' : ''}.`;
+        }
+      } else {
+        openingNarrative = `Saldo ${itemMeta.name} pada satuan kerja ${m.uakpb || ''} per ${m.tanggalCutoff || ''} adalah sebesar Rp.${formatRp(s.akhirGab)}${s.akhirGab === 0 ? ' (nihil)' : ''}. Jumlah tersebut terdiri atas saldo awal sejumlah ${formatRp(sa.qtyAwal)} dengan nilai sebesar Rp.${formatRp(s.awalGab)}${s.awalGab === 0 ? ' (nihil)' : ''}. mutasi tambah sejumlah ${formatRp(sa.qtyTambah)} dengan nilai sebesar Rp.${formatRp(s.tambahGab)}${s.tambahGab === 0 ? ' (nihil)' : ''}. dan mutasi kurang sejumlah ${formatRp(sa.qtyKurang)} dengan nilai sebesar Rp.${formatRp(s.kurangGab)}${s.kurangGab === 0 ? ' (nihil)' : ''}.`;
+      }
+
+      const tambahRows = [];
+      if (s.awalIntra !== 0 || s.awalEkstra !== 0 || sa.tambah.length > 0) {
+        tambahRows.push({ uraian: 'Saldo Awal', intra: s.awalIntra, ekstra: s.awalEkstra });
+      }
+      (sa.tambah || []).forEach(r => tambahRows.push(r));
+
+      let tambahTableHtml = '';
+      if (tambahRows.length > 0) {
+        const trs = tambahRows.map(r => {
+          const g = Number(r.intra || 0) + Number(r.ekstra || 0);
+          return `<tr><td>${r.uraian || '-'}</td><td style="text-align:right">${formatRp(r.intra)}</td><td style="text-align:right">${formatRp(r.ekstra)}</td><td style="text-align:right">${formatRp(g)}</td></tr>`;
+        }).join('');
+        tambahTableHtml = `
+          <div style="margin-top:6px;">${tambahTitle}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Uraian Jenis Transaksi</th>
+                <th style="width:130px">Intrakomptabel <br/>(Rp.)</th>
+                <th style="width:130px">Ekstrakomptabel<br/> (Rp.)</th>
+                <th style="width:130px">Gabungan <br/>(Rp.)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${trs}
+              <tr style="font-weight:bold; background:#f3f4f6;">
+                <td>Jumlah</td>
+                <td style="text-align:right">${formatRp(s.awalIntra + s.tambahIntra)}</td>
+                <td style="text-align:right">${formatRp(s.awalEkstra + s.tambahEkstra)}</td>
+                <td style="text-align:right">${formatRp(s.awalGab + s.tambahGab)}</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+      }
+
+      let kurangTableHtml = '';
+      if (sa.kurang && sa.kurang.length > 0) {
+        const trs = sa.kurang.map(r => {
+          const g = Number(r.intra || 0) + Number(r.ekstra || 0);
+          return `<tr><td>${r.uraian || '-'}</td><td style="text-align:right">${formatRp(r.intra)}</td><td style="text-align:right">${formatRp(r.ekstra)}</td><td style="text-align:right">${formatRp(g)}</td></tr>`;
+        }).join('');
+        kurangTableHtml = `
+          <div style="margin-top:6px;">${kurangTitle}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Uraian Jenis Transaksi</th>
+                <th style="width:130px">Intrakomptabel <br/>(Rp.)</th>
+                <th style="width:130px">Ekstrakomptabel<br/> (Rp.)</th>
+                <th style="width:130px">Gabungan <br/>(Rp.)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${trs}
+              <tr style="font-weight:bold; background:#f3f4f6;">
+                <td>Jumlah</td>
+                <td style="text-align:right">${formatRp(s.kurangIntra)}</td>
+                <td style="text-align:right">${formatRp(s.kurangEkstra)}</td>
+                <td style="text-align:right">${formatRp(s.kurangGab)}</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+      }
+
+      const prosesHapusText = (groupCode === 'gb')
+        ? `sedang dalam proses penghapusan adalah ${formatRp(sa.prosesHapusQty)} dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.`
+        : (groupCode === 'jij')
+          ? `sedang dalam proses penghapusan/pemindahtanganan adalah sebanyak ${formatRp(sa.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.`
+          : `sedang dalam proses penghapusan/pemindahtanganan adalah ${formatRp(sa.prosesHapusQty)} kuantitas dengan nilai sebesar Rp.${formatRp(sa.prosesHapusNilai)}${Number(sa.prosesHapusNilai || 0) === 0 ? ' (Nihil)' : ''}.`;
+
+      let totalKondisiQty = 0, totalKondisiNilai = 0;
+      const kondisiRowsHtml = KONDISI_LABELS.map((lbl, idx) => {
+        const k = (sa.kondisi && sa.kondisi[idx]) ? sa.kondisi[idx] : { qty: 0, nilai: 0 };
+        totalKondisiQty += Number(k.qty || 0);
+        totalKondisiNilai += Number(k.nilai || 0);
+        return `<tr><td>${lbl}</td><td style="text-align:right">${formatRp(k.qty)}</td><td style="text-align:right">${formatRp(k.nilai)}</td></tr>`;
+      }).join('');
+
+      const hentiGunaHtml = (groupCode === 'pm' || Number(sa.dihentikanQty || 0) !== 0 || Number(sa.dihentikanNilai || 0) !== 0)
+        ? `<p style="margin:4px 0;">Kelompok barang ${itemMeta.name} yang statusnya dihentikan dari penggunaan operasional pemerintah adalah ${formatRp(sa.dihentikanQty)} unit/Rp.${formatRp(sa.dihentikanNilai)}</p>`
+        : '';
+
+      return `
+        <div style="margin-left:14px; margin-top:10px;">
+          <div style="font-weight:bold;">${numIndex}. ${titleLabel}</div>
+          <p style="text-align:justify; margin:4px 0;">${openingNarrative}</p>
+          ${tambahTableHtml}
+          ${kurangTableHtml}
+          <p style="text-align:justify; margin:4px 0;">
+            Dari jumlah ${itemMeta.name} di atas. yang statusnya sedang dimanfaatkan oleh pihak ketiga adalah sejumlah ${formatRp(sa.pihakKetigaQty)} dengan nilai sebesar Rp.${formatRp(sa.pihakKetigaNilai)}${Number(sa.pihakKetigaNilai || 0) === 0 ? ' (Nihil)' : ''}. ${prosesHapusText}
+          </p>
+          <div>Dari jumlah Saldo ${itemMeta.name} di atas. berdasarkan status kondisinya adalah sebagai berikut :</div>
+          <table>
+            <thead>
+              <tr><th>Uraian Kondisi</th><th style="width:120px">Kuantitas</th><th style="width:150px">Nilai (Rp.)</th></tr>
+            </thead>
+            <tbody>
+              ${kondisiRowsHtml}
+              <tr style="font-weight:bold; background:#f3f4f6;">
+                <td>Jumlah</td>
+                <td style="text-align:right">${formatRp(totalKondisiQty)}</td>
+                <td style="text-align:right">${formatRp(totalKondisiNilai)}</td>
+              </tr>
+            </tbody>
+          </table>
+          ${hentiGunaHtml}
+        </div>
+      `;
     }
 
     // ========================================================================
@@ -3390,10 +4074,26 @@
       const bv = p.babV || {};
       const wb = XLSX.utils.book_new();
 
-      // Sheet 1: Identitas & Neraca BMN
+      const sub1Intra = n.persAkhir, sub1Ekstra = 0, sub1Gab = n.persAkhir;
+      const sub2Intra = n.tanahAkhir + n.pm.akhirIntra + n.gb.akhirIntra + n.jij.akhirIntra + n.atl.akhirIntra + n.kdp.akhirIntra;
+      const sub2Ekstra = n.pm.akhirEkstra + n.gb.akhirEkstra + n.jij.akhirEkstra + n.atl.akhirEkstra + n.kdp.akhirEkstra;
+      const sub2Gab = sub2Intra + sub2Ekstra;
+      const sub3Intra = n.kemitraan.akhirIntra + n.atb.akhirIntra + n.dihentikan.akhirIntra;
+      const sub3Ekstra = n.kemitraan.akhirEkstra + n.atb.akhirEkstra + n.dihentikan.akhirEkstra;
+      const sub3Gab = sub3Intra + sub3Ekstra;
+      const totNeracaIntra = sub1Intra + sub2Intra + sub3Intra;
+      const totNeracaEkstra = sub1Ekstra + sub2Ekstra + sub3Ekstra;
+      const totNeracaGab = totNeracaIntra + totNeracaEkstra;
+
       const sheet1Rows = [
-        ['CATATAN ATAS LAPORAN BARANG MILIK NEGARA (CaLBMN)'],
-        ['PERIODE ' + (m.periode || '').toUpperCase() + ' TAHUN ANGGARAN ' + (m.tahunAnggaran || '')],
+        ['Lampiran IV - Peraturan Menteri Keuangan Republik Indonesia Nomor : 181/PMK.06/2016'],
+        ['Laporan Barang UAKPB ' + (m.kodeSatker || '') + ' ' + (m.uakpb || '')],
+        ['Periode ' + (m.periode || '') + ' Tahun Anggaran ' + (m.tahunAnggaran || '')],
+        [],
+        ['CATATAN ATAS LAPORAN BARANG MILIK NEGARA'],
+        ['PADA ' + (m.uakpb || '').toUpperCase()],
+        [m.kodeSatker || ''],
+        ['Periode ' + (m.periode || '') + ' Tahun Anggaran ' + (m.tahunAnggaran || '')],
         [],
         ['UAPB', m.uapb],
         ['UAPBE1', m.uapbe1],
@@ -3404,37 +4104,33 @@
         ['Nomor Telp.', m.telepon],
         ['Tanggal Cut-Off', m.tanggalCutoff],
         [],
-        ['NILAI BMN PADA NERACA'],
-        ['No', 'Akun Neraca', 'Intrakomptabel (Rp.)', 'Ekstrakomptabel (Rp.)', 'Gabungan (Rp.)', 'Akumulasi Penyusutan Gabungan (Rp.)', 'Nilai Buku Gabungan (Rp.)']
+        ['3.a. BMN PER AKUN NERACA'],
+        ['No', 'Uraian Neraca', 'Intrakomptabel (Rp.)', 'Ekstrakomptabel (Rp.)', 'Gabungan (Rp.)'],
+        ['I', 'Aset Lancar', '', '', 0],
+        [1, 'Persediaan', n.persAkhir, 0, n.persAkhir],
+        ['Sub Jumlah (1)', '', sub1Intra, sub1Ekstra, sub1Gab],
+        ['II', 'Aset Tetap', '', '', ''],
+        [1, 'Tanah', n.tanahAkhir, 0, n.tanahAkhir],
+        [2, 'Peralatan dan Mesin', n.pm.akhirIntra, n.pm.akhirEkstra, n.pm.akhirGab],
+        [3, 'Gedung dan Bangunan', n.gb.akhirIntra, n.gb.akhirEkstra, n.gb.akhirGab],
+        [4, 'Jalan. Irigasi dan Jaringan', n.jij.akhirIntra, n.jij.akhirEkstra, n.jij.akhirGab],
+        [5, 'Aset Tetap Lainnya', n.atl.akhirIntra, n.atl.akhirEkstra, n.atl.akhirGab],
+        [6, 'KDP', n.kdp.akhirIntra, n.kdp.akhirEkstra, n.kdp.akhirGab],
+        ['Sub Jumlah (2)', '', sub2Intra, sub2Ekstra, sub2Gab],
+        ['III', 'Aset Lainnya', '', '', ''],
+        [1, 'Kemitraan dengan Pihak Ketiga', n.kemitraan.akhirIntra, n.kemitraan.akhirEkstra, n.kemitraan.akhirGab],
+        [2, 'Aset Tak Berwujud', n.atb.akhirIntra, n.atb.akhirEkstra, n.atb.akhirGab],
+        [3, 'Aset yang dihentikan penggunaan operasional Pemerintah', n.dihentikan.akhirIntra, n.dihentikan.akhirEkstra, n.dihentikan.akhirGab],
+        ['Sub Jumlah (3)', '', sub3Intra, sub3Ekstra, sub3Gab],
+        ['Total', '', totNeracaIntra, totNeracaEkstra, totNeracaGab]
       ];
-
-      const neracaItems = [
-        [1, 'Persediaan', n.persAkhir, 0, 0],
-        [2, 'Tanah', n.tanahAkhir, 0, 0],
-        [3, 'Peralatan dan Mesin', n.pm.akhirIntra, n.pm.akhirEkstra, Number(peny.pm_intra || 0) + Number(peny.pm_ekstra || 0)],
-        [4, 'Gedung dan Bangunan', n.gb.akhirIntra, n.gb.akhirEkstra, Number(peny.gb_intra || 0) + Number(peny.gb_ekstra || 0)],
-        [5, 'Jalan. Irigasi dan Jaringan', n.jij.akhirIntra, n.jij.akhirEkstra, Number(peny.jij_intra || 0) + Number(peny.jij_ekstra || 0)],
-        [6, 'Aset Tetap Lainnya', n.atl.akhirIntra, n.atl.akhirEkstra, Number(peny.atl_intra || 0) + Number(peny.atl_ekstra || 0)],
-        [7, 'KDP', n.kdp.akhirIntra, n.kdp.akhirEkstra, Number(peny.kdp_intra || 0) + Number(peny.kdp_ekstra || 0)],
-        [8, 'Kemitraan dengan Pihak Ketiga', n.kemitraan.akhirIntra, n.kemitraan.akhirEkstra, Number(peny.kemitraan_intra || 0) + Number(peny.kemitraan_ekstra || 0)],
-        [9, 'Aset Tak Berwujud', n.atb.akhirIntra, n.atb.akhirEkstra, Number(peny.atb_intra || 0) + Number(peny.atb_ekstra || 0)],
-        [10, 'Aset yang dihentikan', n.dihentikan.akhirIntra, n.dihentikan.akhirEkstra, Number(peny.dihentikan_intra || 0) + Number(peny.dihentikan_ekstra || 0)]
-      ];
-
-      neracaItems.forEach(r => {
-        const gab = r[2] + r[3];
-        const buku = gab - r[4];
-        sheet1Rows.push([r[0], r[1], r[2], r[3], gab, -r[4], buku]);
-      });
-
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet1Rows), '1_Entitas_Neraca');
 
-      // Sheet 2: Rincian Mutasi Aktif (Hanya BMN yang diisi transaksinya)
-      const sheet2Rows = [['KELOMPOK / BIDANG BMN', 'KATEGORI', 'URAIAN TRANSAKSI', 'INTRAKOMPTABEL (Rp)', 'EKSTRAKOMPTABEL (Rp)', 'GABUNGAN (Rp)']];
+      const sheet2Rows = [['KELOMPOK / BIDANG BMN', 'KATEGORI', 'URAIAN JENIS TRANSAKSI', 'INTRAKOMPTABEL (Rp.)', 'EKSTRAKOMPTABEL (Rp.)', 'GABUNGAN (Rp.)']];
       if (n.hasPersediaan) {
         (p.persediaan.items || []).forEach(it => {
           if (Number(it.awal || 0) !== 0 || Number(it.mutasi || 0) !== 0) {
-            sheet2Rows.push(['Persediaan', it.kode, it.uraian, Number(it.awal || 0), Number(it.mutasi || 0), Number(it.awal || 0) + Number(it.mutasi || 0)]);
+            sheet2Rows.push(['Barang Persediaan', it.kode, it.uraian, Number(it.awal || 0), Number(it.mutasi || 0), Number(it.awal || 0) + Number(it.mutasi || 0)]);
           }
         });
       }
@@ -3450,7 +4146,7 @@
         { key: 'kdp_701', name: 'Konstruksi Dalam Pengerjaan (KDP)' },
         { key: 'al_kemitraan', name: 'Aset Kemitraan Dengan Pihak Ketiga' },
         { key: 'atb_801', name: 'Aset Tak Berwujud' },
-        { key: 'al_dihentikan', name: 'BMN Dihentikan dari Operasional' }
+        { key: 'al_dihentikan', name: 'BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah' }
       );
 
       allSubKeys.forEach(meta => {
@@ -3461,19 +4157,20 @@
         (sa.tambah || []).forEach(r => sheet2Rows.push([meta.name, 'Mutasi Tambah', r.uraian, Number(r.intra || 0), Number(r.ekstra || 0), Number(r.intra || 0) + Number(r.ekstra || 0)]));
         (sa.kurang || []).forEach(r => sheet2Rows.push([meta.name, 'Mutasi Kurang', r.uraian, Number(r.intra || 0), Number(r.ekstra || 0), Number(r.intra || 0) + Number(r.ekstra || 0)]));
       });
-
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet2Rows), '2_Mutasi_BMN_Aktif');
 
-      // Sheet 3: Bab V (Perkembangan, PSP, Pengelolaan, Idle, Info Lainnya)
-      const sheet3Rows = [['BAB V - PERKEMBANGAN NILAI BMN'], ['No', 'Periode', 'Nilai BMN (Rp)']];
-      (bv.perkembangan || []).forEach((x, idx) => sheet3Rows.push([idx + 1, x.periode, Number(x.nilai || 0)]));
-      sheet3Rows.push([], ['PENETAPAN STATUS PENGGUNAAN (PSP)'], ['Uraian', 'Sudah PSP (Rp)', 'Belum PSP (Rp)', 'Total (Rp)']);
-      (bv.psp || []).forEach(x => sheet3Rows.push([x.uraian, Number(x.sudah || 0), Number(x.belum || 0), Number(x.sudah || 0) + Number(x.belum || 0)]));
-      sheet3Rows.push([], ['INFORMASI LAINNYA']);
+      const sheet3Rows = [
+        ['V. INFORMASI BMN LAINNYA'],
+        ['1. Perkembangan Nilai BMN'],
+        ['No', 'Periode Laporan', 'Nilai BMN', 'Perkembangan (Rupiah)', 'Perkembangan (Persen)']
+      ];
+      (bv.perkembangan || []).forEach((x, idx) => sheet3Rows.push([idx + 1, x.periode, Number(x.nilai || 0), Number(x.rupiah || 0), x.persen || '0']));
+      sheet3Rows.push([], ['2.a. Penetapan Status Penggunaan BMN'], ['No', 'Uraian', 'Sudah Ditetapkan Status Penggunaan (Rp)', 'Belum Ditetapkan Status Penggunaan (Rp)']);
+      (bv.psp || []).forEach((x, idx) => sheet3Rows.push([(idx + 1) + '.', x.uraian, Number(x.sudah || 0), Number(x.belum || 0)]));
+      sheet3Rows.push([], ['2.d. Informasi Lainnya']);
       (bv.informasiLainnya || []).forEach(txt => {
-        if (txt && txt.trim() !== '') sheet3Rows.push([txt]);
+        if (txt && txt.trim() !== '') sheet3Rows.push(['-', txt]);
       });
-
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet3Rows), '3_Bab_V_Informasi');
 
       const fileName = `CaLBMN_${(m.uakpb || 'UNIMA').replace(/\s+/g, '_')}_${m.periode}_${m.tahunAnggaran}.xlsx`;
@@ -3499,7 +4196,7 @@
     }
 
     // ========================================================================
-    // KEAMANAN AKUN & PANEL ADMIN (TERMASUK PENGANGKATAN ADMIN KHUSUS & HAPUS)
+    // KEAMANAN AKUN & PANEL ADMIN (ADMIN KHUSUS & HAPUS USER)
     // ========================================================================
     async function handleChangeOwnPassword(e) {
       e.preventDefault();
