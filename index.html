@@ -2138,32 +2138,66 @@
       }
     }
 
+    const SUPER_ADMIN_USERNAME = 'admin';
+
     function renderAdminPanel() {
       const uBody = document.getElementById('adminUsersTableBody');
-      uBody.innerHTML = (state.users || []).map(u => `
-        <tr>
-          <td class="p-2.5 font-mono font-bold text-slate-800">${u.username}<br/><span class="text-[10px] text-slate-400">${u.userId}</span></td>
-          <td class="p-2.5 font-semibold text-slate-700">${cleanLabel(u.fullName)}</td>
-          <td class="p-2.5 text-center">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
-              ${u.role}
-            </span>
-          </td>
-          <td class="p-2.5 font-mono text-[11px] text-slate-400">${u.passwordHashPreview || '***'}</td>
-          <td class="p-2.5 text-center">
-            <div class="inline-flex gap-1">
-              <button onclick="adminToggleRole('${u.username}', '${u.role === 'admin' ? 'operator' : 'admin'}')"
-                class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px]">
-                Ubah Role
-              </button>
-              <button onclick="adminResetPass('${u.username}')"
-                class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-[11px]">
-                Reset Pass
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      const actorUsername = String(state.currentUser ? state.currentUser.username : '').trim().toLowerCase();
+      const isActorSuperAdmin = (actorUsername === SUPER_ADMIN_USERNAME);
+
+      uBody.innerHTML = (state.users || []).map(u => {
+        const targetUsername = String(u.username || '').trim().toLowerCase();
+        const isTargetSuperAdmin = (targetUsername === SUPER_ADMIN_USERNAME);
+        const isSelf = (targetUsername === actorUsername);
+        const isTargetAdmin = (String(u.role).toLowerCase() === 'admin');
+
+        // Aturan izin hapus:
+        // 1. Tidak boleh hapus diri sendiri & tidak boleh hapus Admin Khusus ('admin')
+        // 2. Jika target adalah Admin, hanya Admin Khusus ('admin') yang boleh menghapus
+        const canDelete = !isSelf && !isTargetSuperAdmin && (!isTargetAdmin || isActorSuperAdmin);
+
+        // Aturan izin ubah role: Admin Khusus tidak bisa diturunkan rolenya, dan sesama Admin hanya bisa diubah oleh Admin Khusus
+        const canChangeRole = !isTargetSuperAdmin && (!isTargetAdmin || isActorSuperAdmin);
+
+        return `
+          <tr>
+            <td class="p-2.5 font-mono font-bold text-slate-800">
+              ${u.username}
+              ${isTargetSuperAdmin ? '<span class="ml-1 px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 text-[9px] font-extrabold uppercase">Admin Khusus</span>' : ''}
+              <br/><span class="text-[10px] text-slate-400">${u.userId}</span>
+            </td>
+            <td class="p-2.5 font-semibold text-slate-700">${cleanLabel(u.fullName)}</td>
+            <td class="p-2.5 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
+                ${u.role}
+              </span>
+            </td>
+            <td class="p-2.5 font-mono text-[11px] text-slate-400">${u.passwordHashPreview || '***'}</td>
+            <td class="p-2.5 text-center">
+              <div class="inline-flex flex-wrap items-center justify-center gap-1">
+                ${canChangeRole ? `
+                  <button onclick="adminToggleRole('${u.username}', '${u.role === 'admin' ? 'operator' : 'admin'}')"
+                    class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-[11px]" title="Ganti Role">
+                    Ubah Role
+                  </button>
+                ` : ''}
+                ${(!isTargetSuperAdmin || isActorSuperAdmin) ? `
+                  <button onclick="adminResetPass('${u.username}')"
+                    class="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-[11px]" title="Reset Password ke 123456">
+                    Reset Pass
+                  </button>
+                ` : ''}
+                ${canDelete ? `
+                  <button onclick="adminDeleteUser('${u.username}', '${u.role}')"
+                    class="px-2 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-[11px]" title="Hapus Akun">
+                    <i class="fa-solid fa-trash-can mr-0.5"></i>Hapus
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
 
       const lBody = document.getElementById('adminLogsTableBody');
       lBody.innerHTML = (state.logs || []).map(l => `
@@ -2215,6 +2249,8 @@
           state.logs = res.bundle.logs;
           renderAdminPanel();
           showToast(res.message);
+        } else {
+          showToast(res ? res.message : 'Gagal mengubah role.', 'error');
         }
       } catch (err) {
         hideLoading();
@@ -2233,6 +2269,29 @@
           state.logs = res.bundle.logs;
           renderAdminPanel();
           showToast(res.message);
+        } else {
+          showToast(res ? res.message : 'Gagal mereset password.', 'error');
+        }
+      } catch (err) {
+        hideLoading();
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function adminDeleteUser(targetUsername, targetRole) {
+      const roleLabel = String(targetRole).toUpperCase();
+      if (!confirm(`Apakah Anda yakin ingin MENGHAPUS akun "${targetUsername}" (Role: ${roleLabel}) secara permanen?`)) return;
+      showLoading('Menghapus akun pengguna...');
+      try {
+        const res = await callServer('apiAdminDeleteUser', targetUsername, state.currentUser);
+        hideLoading();
+        if (res && res.success) {
+          state.users = res.bundle.users;
+          state.logs = res.bundle.logs;
+          renderAdminPanel();
+          showToast(res.message);
+        } else {
+          showToast(res ? res.message : 'Gagal menghapus user.', 'error');
         }
       } catch (err) {
         hideLoading();
