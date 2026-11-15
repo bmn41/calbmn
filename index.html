@@ -4251,7 +4251,7 @@
               ${renderThreeColMutationTable('Mutasi Tambah Aset Kemitraan Dengan Pihak Ketiga tersebut meliputi :', kemTambahRows, sKem.awalIntra + sKem.tambahIntra, sKem.awalEkstra + sKem.tambahEkstra)}
               ${renderThreeColMutationTable('Mutasi Kurang Aset Kemitraan Dengan Pihak Ketiga tersebut meliputi :', saKem.kurang, sKem.kurangIntra, sKem.kurangEkstra)}
               ${kemitraanGolActive ? `
-                <div style="margin-top:6px;">Rincian Aset Kemitraan Dengan Pihak Ketiga pada Laporan Barang Kuasa Pengguna Periode ${m.periode} Tahun Anggaran ${m.tahunAnggaran} per 31 Desember per golongan barang adalah sebagai berikut :</div>
+                <div style="margin-top:6px;">Rincian Aset Kemitraan Dengan Pihak Ketiga pada Laporan Barang Kuasa Pengguna Periode ${m.periode} Tahun Anggaran ${m.tahunAnggaran} per ${m.tanggalCutoff} per golongan barang adalah sebagai berikut :</div>
                 <table>
                   <thead><tr><th colspan="2">Golongan Barang</th><th style="width:150px">Intrakomptabel (Rp)</th><th style="width:150px">Ekstrakomptabel (Rp.)</th></tr></thead>
                   <tbody>
@@ -4330,7 +4330,7 @@
               ${renderThreeColMutationTable('Mutasi Tambah BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah tersebut meliputi :', dihTambahRows, sDih.awalIntra + sDih.tambahIntra, sDih.awalEkstra + sDih.tambahEkstra)}
               ${renderThreeColMutationTable('Mutasi Kurang BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah tersebut meliputi :', saDih.kurang, sDih.kurangIntra, sDih.kurangEkstra)}
               ${dihentikanGolActive ? `
-                <div style="margin-top:6px;">Rincian BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah pada Laporan Barang Kuasa Pengguna. untuk CaLBMN Periode ${m.periode} Tahun Anggaran ${m.tahunAnggaran} per 31 Desember per golongan barang adalah sebagai berikut:</div>
+                <div style="margin-top:6px;">Rincian BMN Yang Dihentikan Penggunaannya dari Operasional Pemerintah pada Laporan Barang Kuasa Pengguna. untuk CaLBMN Periode ${m.periode} Tahun Anggaran ${m.tahunAnggaran} per ${m.tanggalCutoff} per golongan barang adalah sebagai berikut:</div>
                 <table>
                   <thead><tr><th colspan="2">Golongan Barang</th><th style="width:150px">Intrakomptabel (Rp)</th><th style="width:150px">Ekstrakomptabel (Rp.)</th></tr></thead>
                   <tbody>
@@ -4802,7 +4802,7 @@
         </table>
 
         <div style="margin-top:8px;">
-          Rincian nilai Akumulasi Penyusutan BMN pada Laporan Barang Kuasa Pengguna Semesteran. untuk CaLBMN Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} per 31 Desember per perkiraan Neraca adalah sebagai berikut :
+          Rincian nilai Akumulasi Penyusutan BMN pada Laporan Barang Kuasa Pengguna Semesteran. untuk CaLBMN Periode ${m.periode || ''} Tahun Anggaran ${m.tahunAnggaran || ''} per ${m.tanggalCutoff} per perkiraan Neraca adalah sebagai berikut :
         </div>
 
         <!-- Tabel 2 Bab IV.3.a: Rincian Akumulasi Penyusutan per Perkiraan Neraca -->
