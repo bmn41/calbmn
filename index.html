@@ -1897,7 +1897,7 @@
 
     async function refreshFromServer() {
       if (!state.currentUser) return;
-      showLoading('Menyinkronkan data dengan Google Spreadsheet...');
+      showLoading('Menyinkronkan...');
       try {
         const res = await callServer('apiRefreshBundle', state.currentUser);
         hideLoading();
