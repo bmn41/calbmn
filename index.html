@@ -1885,6 +1885,106 @@
     }
 
     // ========================================================================
+    // KONFIGURASI LINK URL & JUDUL TAB PER MENU
+    // ========================================================================
+    let currentEditorSubTab = 'meta';
+
+    const MENU_ROUTES = {
+      login:     { hash: '#/login',                title: 'Login | CaLBMN UNIMA' },
+      dashboard: { hash: '#/daftar-laporan',       title: 'Daftar Laporan | CaLBMN UNIMA' },
+      editor:    { hash: '#/editor-kertas-kerja',  title: 'Editor Kertas Kerja | CaLBMN UNIMA' },
+      preview:   { hash: '#/pratinjau-cetak',      title: 'Pratinjau & Cetak | CaLBMN UNIMA' },
+      profile:   { hash: '#/keamanan-akun',        title: 'Keamanan Akun | CaLBMN UNIMA' },
+      admin:     { hash: '#/panel-admin',          title: 'Panel Admin & Log | CaLBMN UNIMA' }
+    };
+
+    const EDITOR_SUB_ROUTES = {
+      meta:             { slug: 'entitas-saldo-awal',      title: 'Bab I-IV.1 Entitas & Saldo Awal | CaLBMN UNIMA' },
+      persediaan_tanah: { slug: 'persediaan-tanah',        title: 'Bab IV.2 Persediaan & Tanah | CaLBMN UNIMA' },
+      subassets:        { slug: 'bidang-bmn',              title: 'Bab IV.2 Bidang BMN | CaLBMN UNIMA' },
+      penyusutan:       { slug: 'penyusutan-neraca',       title: 'Bab IV.2-IV.3 Penyusutan & Neraca | CaLBMN UNIMA' },
+      babv:             { slug: 'informasi-lainnya-bab-v', title: 'Bab V Informasi BMN Lainnya | CaLBMN UNIMA' }
+    };
+
+    function updateBrowserRoute(tabName, subTabName = null, replace = false) {
+      const routeInfo = MENU_ROUTES[tabName] || MENU_ROUTES.dashboard;
+      let targetHash = routeInfo.hash;
+      let targetTitle = routeInfo.title;
+
+      if (tabName === 'editor' && subTabName && EDITOR_SUB_ROUTES[subTabName] && state.activeReport && state.activeReport.reportId) {
+        targetHash = `${routeInfo.hash}/${EDITOR_SUB_ROUTES[subTabName].slug}`;
+        targetTitle = EDITOR_SUB_ROUTES[subTabName].title;
+      }
+
+      document.title = targetTitle;
+
+      try {
+        if (window.location.hash !== targetHash) {
+          if (replace) {
+            window.history.replaceState({ tab: tabName, subTab: subTabName }, '', targetHash);
+          } else {
+            window.history.pushState({ tab: tabName, subTab: subTabName }, '', targetHash);
+          }
+        }
+        // Sinkronisasi tambahan jika dibuka langsung lewat URL Web App Google Apps Script
+        if (typeof google !== 'undefined' && google.script && google.script.history) {
+          const gasHash = targetHash.replace(/^#\/?/, '');
+          if (replace) google.script.history.replace(null, null, gasHash);
+          else google.script.history.push(null, null, gasHash);
+        }
+      } catch (e) {
+        if (window.location.hash !== targetHash) {
+          window.location.hash = targetHash;
+        }
+      }
+    }
+
+    function parseRouteFromHash() {
+      const rawHash = String(window.location.hash || '').replace(/^#\/?/, '').trim().toLowerCase();
+      if (!rawHash) return { tab: 'dashboard', subTab: null };
+
+      const parts = rawHash.split('/');
+      const mainSlug = '#/' + parts[0];
+      const subSlug = parts[1] || '';
+
+      let matchedTab = 'dashboard';
+      Object.keys(MENU_ROUTES).forEach(key => {
+        if (MENU_ROUTES[key].hash === mainSlug) matchedTab = key;
+      });
+
+      let matchedSub = null;
+      if (matchedTab === 'editor' && subSlug) {
+        Object.keys(EDITOR_SUB_ROUTES).forEach(subKey => {
+          if (EDITOR_SUB_ROUTES[subKey].slug === subSlug) matchedSub = subKey;
+        });
+      }
+
+      return { tab: matchedTab, subTab: matchedSub };
+    }
+
+    function applyRouteFromUrl(replaceInvalid = false) {
+      if (!state.currentUser) {
+        updateBrowserRoute('login', null, true);
+        return;
+      }
+      const parsed = parseRouteFromHash();
+      let targetTab = parsed.tab;
+      if (targetTab === 'login') targetTab = 'dashboard';
+      if (targetTab === 'admin' && !isAdminLevelUser(state.currentUser)) {
+        targetTab = 'dashboard';
+      }
+
+      switchMainTab(targetTab, true);
+      if (targetTab === 'editor' && parsed.subTab && state.activeReport && state.activeReport.reportId) {
+        switchEditorSubTab(parsed.subTab, true);
+      }
+      const activeSub = (targetTab === 'editor' && state.activeReport && state.activeReport.reportId)
+        ? (parsed.subTab || currentEditorSubTab)
+        : null;
+      updateBrowserRoute(targetTab, activeSub, replaceInvalid || targetTab !== parsed.tab);
+    }
+
+    // ========================================================================
     // AUTENTIKASI & NAVIGASI
     // ========================================================================
     async function handleLogin(e) {
@@ -1912,6 +2012,7 @@
         startSessionMonitor();
         applyAuthenticatedUI(state.currentUser);
         renderAllViews();
+        switchMainTab('dashboard');
         showToast('Selamat datang, ' + state.currentUser.fullName + '!');
       } catch (err) {
         hideLoading();
@@ -1931,6 +2032,7 @@
       document.getElementById('printArea').innerHTML = '';
       document.getElementById('appView').classList.add('hidden');
       document.getElementById('loginView').classList.remove('hidden');
+      updateBrowserRoute('login', null, true);
       showToast(isAutoExpired ? 'Sesi berakhir otomatis karena tidak ada aktivitas selama 30 menit.' : 'Anda telah keluar.', isAutoExpired ? 'error' : 'info');
     }
 
@@ -1974,7 +2076,11 @@
       }
     }
 
-    function switchMainTab(tabName) {
+    function switchMainTab(tabName, skipHistory = false) {
+      if (tabName === 'admin' && !isAdminLevelUser(state.currentUser)) {
+        tabName = 'dashboard';
+      }
+
       const tabs = ['dashboard', 'editor', 'preview', 'profile', 'admin'];
       tabs.forEach(t => {
         const el = document.getElementById('mainTab-' + t);
@@ -1993,12 +2099,23 @@
           }
         }
       });
+
       if (tabName === 'editor') updateEditorGateVisibility();
       if (tabName === 'preview') renderDocumentPreview();
+
+      if (!skipHistory) {
+        const activeSub = (tabName === 'editor' && state.activeReport && state.activeReport.reportId)
+          ? currentEditorSubTab
+          : null;
+        updateBrowserRoute(tabName, activeSub, false);
+      }
     }
 
-    function switchEditorSubTab(subName) {
+    function switchEditorSubTab(subName, skipHistory = false) {
       const subs = ['meta', 'persediaan_tanah', 'subassets', 'penyusutan', 'babv'];
+      if (!subs.includes(subName)) subName = 'meta';
+      currentEditorSubTab = subName;
+
       subs.forEach(s => {
         const el = document.getElementById('editorSubTab-' + s);
         const btn = document.getElementById('subTabBtn-' + s);
@@ -2010,6 +2127,10 @@
           btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition text-slate-600 hover:bg-white/60';
         }
       });
+
+      if (!skipHistory) {
+        updateBrowserRoute('editor', subName, false);
+      }
     }
 
     // Helper membaca periode dasar ('Semester I', 'Semester II', 'Tahunan') dan status audit ('', 'Unaudited', 'Audited')
@@ -5522,6 +5643,10 @@
       }
     }
 
+    // Sinkronisasi otomatis saat tombol Back/Forward browser ditekan atau URL diubah manual
+    window.addEventListener('popstate', () => applyRouteFromUrl(true));
+    window.addEventListener('hashchange', () => applyRouteFromUrl(true));
+
     // Inisialisasi Awal, Pemulihan Sesi Saat Refresh, & Listener Aktivitas 30 Menit
     window.addEventListener('DOMContentLoaded', async () => {
       updateConnectionBadges();
@@ -5532,6 +5657,7 @@
 
       const savedSession = getActiveSession();
       if (savedSession && savedSession.expired) {
+        updateBrowserRoute('login', null, true);
         showToast('Sesi Anda sebelumnya telah berakhir (lebih dari 30 menit tanpa aktivitas).', 'error');
         return;
       }
@@ -5542,6 +5668,9 @@
         applyAuthenticatedUI(state.currentUser);
         startSessionMonitor();
         await refreshFromServer();
+        applyRouteFromUrl(true);
+      } else {
+        updateBrowserRoute('login', null, true);
       }
     });
   </script>
